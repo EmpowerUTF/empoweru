@@ -882,8 +882,8 @@ function dimLabel(v){
 function dimColor(v){
   if(v >= TH.H)  return "rgba(94,234,212,0.85)";
   if(v >= TH.M)  return "rgba(165,180,252,0.85)";
-  if(v >= TH.L)  return "rgba(148,163,184,0.60)";
-  return "rgba(100,116,139,0.52)";
+  if(v >= TH.L)  return "rgba(129,140,248,0.72)";
+  return "rgba(99,102,241,0.60)";
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -1156,8 +1156,8 @@ function render(comResult, somResult){
   function barColor(v){
     if(v >= TH.H)  return "linear-gradient(90deg,#3b82f6,#14b8a6)";
     if(v >= TH.M)  return "linear-gradient(90deg,#6366f1,#8b5cf6)";
-    if(v >= TH.L)  return "rgba(148,163,184,0.45)";
-    return "rgba(100,116,139,0.35)";
+    if(v >= TH.L)  return "linear-gradient(90deg,#818cf8,#6366f1)";
+    return "linear-gradient(90deg,#6366f1,#4f46e5)";
   }
 
   var eVal = avgDims.E || 0;
