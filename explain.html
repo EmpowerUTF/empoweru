@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Empower.U • What is UTF?</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<style>
+:root{
+--primary:#4c6fff;
+--accent:#00c2a8;
+--sig-grad: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+--bg:#020617;
+--bg-soft:#0b1120;
+--card-bg:#020617;
+--border-subtle:rgba(148,163,184,.35);
+--text-main:#f1f5f9;
+--text-muted:#cbd5e1;
+--shadow: 0 24px 80px rgba(0,0,0,.65);
+--radius: 20px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+min-height:100vh;
+background:
+radial-gradient(circle at top, rgba(76,111,255,.18) 0, transparent 55%),
+radial-gradient(circle at 85% 15%, rgba(0,194,168,.12) 0, transparent 55%),
+linear-gradient(180deg, #020617 0%, #020617 100%);
+color:var(--text-main);
+padding:24px 12px;
+padding-top: 88px;
+line-height:1.6;
+}
+
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:2500;
+  padding:10px 12px;
+  background:rgba(10,12,20,0.82);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(255,255,255,0.09);
+  box-shadow:0 2px 24px rgba(0,0,0,0.35);
+}
+.topbar-inner{
+  max-width:980px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.home-btn,
+.home-btn,
+.menu-btn{
+  position:relative;
+  display:inline-flex;align-items:center;justify-content:center;
+  width:46px;height:42px;border-radius:14px;
+  border:1px solid rgba(255,255,255,0.20);
+  background:rgba(255,255,255,0.08);
+  color:rgba(230,237,247,0.95);
+  cursor:pointer;
+  transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease;
+  text-decoration:none;flex:0 0 auto;
+  touch-action:manipulation;user-select:none;
+  -webkit-tap-highlight-color:transparent;
+}
+.home-btn{ width:42px; }
+.home-btn:hover,.menu-btn:hover{
+  transform:translateY(-1px);
+  border-color:rgba(20,184,166,0.50);
+  box-shadow:0 8px 24px rgba(0,0,0,0.40);
+}
+.topbar-center{
+  flex:1 1 auto;display:flex;align-items:center;justify-content:center;min-width:0;
+}
+.eu-gradient-text{
+  background:linear-gradient(135deg,#fff 0%,rgba(255,255,255,0.85) 50%,#4c6fff 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  font-weight:950;letter-spacing:.12em;font-size:1.5rem;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+
+.container{
+max-width:900px;
+margin:0 auto;
+}
+.hero{
+text-align:center;
+margin-bottom:32px;
+padding-top:32px;
+}
+.hero h1{
+font-size:3.4rem;
+font-weight:900;
+background:linear-gradient(135deg, rgba(255,255,255,0.98), rgba(255,179,102,0.92), rgba(76,111,255,0.90), rgba(20,184,166,0.88));
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+background-clip:text;
+margin-bottom:16px;
+letter-spacing:-0.025em;
+line-height:1.08;
+}
+.hero p{
+font-size:1.15rem;
+color:rgba(203,213,225,0.92);
+max-width:620px;
+margin:0 auto 24px;
+line-height:1.65;
+font-weight:400;
+}
+.hero-cta-wrapper{
+display:flex;
+gap:16px;
+justify-content:center;
+flex-wrap:wrap;
+margin-top:40px;
+}
+.hero-cta{
+position:relative;
+display:inline-flex;
+align-items:center;
+justify-content:center;
+padding:16px 32px;
+border-radius:12px;
+font-weight:700;
+font-size:1.05rem;
+text-decoration:none;
+letter-spacing:0.01em;
+transition:all .22s cubic-bezier(0.4, 0, 0.2, 1);
+overflow:hidden;
+}
+.hero-cta-primary{
+background:linear-gradient(135deg, rgba(76,111,255,0.95), rgba(59,130,246,0.92));
+color:#ffffff;
+border:1px solid rgba(255,255,255,0.18);
+box-shadow:
+inset 0 1px 0 rgba(255,255,255,0.20),
+0 1px 2px rgba(0,0,0,0.05),
+0 8px 24px rgba(76,111,255,0.28),
+0 16px 48px rgba(59,130,246,0.18);
+}
+.hero-cta-primary::before{
+content:'';
+position:absolute;
+inset:0;
+background:linear-gradient(135deg, rgba(255,255,255,0.12), transparent);
+opacity:0;
+transition:opacity .22s ease;
+}
+.hero-cta-primary:hover{
+transform:translateY(-2px);
+box-shadow:
+inset 0 1px 0 rgba(255,255,255,0.25),
+0 2px 4px rgba(0,0,0,0.05),
+0 12px 32px rgba(76,111,255,0.35),
+0 20px 60px rgba(59,130,246,0.25);
+}
+.hero-cta-primary:hover::before{
+opacity:1;
+}
+.hero-cta-secondary{
+background:linear-gradient(135deg, rgba(20,184,166,0.18), rgba(6,182,212,0.16));
+color:rgba(230,237,247,0.98);
+border:1px solid rgba(20,184,166,0.35);
+box-shadow:
+inset 0 1px 0 rgba(255,255,255,0.08),
+0 1px 2px rgba(0,0,0,0.05),
+0 4px 12px rgba(20,184,166,0.12);
+}
+.hero-cta-secondary:hover{
+transform:translateY(-2px);
+background:linear-gradient(135deg, rgba(20,184,166,0.28), rgba(6,182,212,0.24));
+border-color:rgba(20,184,166,0.60);
+box-shadow:
+inset 0 1px 0 rgba(255,255,255,0.12),
+0 2px 4px rgba(0,0,0,0.05),
+0 8px 24px rgba(20,184,166,0.25),
+0 0 32px rgba(20,184,166,0.15);
+color:#ffffff;
+}
+
+.section{
+margin-bottom:64px;
+}
+.section-title{
+font-size:2rem;
+font-weight:700;
+margin-bottom:12px;
+background:var(--sig-grad);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+background-clip:text;
+letter-spacing:-0.02em;
+text-align:center;
+}
+.section-subtitle{
+font-size:1.1rem;
+color:var(--text-muted);
+margin-bottom:24px;
+line-height:1.7;
+text-align:center;
+max-width:720px;
+margin-left:auto;
+margin-right:auto;
+}
+.card{
+background:
+  radial-gradient(circle at bottom left, rgba(0,194,168,0.06), transparent 50%),
+  var(--card-bg);
+border:1px solid var(--border-subtle);
+border-radius:var(--radius);
+padding:32px;
+margin-bottom:24px;
+box-shadow:var(--shadow);
+transition:all 0.3s ease;
+}
+.card:hover{
+border-color:rgba(76,111,255,.5);
+box-shadow:
+  0 28px 90px rgba(0,0,0,.75),
+  0 0 50px rgba(76,111,255,.12);
+}
+.card h3{
+font-size:1.5rem;
+font-weight:700;
+margin-bottom:12px;
+background:var(--sig-grad);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+background-clip:text;
+}
+.card p{
+font-size:1.05rem;
+color:var(--text-muted);
+line-height:1.8;
+margin-bottom:12px;
+}
+.card p:last-child{
+margin-bottom:0;
+}
+.card ul{
+list-style:none;
+padding:0;
+margin:16px 0;
+}
+.card li{
+padding:10px 0;
+color:var(--text-muted);
+font-size:1.05rem;
+line-height:1.7;
+}
+.card li::before{
+content:"✓";
+color:var(--accent);
+font-weight:700;
+margin-right:12px;
+font-size:1.2rem;
+}
+
+.feature-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:24px;
+margin:20px 0 32px;
+}
+.feature-card{
+background:
+  radial-gradient(circle at top right, rgba(76,111,255,0.08), transparent 60%),
+  var(--bg-soft);
+border:1px solid var(--border-subtle);
+border-radius:16px;
+padding:28px;
+transition:all 0.3s ease;
+}
+.feature-card:hover{
+border-color:rgba(76,111,255,.5);
+transform:translateY(-3px);
+box-shadow:
+  0 20px 60px rgba(0,0,0,.5),
+  0 0 40px rgba(76,111,255,.15);
+}
+.feature-card h4{
+font-size:1.3rem;
+font-weight:700;
+margin-bottom:12px;
+color:rgba(241,245,249,0.95);
+}
+.feature-card p{
+font-size:1.05rem;
+color:var(--text-muted);
+line-height:1.7;
+}
+
+.type-dropdown{
+background:var(--bg-soft);
+border:1px solid var(--border-subtle);
+border-radius:16px;
+padding:24px 32px;
+margin:0 auto 20px;
+max-width:600px;
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:16px;
+}
+.type-dropdown label{
+font-size:1.1rem;
+color:var(--text-main);
+font-weight:700;
+text-align:center;
+}
+.type-dropdown select{
+width:100%;
+max-width:400px;
+background:var(--card-bg);
+border:1px solid var(--border-subtle);
+border-radius:12px;
+padding:14px 18px;
+color:var(--text-main);
+font-size:1.05rem;
+font-weight:600;
+cursor:pointer;
+transition:all 0.2s ease;
+}
+.type-dropdown select:hover{
+border-color:var(--primary);
+}
+.type-dropdown select:focus{
+outline:none;
+border-color:var(--primary);
+box-shadow:0 0 0 3px rgba(76,111,255,0.2);
+}
+.type-reveal{
+display:none;
+margin-top:32px;
+animation:fadeIn 0.3s ease;
+}
+.type-reveal.show{
+display:block;
+}
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(-10px);}
+to{opacity:1;transform:translateY(0);}
+}
+
+.type-section-heading{
+font-size:1.4rem;
+font-weight:700;
+text-align:center;
+margin-bottom:24px;
+background:linear-gradient(135deg, #a855f7 0%, #06b6d4 100%);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+background-clip:text;
+}
+
+.dropdowns-container{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:32px;
+margin-bottom:32px;
+}
+
+.dropdown-col{
+display:flex;
+flex-direction:column;
+}
+
+@media(max-width:768px){
+.dropdowns-container{
+grid-template-columns:1fr;
+gap:24px;
+}
+}
+
+.type-header{
+display:flex;
+align-items:center;
+justify-content:space-between;
+margin-bottom:20px;
+flex-wrap:wrap;
+gap:12px;
+}
+.type-name{
+font-size:1.9rem;
+font-weight:900;
+text-shadow:0 2px 12px rgba(0,0,0,0.3);
+}
+.type-number{
+font-size:0.85rem;
+color:var(--text-muted);
+font-weight:600;
+background:var(--bg-soft);
+padding:6px 12px;
+border-radius:8px;
+border:1px solid var(--border-subtle);
+}
+.type-desc{
+color:var(--text-main);
+font-size:1.1rem;
+margin-bottom:20px;
+line-height:1.8;
+}
+.dimensions{
+background:var(--bg-soft);
+border-radius:12px;
+padding:20px;
+}
+.dim-title{
+font-size:0.85rem;
+text-transform:uppercase;
+letter-spacing:0.08em;
+color:var(--accent);
+font-weight:700;
+margin-bottom:12px;
+}
+.dim-item{
+font-size:1rem;
+color:#cbd5e1;
+line-height:1.7;
+}
+
+.cta-box{
+background:linear-gradient(135deg, rgba(76,111,255,.15), rgba(0,194,168,.15));
+border:1px solid var(--border-subtle);
+border-radius:var(--radius);
+padding:40px;
+text-align:center;
+margin:48px 0;
+}
+.cta-box h3{
+font-size:1.8rem;
+font-weight:700;
+margin-bottom:16px;
+background:var(--sig-grad);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+background-clip:text;
+}
+.cta-box p{
+font-size:1.1rem;
+color:var(--text-muted);
+line-height:1.7;
+margin-bottom:24px;
+}
+.cta-btn{
+display:inline-block;
+padding:15px 36px;
+border-radius:10px;
+background:linear-gradient(135deg, rgba(59,130,246,0.92), rgba(20,184,166,0.88));
+color:#ffffff;
+font-weight:800;
+font-size:1.00rem;
+text-decoration:none;
+border: 1px solid rgba(255,255,255,0.16);
+box-shadow:
+inset 0 1px 1px rgba(255,255,255,0.22),
+0 0 24px rgba(59,130,246,0.20),
+0 12px 32px rgba(20,184,166,0.16);
+transition:all .20s ease;
+letter-spacing:0.02em;
+}
+.cta-btn:hover{
+background:linear-gradient(135deg, rgba(59,130,246,0.98), rgba(20,184,166,0.94));
+box-shadow:
+inset 0 1px 1px rgba(255,255,255,0.28),
+0 0 32px rgba(59,130,246,0.28),
+0 16px 40px rgba(20,184,166,0.22);
+transform:translateY(-2px);
+}
+
+.dropdown-section{
+margin-bottom:24px;
+}
+.dropdown-toggle{
+background:var(--bg-soft);
+border:1px solid var(--border-subtle);
+border-radius:12px;
+padding:20px 24px;
+cursor:pointer;
+transition:all 0.3s ease;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:16px;
+}
+.dropdown-toggle:hover{
+border-color:var(--primary);
+background:rgba(76,111,255,0.05);
+}
+.dropdown-toggle h3{
+font-size:1.1rem;
+font-weight:600;
+color:rgba(241,245,249,0.92);
+margin:0;
+line-height:1.4;
+}
+.dropdown-icon{
+font-size:1rem;
+color:var(--accent);
+transition:transform 0.3s ease;
+flex-shrink:0;
+font-weight:700;
+opacity:0.8;
+}
+.dropdown-toggle.active .dropdown-icon{
+transform:rotate(180deg);
+}
+
+.agreement{
+display:flex;
+justify-content:center;
+margin:20px 0;
+}
+.agreement label{
+display:flex;
+gap:10px;
+align-items:flex-start;
+cursor:pointer;
+user-select:none;
+font-size:0.95rem;
+color:var(--text-main);
+}
+.agreement input[type="checkbox"]{
+margin-top:3px;
+width:18px;
+height:18px;
+accent-color:var(--accent);
+flex:0 0 auto;
+}
+.agreement a{
+white-space:nowrap;
+color:rgba(165,180,252,.95);
+text-decoration:none;
+border-bottom:1px dashed rgba(165,180,252,.55);
+font-weight:950;
+}
+.agreement a:hover{
+color:rgba(52,211,153,.95);
+border-bottom-color:rgba(52,211,153,.55);
+}
+.dropdown-content{
+max-height:0;
+overflow:hidden;
+transition:max-height 0.3s ease;
+}
+.dropdown-content.active{
+max-height:3000px;
+}
+.dropdown-inner{
+padding:24px;
+background:var(--card-bg);
+border:1px solid var(--border-subtle);
+border-top:none;
+border-radius:0 0 12px 12px;
+margin-top:-1px;
+}
+.dropdown-inner h4{
+font-size:1.1rem;
+font-weight:700;
+background:var(--sig-grad);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+background-clip:text;
+margin-bottom:12px;
+margin-top:20px;
+}
+.dropdown-inner h4:first-child{
+margin-top:0;
+}
+.dropdown-inner p{
+color:var(--text-muted);
+font-size:1.05rem;
+line-height:1.7;
+margin-bottom:12px;
+}
+
+.eu-footer{
+margin-top: 22px;
+padding: 18px 12px 16px;
+border-top: 1px solid rgba(148,163,184,.18);
+background: transparent;
+}
+.eu-footer .inner{
+max-width: 900px;
+margin: 0 auto;
+text-align: center;
+display: flex;
+flex-direction: column;
+gap: 10px;
+}
+.eu-footer .links{
+display:flex;
+gap: 14px;
+flex-wrap: wrap;
+justify-content:center;
+}
+.eu-footer a{
+color: rgba(165,180,252,.85);
+text-decoration:none;
+font-weight: 900;
+font-size: .85rem;
+border-bottom: 1px dashed rgba(165,180,252,.35);
+}
+.eu-footer a:hover{
+color: rgba(52,211,153,.95);
+border-bottom-color: rgba(52,211,153,.45);
+}
+
+.menu-backdrop{
+position: fixed;
+inset: 0;
+z-index: 4000;
+background: rgba(0,0,0,.55);
+backdrop-filter: blur(6px);
+display: none;
+align-items: center;
+justify-content: center;
+padding: 18px;
+}
+.menu-backdrop.show{ display:flex; }
+.menu-modal{
+width: min(740px, 92vw);
+border-radius: 22px;
+border: 1px solid rgba(255,255,255,0.12);
+background:
+radial-gradient(900px 520px at 20% 10%, rgba(96,165,250,0.16), transparent 58%),
+radial-gradient(900px 520px at 80% 20%, rgba(20,184,166,0.14), transparent 62%),
+linear-gradient(180deg, rgba(9,12,22,0.98), rgba(6,9,16,0.98));
+box-shadow: 0 28px 90px rgba(0,0,0,.72);
+overflow: hidden;
+}
+.menu-header{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap: 10px;
+padding: 16px 16px;
+border-bottom: 1px solid rgba(255,255,255,0.10);
+}
+.menu-title{
+font-weight: 950;
+letter-spacing: .10em;
+text-transform: uppercase;
+font-size: .98rem;
+color: rgba(230,237,247,0.92);
+}
+.menu-close{
+border: 1px solid rgba(255,255,255,0.18);
+background: rgba(255,255,255,0.04);
+color: rgba(230,237,247,0.9);
+border-radius: 14px;
+padding: 10px 12px;
+cursor: pointer;
+font-weight: 950;
+touch-action: manipulation;
+transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+.menu-close:hover{
+transform: translateY(-1px);
+border-color: rgba(20,184,166,0.45);
+box-shadow: 0 14px 34px rgba(0,0,0,.35);
+}
+.menu-body{
+padding: 14px 16px 18px;
+}
+.menu-links{
+display:grid;
+gap: 12px;
+}
+.menu-link{
+width:100%;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:10px;
+padding: 14px 14px;
+border-radius: 18px;
+border: 1px solid rgba(255,255,255,0.10);
+background: rgba(255,255,255,0.03);
+color: rgba(230,237,247,0.90);
+font-weight: 950;
+text-decoration: none;
+cursor:pointer;
+touch-action: manipulation;
+transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+text-align:left;
+min-width:0;
+}
+.menu-link:visited{ color: rgba(230,237,247,0.90); }
+.menu-link:hover{
+transform: translateY(-1px);
+border-color: rgba(20,184,166,0.45);
+box-shadow: 0 14px 34px rgba(0,0,0,.35);
+}
+.menu-link span:first-child{
+color: rgba(230,237,247,0.92);
+min-width:0;
+overflow:hidden;
+text-overflow:ellipsis;
+white-space:nowrap;
+}
+.menu-link span:last-child{
+font-weight: 900;
+color: rgba(230,237,247,0.62);
+letter-spacing: .02em;
+flex: 0 0 auto;
+white-space:nowrap;
+}
+
+@media(max-width:768px){
+body{padding:18px 12px;padding-top:80px;}
+.hero{margin-bottom:48px;padding-top:40px;}
+.hero h1{font-size:2.2rem;line-height:1.12;}
+.hero p{font-size:1.02rem;}
+.hero-cta{padding:13px 24px;font-size:0.98rem;}
+.feature-grid{grid-template-columns:1fr;gap:18px;}
+.feature-card{padding:24px;}
+.card{padding:24px;margin-bottom:20px;}
+.section{margin-bottom:48px;}
+.section-title{font-size:1.5rem;margin-bottom:20px;}
+.section-subtitle{font-size:1rem;}
+.dropdowns-container{grid-template-columns:1fr;}
+}
+
+@media(min-width:769px) and (max-width:1024px){
+.hero h1{font-size:2.8rem;}
+.card{padding:28px;}
+.feature-card{padding:26px;}
+}
+
+.scroll-explore-btn{
+display:inline-flex;
+align-items:center;
+gap:8px;
+padding:11px 24px;
+border-radius:10px;
+background:rgba(76,111,255,0.10);
+border:1px solid rgba(76,111,255,0.32);
+color:rgba(165,180,252,0.95);
+font-weight:700;
+font-size:0.92rem;
+cursor:pointer;
+text-decoration:none;
+transition:all 0.2s ease;
+margin-top:20px;
+}
+.scroll-explore-btn:hover{
+background:rgba(76,111,255,0.20);
+border-color:rgba(76,111,255,0.55);
+transform:translateY(-1px);
+}
+.scroll-explore-btn svg{
+flex-shrink:0;
+}
+
+.explore-disclaimer{
+font-size:0.84rem;
+color:rgba(148,163,184,0.72);
+text-align:center;
+margin:0 0 20px;
+line-height:1.5;
+font-style:italic;
+}
+
+.show-types-btn{
+display:block;
+width:100%;
+max-width:280px;
+margin:20px auto 0;
+padding:13px 28px;
+border-radius:10px;
+background:linear-gradient(135deg, rgba(76,111,255,0.85), rgba(0,194,168,0.80));
+color:#fff;
+font-weight:800;
+font-size:1rem;
+cursor:pointer;
+border:1px solid rgba(255,255,255,0.14);
+transition:all 0.2s ease;
+letter-spacing:0.02em;
+}
+.show-types-btn:hover{
+transform:translateY(-2px);
+box-shadow:0 8px 24px rgba(76,111,255,0.28);
+}
+.show-types-btn:disabled{
+opacity:0.45;
+cursor:default;
+transform:none;
+box-shadow:none;
+}
+
+.type-card{
+background:var(--bg-soft);
+border:1px solid var(--border-subtle);
+border-radius:16px;
+padding:24px 28px;
+animation:fadeIn 0.3s ease;
+}
+.type-title{
+font-size:1.5rem;
+font-weight:900;
+margin-bottom:10px;
+}
+.type-desc{
+font-size:1.05rem;
+color:var(--text-main);
+line-height:1.75;
+margin-bottom:14px;
+}
+.type-how{
+font-size:0.97rem;
+color:var(--text-muted);
+line-height:1.75;
+}
+.type-how strong{
+color:var(--accent);
+}
+
+/* Per-type gradients */
+.type-title-Nexus      { background:linear-gradient(135deg,#818cf8 0%,#06b6d4 100%); }
+.type-title-Harmonizer { background:linear-gradient(135deg,#7c3aed 0%,#a78bfa 100%); }
+.type-title-Architect  { background:linear-gradient(135deg,#60a5fa 0%,#6366f1 100%); }
+.type-title-Visionary  { background:linear-gradient(135deg,#fbbf24 0%,#f87171 100%); }
+.type-title-Sage       { background:linear-gradient(135deg,#34d399 0%,#0ea5e9 100%); }
+.type-title-Pathfinder { background:linear-gradient(135deg,#fb923c 0%,#fde047 100%); }
+.type-title-Navigator  { background:linear-gradient(135deg,#7dd3fc 0%,#c084fc 100%); }
+.type-title-Composer   { background:linear-gradient(135deg,#2dd4bf 0%,#e2c58a 100%); }
+.type-title-Luminary   { background:linear-gradient(135deg,#fcd34d 0%,#f97316 100%); }
+.type-title-Pioneer    { background:linear-gradient(135deg,#f87171 0%,#fbbf24 100%); }
+.type-title-Catalyst   { background:linear-gradient(135deg,#ea580c 0%,#fb923c 100%); }
+.type-title-Coordinator{ background:linear-gradient(135deg,#38bdf8 0%,#34d399 100%); }
+.type-title-Executive  { background:linear-gradient(135deg,#93c5fd 0%,#6366f1 100%); }
+.type-title-Sentinel   { background:linear-gradient(135deg,#94a3b8 0%,#60a5fa 100%); }
+.type-title-Anchor     { background:linear-gradient(135deg,#d4a574 0%,#7dd3fc 100%); }
+.type-title-Mechanist  { background:linear-gradient(135deg,#67e8f9 0%,#818cf8 100%); }
+.type-title-Artisan    { background:linear-gradient(135deg,#fbbf24 0%,#ef4444 100%); }
+.type-title-Synthesist { background:linear-gradient(135deg,#a78bfa 0%,#34d399 100%); }
+.type-title-Innovator  { background:linear-gradient(135deg,#4ade80 0%,#2dd4bf 100%); }
+.type-title-Bridge     { background:linear-gradient(135deg,#0891b2 0%,#06b6d4 100%); }
+.type-title-Operator   { background:linear-gradient(135deg,#7dd3fc 0%,#64748b 100%); }
+[class^="type-title-"], [class*=" type-title-"] {
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+
+.type-title-DRV { background:linear-gradient(135deg,#34d399 0%,#3b82f6 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.type-title-HRB { background:linear-gradient(135deg,#f97316 0%,#fb923c 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.type-title-TBZ { background:linear-gradient(135deg,#fbbf24 0%,#f97316 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.type-title-BLD { background:linear-gradient(135deg,#60a5fa 0%,#14b8a6 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.type-title-EQZ { background:linear-gradient(135deg,#a78bfa 0%,#38bdf8 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.type-title-ENH { background:linear-gradient(135deg,#4ade80 0%,#0ea5e9 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.type-title-BST { background:linear-gradient(135deg,#818cf8 0%,#c084fc 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.type-title-HVN { background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.type-title-REF { background:linear-gradient(135deg,#fcd34d 0%,#a78bfa 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+</style>
+</head>
+<body>
+
+<header class="topbar" role="banner">
+  <div class="topbar-inner">
+    <a class="home-btn" href="index.html" aria-label="Home" title="Home">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M3 10.5L12 3l9 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M5.5 10.5V21h13V10.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+    <div class="topbar-center" aria-label="Page title">
+      <div class="eu-gradient-text">Empower.U</div>
+    </div>
+    <button class="menu-btn" id="btnMenu" type="button" aria-label="Menu" title="Menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M4 7h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M4 12h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!-- Menu modal -->
+<div class="menu-backdrop" id="menuModal" aria-hidden="true">
+<div class="menu-modal" role="dialog" aria-modal="true" aria-label="Menu">
+<div class="menu-head">
+<div class="menu-title">MENU</div>
+<button class="menu-close" id="menuClose" type="button">Close</button>
+</div>
+<div class="menu-body">
+<div class="menu-links">
+<a class="menu-link" href="index.html"><span>Home</span><span>Empower.U</span></a>
+<a class="menu-link" href="com.html"><span>COM Assessment</span><span>Cognitive</span></a>
+<a class="menu-link" href="som.html"><span>SOM Assessment</span><span>Seasonal</span></a>
+<a class="menu-link" href="synthesis.html"><span>UTF Profile</span><span>Synthesis</span></a>
+<a class="menu-link" href="explain.html"><span>What is UTF?</span><span>Guide</span></a>
+<a class="menu-link" href="about.html"><span>About / Contact</span><span>Info</span></a>
+</div>
+</div>
+</div>
+</div>
+
+<div class="container">
+
+<div class="hero">
+<h1>Unified Typing<br>Framework</h1>
+<p>UTF shows you two things other systems miss: how your mind is wired, and what your current season actually needs. Not who you should be. Who you are, and where you are right now.</p>
+</div>
+
+<!-- THE FRAMEWORK -->
+<div class="section">
+<h2 class="section-title" style="background:linear-gradient(135deg, #ffffff 0%, #4c6fff 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">The Architecture</h2>
+
+<div class="feature-grid">
+<div class="feature-card">
+<h4>COM: Cognitive Operating Mode</h4>
+<p>Your stable cognitive identity. How you naturally think, decide, and relate to people. This doesn't change with your mood or circumstances. It's how you're wired.</p>
+<p style="margin-top:12px;color:var(--accent);font-weight:600;">21 types across 9 dimensions + the E axis</p>
+</div>
+<div class="feature-card">
+<h4>SOM: Seasonal Operating Mode</h4>
+<p>Your current state. How much energy you have, what you're focused on, and what your system actually needs right now. This changes as your life changes.</p>
+<p style="margin-top:12px;color:var(--accent);font-weight:600;">9 modes across a 3×3 grid</p>
+</div>
+</div>
+
+<div class="card">
+<p><strong>Together, COM + SOM = your UTF profile.</strong> Example: You might be a Composer (quality-obsessed, detail-driven, independent) in a Driver season (high energy, output-focused). That combination tells you this is a rare window where your perfectionism can actually produce. Set deadlines and ship. No other system gives you both layers.</p>
+</div>
+
+<div style="text-align:center;margin-top:8px;">
+<a class="scroll-explore-btn" href="#explore-types" onclick="event.preventDefault();document.getElementById('explore-types').scrollIntoView({behavior:'smooth',block:'start'});">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+Explore all 21 types and 9 modes
+</a>
+</div>
+</div>
+
+<!-- WHAT MAKES IT DIFFERENT -->
+<div class="section">
+<div class="dropdown-section">
+<div class="dropdown-toggle" onclick="toggleDropdown('mission')">
+<h3>What makes UTF different from MBTI, Big Five, and other systems?</h3>
+<span class="dropdown-icon" id="mission-icon">▼</span>
+</div>
+<div class="dropdown-content" id="mission-content">
+<div class="dropdown-inner">
+<p>Most personality systems give you a fixed label and stop there. MBTI sorts you into one of 16 boxes. Big Five gives you five scores but no actionable guidance. Enneagram describes your motivation but not your current capacity. None of them tell you what to do differently <em>this month</em>.</p>
+<p>UTF measures your stable cognitive wiring (COM) AND your current seasonal state (SOM) as two separate, interacting layers. This means it can tell you not just how you think, but whether your current season is aligned with your wiring or working against it, and what to do about it.</p>
+<p>We also measure on continuous dimensions, not binary switches. You can be high on both logic and empathy, both structure and flexibility. Real people don't fit in either/or boxes, and UTF doesn't try to force them.</p>
+</div>
+</div>
+</div>
+</div>
+
+<!-- WHAT YOU GET -->
+<div class="section">
+<div class="dropdown-section">
+<div class="dropdown-toggle" onclick="toggleDropdown('gets')">
+<h3>What this gets you</h3>
+<span class="dropdown-icon" id="gets-icon">▼</span>
+</div>
+<div class="dropdown-content" id="gets-content">
+<div class="dropdown-inner">
+<div class="feature-grid" style="margin:0;">
+<div class="feature-card">
+<h4>Decisions That Fit</h4>
+<p>Make choices that work with your wiring instead of against it. Know when to push and when to pull back.</p>
+</div>
+<div class="feature-card">
+<h4>Clearer Communication</h4>
+<p>Understand how you process information so you can work better with people who think differently.</p>
+</div>
+<div class="feature-card">
+<h4>Seasonal Awareness</h4>
+<p>Know whether you're in a build season, a recovery season, or a transition. Stop forcing the wrong gear.</p>
+</div>
+<div class="feature-card">
+<h4>AI That Actually Knows You</h4>
+<p>Your UTF profile becomes a payload any AI can use to personalize its advice to how you actually think and operate.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- THE SYSTEM -->
+<div class="section">
+<div class="dropdown-section">
+<div class="dropdown-toggle" onclick="toggleDropdown('system')">
+<h3>How the complete system works</h3>
+<span class="dropdown-icon" id="system-icon">▼</span>
+</div>
+<div class="dropdown-content" id="system-content">
+<div class="dropdown-inner">
+<p>Take the COM assessment (about 12 minutes) to map your stable cognitive identity. Take the SOM assessment (about 5 minutes) to map your current season. The synthesis page combines them into your UTF profile and generates an Atlas payload, a compact data package you can paste into any AI chat for personalized guidance.</p>
+<p>Everything stays on your device unless you choose to share it. Your results, your conversations, your growth. You own it.</p>
+</div>
+</div>
+</div>
+</div>
+
+<!-- EXPLORE TYPES -->
+<div class="section" id="explore-types">
+<h2 class="section-title">Look Up Any Type</h2>
+<p class="section-subtitle">Choose a COM type, a SOM mode, or both. These are general descriptions of each pattern. Your actual experience depends on your full profile and how both layers interact.</p>
+
+<div class="dropdowns-container">
+<div class="dropdown-col">
+<h3 class="type-section-heading">COM Types (21)</h3>
+<div class="type-dropdown">
+<label for="com-select">Select a COM type:</label>
+<select id="com-select">
+<option value="">Choose a type</option>
+</select>
+</div>
+</div>
+
+<div class="dropdown-col">
+<h3 class="type-section-heading">SOM Modes (9)</h3>
+<div class="type-dropdown">
+<label for="som-select">Select a SOM mode:</label>
+<select id="som-select">
+<option value="">Choose a mode</option>
+</select>
+</div>
+</div>
+</div>
+
+<button class="show-types-btn" onclick="showSelectedTypes()">Show</button>
+
+<div id="explore-results" style="margin-top:32px;display:none;">
+<p class="explore-disclaimer">General read only. Your real profile depends on your full assessment results and how COM and SOM interact together.</p>
+<div class="dropdowns-container">
+<div class="dropdown-col" id="com-reveal-col" style="display:none;">
+<h3 class="type-section-heading">COM</h3>
+<div id="com-reveal" class="type-reveal show"></div>
+</div>
+<div class="dropdown-col" id="som-reveal-col" style="display:none;">
+<h3 class="type-section-heading">SOM</h3>
+<div id="som-reveal" class="type-reveal show"></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- THE SCIENCE -->
+<div class="section">
+<h2 class="section-title">The Science Behind It</h2>
+
+<div class="dropdown-section">
+<div class="dropdown-toggle" onclick="toggleDropdown('tech')">
+<h3>How does UTF measure cognitive patterns?</h3>
+<span class="dropdown-icon" id="tech-icon">▼</span>
+</div>
+<div class="dropdown-content" id="tech-content">
+<div class="dropdown-inner">
+<h4>Dimensional Measurement</h4>
+<p>COM measures 9 cognitive dimensions: pattern thinking, decision speed, systems thinking, structure preference, social reading, quality focus, people priority, independence, and emotional stability. These shape your type. The E axis (social energy) runs alongside them as a separate inward/outward orientation that colors how your type expresses. Your type emerges from the combination of all 9, not from answering a handful of binary questions.</p>
+<h4>21 Types, Not Buckets</h4>
+<p>Each COM type represents a distinct operational profile, a real pattern that shows up when you measure cognition across multiple dimensions simultaneously. These aren't arbitrary labels. Each type has specific dimension signatures, gate rules, and distance targets that are mathematically validated.</p>
+<h4>Forced-Choice Seasonal Measurement</h4>
+<p>SOM uses 27 forced-choice questions where each option maps to one of 5 seasonal dimensions: energy, recovery need, output focus, people focus, and change focus. The format eliminates acquiescence bias and measures what you're actually doing, not what sounds good.</p>
+<h4>Two-Layer Architecture</h4>
+<p>COM measures stable traits. SOM measures current state. The synthesis layer computes interactions between them: alignment, tension, burnout risk, and season-appropriate coaching. This is the only personality system that produces both layers and connects them.</p>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ATLAS -->
+<div class="section" id="atlas-intro">
+<div class="dropdown-section">
+<div class="dropdown-toggle" onclick="toggleDropdown('atlas')">
+<h3>Atlas: your cognitive advisor</h3>
+<span class="dropdown-icon" id="atlas-icon">▼</span>
+</div>
+<div class="dropdown-content" id="atlas-content">
+<div class="dropdown-inner">
+<p>Atlas is what happens when your UTF profile meets any AI. When you activate Atlas on the synthesis page, it generates a compact payload you paste into any AI chat: ChatGPT, Claude, Gemini, whatever you use. The AI then knows how you think, what your season needs, and how to talk to you.</p>
+<p>It's not a separate app. It's a payload that makes any AI smarter about you. The AI adapts its tone, advice, examples, and priorities to match your actual wiring and current state. No generic advice. No one-size-fits-all.</p>
+<p>Everything stays private. You paste the payload yourself. Nothing is sent anywhere automatically. You control what any AI knows about you.</p>
+</div>
+</div>
+</div>
+</div>
+
+<!-- CTA -->
+<div class="hero-cta-wrapper" style="margin:48px auto 32px;max-width:max-content;">
+<a href="com.html" class="hero-cta hero-cta-primary">Take the COM Assessment</a>
+<a href="synthesis.html" class="hero-cta hero-cta-secondary">Go to Synthesis</a>
+</div>
+
+</div>
+
+<!-- Footer -->
+<footer style="margin-top:48px;padding:24px 12px;border-top:1px solid rgba(148,163,184,0.18);text-align:center;">
+<div style="font-weight:900;letter-spacing:.14em;font-size:.9rem;background:linear-gradient(90deg,#4c6fff,#00c2a8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;color:transparent;margin-bottom:10px;">Empower.U</div>
+<div style="display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin-bottom:10px;">
+<a href="index.html" style="font-size:.85rem;font-weight:800;color:rgba(165,180,252,.85);text-decoration:none;">Home</a>
+<a href="explain.html" style="font-size:.85rem;font-weight:800;color:rgba(165,180,252,.85);text-decoration:none;">What is UTF?</a>
+<a href="about.html" style="font-size:.85rem;font-weight:800;color:rgba(165,180,252,.85);text-decoration:none;">About</a>
+</div>
+<div style="font-size:.78rem;color:rgba(229,231,235,.55);">self-reflection tools built for clarity. © 2025</div>
+</footer>
+
+<script>
+// ============================================================
+// TYPE DATA: 21 COM TYPES + 9 SOM MODES
+// ============================================================
+var COM_TYPES = {
+  Nexus:      {desc:"You see how everything connects. You build from that place.", how:"Your mind maps relationships between ideas, people, and problems in layers that others have to be walked through. That gap can create a sense of distance in shared understanding, especially when translation isn't happening , impatience, withdrawal, doing it yourself because explaining takes longer than finishing. But when you bring someone into your world, the things you build don't just work. They change how people understand the problem entirely."},
+  Harmonizer: {desc:"You feel the room before anyone says a word. You hold space most people didn't know they needed.", how:"You sense tension before anyone speaks and help people feel heard without taking sides. The weight is real. You absorb what isn't yours and delay honest conversations because you know exactly how much they'll cost. But the spaces you create, where people feel safe to be truly honest, are rare. You give people the thing they didn't know they were missing."},
+  Architect:  {desc:"You make things make sense. Where others see chaos, you see steps, sequence, and a path forward.", how:"There's a deep satisfaction in taking something messy and giving it structure that makes everything else easier. The thing to know about yourself is that your best work happens when the structure serves the outcome, not the other way around. When you hold it loosely enough to let better ideas in, the plan stops being a cage and starts being a launchpad. That's when you become the person who turns intention into something real, reliably, in a way people learn to trust completely."},
+  Visionary:  {desc:"You live a few steps ahead of everyone else, not because you're rushing, but because the future is where your mind naturally goes.", how:"Possibilities are more real to you than the present sometimes. The gap between seeing it and moving on it is the thing worth watching, because your ideas deserve more than just the seeing. But when you do commit, the direction you choose carries a weight that practical minds alone could never generate. You don't just set goals. You set meaning."},
+  Sage:       {desc:"You go deeper than most people slow down enough to. You stay there until it actually makes sense.", how:"Where others are satisfied with a workable answer, you keep pulling at threads because you can feel when something doesn't fully hold together yet. You're sometimes quiet when others want you to speak, and slow when they want you to commit, because the thinking isn't done yet. When you do speak, it carries, because everyone can sense you've actually thought it through. The trust people place in your judgment is earned, and you've never taken shortcuts with the truth."},
+  Pathfinder: {desc:"You learn by moving. While others are still planning, you've already started, adjusting as you go.", how:"You genuinely learn faster from experience than from theory. Your range is wide and your instincts in new territory are sharper than almost anyone's. The starting line is where you do some of your most electric work, and you know when something is worth seeing all the way through. The person who went first always understands the terrain best, and that person is almost always you."},
+  Navigator:  {desc:"You understand people at a level they don't always understand themselves. You help them find their own way.", how:"You pick up on what people actually mean, not just what they're saying. The cost is that you can lose yourself in other people's clarity, taking on weight that was never yours, feeling responsible for things you can't control. But the people you've helped don't just feel assisted. They feel understood. That's different from advice, and it's the thing people remember years later."},
+  Composer:   {desc:"You feel the difference between good enough and right. You can't rest until it's right.", how:"Something in you registers quality at a level that's hard to articulate, not just whether something works, but whether it's true. You can struggle in environments that reward speed over care, and you might hold things too long. But your work carries something that rushed work never will. People feel the care in it, even when they can't name what's different. That's your signature. Protect it."},
+  Luminary:   {desc:"When you walk into a room, something shifts. People orient toward you, not because you demand it, but because your energy gives things direction.", how:"There's a natural momentum to you that others feel and respond to. The hidden cost: when your energy dips, the drain hits harder because you give more of yourself than you realize. But when you're in the right room with people who match your frequency, the effect is something genuinely rare. That's not charisma. That's resonance."},
+  Pioneer:    {desc:"You go where no one else is willing to go, not for the risk, but because something in you needs to know what's out there.", how:"Where others see risk, you see possibility that hasn't been tested yet. The pattern that trips you up is finishing. Once you've proven something can work, your attention is already on the next horizon. The things that exist because you went first wouldn't exist without you. That courage to move without a guarantee matters more than it gets credit for."},
+  Catalyst:   {desc:"You don't wait for permission to start. When something needs to change, you're already moving.", how:"You have an instinct for the decisive moment: where thinking stops being useful and action becomes the only thing that matters. The thing to stay honest about is that speed and flexibility are both yours to use. When you let them work together, the combination is nearly unstoppable. Nobody moves like you do when the direction is right. You turn stalled situations into moving ones, and people around you know it before you even say a word."},
+  Coordinator:{desc:"You're the reason things actually come together, not in theory, but in practice, with real people.", how:"You have a natural sense for what needs to happen next and who needs to be involved. The thing to stay aware of is that your capacity is valuable, and it's worth protecting. You give because you can see how to help, and that generosity is a real strength. But the things that actually happen when people need to work together? You're usually the reason they didn't fall apart."},
+  Executive:  {desc:"You carry the weight of decisions other people avoid. You follow through when it counts.", how:"You see what needs to happen and you're willing to be the one who makes it happen, even when the calls are hard. The thing to stay connected to is that the people around you don't just need your decisions. They need to feel you in them. When your strength and your warmth work together, there's almost nothing you can't hold. And when the stakes are real and someone needs to make the call, you're the person everyone looks at. That ability to carry the weight and still show up is genuinely rare."},
+  Sentinel:   {desc:"You see what could go wrong before it does. You're the reason things stay solid when everything else is shifting.", how:"Consistency isn't boring to you. It's what makes everything else possible. The tension is that this same instinct can make change feel threatening, even when the change is good. You can protect something past the point where it still serves its purpose. But the things you protect actually survive while everything else falls apart. That quiet reliability is the thing everything else depends on."},
+  Anchor:     {desc:"You're the steady center that other people orbit around, especially when everything else feels uncertain.", how:"You don't get pulled into the panic of the moment because you've seen enough to know most crises feel bigger than they are. The thing to be honest about is that this steadiness can become rigidity. The people around you might need you to move faster than feels comfortable. But people come back to you because you were right more often than the people who panicked. Your calm gives others permission to think clearly, and that's something you can't manufacture."},
+  Mechanist:  {desc:"You understand how things actually work, not the theory, not the appearance, but the real mechanics underneath.", how:"When something breaks, you go straight to the mechanism. The depth you bring to a problem is rare, and it's worth protecting. Human dynamics are worth your curiosity too, even when they're messier than the problems you prefer. But the fix you build actually fixes the problem. Not a patch, but the real solution that takes the patience and precision most processes skip. That's irreplaceable."},
+  Artisan:    {desc:"You make things with your hands, your mind, and your full attention. The making itself is where you come alive.", how:"The process of shaping something is where the meaning lives for you, not the finished product, not the recognition. The tension shows up when the world wants you to produce on demand, and timelines strip away what made the thing meaningful. But what you made in flow has something manufactured work never will. People can feel the difference, even if they can't explain why. That's your signature."},
+  Synthesist: {desc:"You hold the whole picture when everyone else is stuck in their piece of it. You bring it together without losing anyone.", how:"Your mind holds multiple perspectives at once without collapsing them too early. The weight is that you get pulled into every situation where nuance matters, and you can hesitate to name the main point because you're trying to honor every view. But when you do name it, it carries more weight than anyone else's because everyone knows you actually considered their perspective first. That's why people don't just listen to you. They believe you."},
+  Innovator:  {desc:"You see exactly where things could work better. You build the upgrade that actually sticks.", how:"You find the specific improvements that make something meaningfully better, not tearing everything down, but making what exists tighter, faster, smarter. The pattern to watch is that this pragmatism can keep you inside boundaries that might need breaking. But the improvements you make actually hold up in real life. While others chase reinvention, your upgrades are already running and compounding. That practical impact is worth more than any grand idea that never becomes real."},
+  Bridge:     {desc:"You bring people together, not by organizing them, but by making them feel like they belong.", how:"There's a warmth in you that others respond to almost immediately. The thing to be honest about is that this giving can become depleting. You pour into others until your own tank is empty, and the boundary between generosity and self-neglect gets blurry. But the connections you build are real. The communities that form around you aren't accidents. You make people feel like they're home, and that ability is something most people can't manufacture."},
+  Operator:   {desc:"You get things done, clearly, consistently, and without needing anyone to notice.", how:"You have a relationship with competence that doesn't need external validation. The thing to stay loose on is change that asks for a new approach, because your real strength is execution, and execution is most powerful when it can flex with the situation. In a world full of people chasing the next big thing, you're the one who actually follows through. Consistently. Without drama. That kind of trust isn't glamorous, but it's the foundation everything else is built on."}
+};
+
+var SOM_TYPES = {
+  DRV: {name:"Driver",      desc:"Full capacity, output focused. This is an execution season with real momentum. Point it at something worth building.", how:"You have real momentum right now. The question isn't whether to move, it's where to point it. Set clear targets and short feedback loops. Keep recovery intentional so output stays clean instead of frantic."},
+  HRB: {name:"Harbor",      desc:"Full capacity, people focused. Relationships, tone, and trust feel unusually important right now.", how:"You have the lift to stay engaged with people, and connection isn't just present. It matters. This is a season of check-ins, closeness, and strengthening bonds. Keep boundaries so connection stays nourishing instead of draining."},
+  TBZ: {name:"Trailblazer", desc:"Full capacity, change focused. Novelty and movement feel genuinely energizing right now.", how:"You have enough lift to explore, test, and follow fresh ideas without feeling boxed in. You learn fast through experience and iteration. Run experiments with limits, then keep the winners."},
+  BLD: {name:"Builder",     desc:"Steady capacity, output focused. Deep work and consistency produce better results than bursts.", how:"You may not be in a huge surge, but there's enough steadiness to build something meaningful over time. Quiet momentum beats sprints. Reduce distractions and stay with what matters."},
+  EQZ: {name:"Equalizer",   desc:"Steady capacity, people focused. Connection is present and sustainable, not intense.", how:"People matter without feeling chaotic or draining. This is steady connection, calmer social energy, and wanting relationships to feel solid. Keep things warm, simple, and sustainable."},
+  ENH: {name:"Enhancer",    desc:"Steady capacity, change focused. Growth through smart adjustments, not overhauls.", how:"You're expanding capacity without trying to reinvent everything at once. Small improvements compound when you keep them realistic. Smart shifts, not dramatic overhauls."},
+  BST: {name:"Bastion",     desc:"Protected capacity, output focused. Fewer priorities and stronger boundaries while still moving forward.", how:"Your best move is fewer priorities and strong boundaries. Make progress through smaller, reliable steps. Accept that smaller wins are real wins."},
+  HVN: {name:"Haven",       desc:"Protected capacity, people focused. Comfort, trust, and restoration are what this season asks for.", how:"You do best with safe connection and reduced load. Give yourself permission to rebuild before pushing hard again. Not everyone needs access to you right now."},
+  REF: {name:"Reformer",    desc:"Protected capacity, change focused. You are recalibrating and updating direction.", how:"Progress can look uneven, but it's still progress. Keep changes small enough that your system can absorb them. Let the transition happen without forcing clarity too early."}
+};
+
+var comCodes = {"Nexus":"NXS","Harmonizer":"HRM","Architect":"ARC","Visionary":"VIS","Sage":"SGE","Pathfinder":"PTH","Navigator":"NAV","Composer":"CMP","Luminary":"LMN","Pioneer":"PIO","Catalyst":"CAT","Coordinator":"CRD","Executive":"EXC","Sentinel":"SNT","Anchor":"ANK","Mechanist":"MCH","Artisan":"ART","Synthesist":"SYN","Innovator":"INV","Bridge":"BRG","Operator":"OPR"};
+
+// ============================================================
+// DROPDOWN LOGIC
+// ============================================================
+function populateDropdowns(){
+  var comSel = document.getElementById("com-select");
+  var somSel = document.getElementById("som-select");
+  if (!comSel || !somSel) return;
+
+  var comNames = Object.keys(COM_TYPES).sort();
+  comNames.forEach(function(name){
+    var opt = document.createElement("option");
+    opt.value = name;
+    opt.textContent = comCodes[name] ? name + " - " + comCodes[name] : name;
+    comSel.appendChild(opt);
+  });
+
+  var somCodes = ["DRV","HRB","TBZ","BLD","EQZ","ENH","BST","HVN","REF"];
+  somCodes.forEach(function(code){
+    var m = SOM_TYPES[code];
+    var opt = document.createElement("option");
+    opt.value = code;
+    opt.textContent = m.name + " (" + code + ")";
+    somSel.appendChild(opt);
+  });
+}
+
+function revealCOMType(val){
+  var el = document.getElementById("com-reveal");
+  var col = document.getElementById("com-reveal-col");
+  if (!el){ return; }
+  if (!val){ el.innerHTML = ""; if(col) col.style.display="none"; return; }
+  var t = COM_TYPES[val];
+  if (!t){ el.innerHTML = ""; if(col) col.style.display="none"; return; }
+  el.innerHTML =
+    "<div class='type-card'>" +
+    "<div class='type-title type-title-" + val + "'>" + val + (comCodes[val] ? " - " + comCodes[val] : "") + "</div>" +
+    "<div class='type-desc'>" + t.desc + "</div>" +
+    "<div class='type-how'><strong>How it works:</strong> " + t.how + "</div>" +
+    "</div>";
+  if(col) col.style.display="";
+}
+
+function revealSOMType(val){
+  var el = document.getElementById("som-reveal");
+  var col = document.getElementById("som-reveal-col");
+  if (!el){ return; }
+  if (!val){ el.innerHTML = ""; if(col) col.style.display="none"; return; }
+  var t = SOM_TYPES[val];
+  if (!t){ el.innerHTML = ""; if(col) col.style.display="none"; return; }
+  el.innerHTML =
+    "<div class='type-card'>" +
+    "<div class='type-title type-title-" + val + "'>" + t.name + " (" + val + ")</div>" +
+    "<div class='type-desc'>" + t.desc + "</div>" +
+    "<div class='type-how'><strong>What this season needs:</strong> " + t.how + "</div>" +
+    "</div>";
+  if(col) col.style.display="";
+}
+
+function showSelectedTypes(){
+  var comVal = document.getElementById("com-select").value;
+  var somVal = document.getElementById("som-select").value;
+  if (!comVal && !somVal) return;
+  revealCOMType(comVal);
+  revealSOMType(somVal);
+  var results = document.getElementById("explore-results");
+  if(results) results.style.display = "";
+}
+
+function toggleDropdown(id){
+  var content = document.getElementById(id + "-content");
+  var icon = document.getElementById(id + "-icon");
+  if (!content) return;
+  var isOpen = content.classList.toggle("active");
+  if (content.parentElement) content.parentElement.querySelector(".dropdown-toggle").classList.toggle("active", isOpen);
+  if (icon) icon.textContent = isOpen ? "▲" : "▼";
+}
+
+// ============================================================
+// MENU
+// ============================================================
+function openMenu(){
+  var m = document.getElementById("menuModal"); if(!m) return;
+  m.classList.add("show"); m.setAttribute("aria-hidden","false");
+  document.body.style.overflow = "hidden";
+}
+function closeMenu(){
+  var m = document.getElementById("menuModal"); if(!m) return;
+  m.classList.remove("show"); m.setAttribute("aria-hidden","true");
+  document.body.style.overflow = "";
+}
+
+document.getElementById("btnMenu").addEventListener("click", openMenu);
+document.getElementById("menuClose").addEventListener("click", closeMenu);
+document.getElementById("menuModal").addEventListener("click", function(e){
+  if (e.target === document.getElementById("menuModal")) closeMenu();
+});
+document.addEventListener("keydown", function(e){
+  if (e.key === "Escape") closeMenu();
+});
+
+populateDropdowns();
+</script>
+
+</body>
+</html>
+

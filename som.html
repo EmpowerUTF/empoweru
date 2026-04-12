@@ -1,0 +1,2361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Empower.U • SOM Assessment (Seasonal Operating Mode) v3.0.3</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    :root{
+      --primary:#4c6fff;
+      --accent:#00c2a8;
+      --sig-grad: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+
+      --bg:#020617;
+      --bg-soft:#0b1120;
+      --card-bg:#020617;
+      --border-subtle:rgba(148,163,184,.35);
+      --text-main:#e5e7eb;
+      --text-muted:#9ca3af;
+
+      --amber:#f59e0b;
+      --amber-glow:rgba(245,158,11,.22);
+
+      --warn-bg: rgba(251, 191, 36, 0.14);
+      --warn-line: rgba(251, 191, 36, 0.40);
+      --warn-text: rgba(255, 237, 180, 0.98);
+
+      --shadow: 0 24px 80px rgba(0,0,0,.65);
+      --radius: 20px;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+
+    body{
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      min-height:100vh;
+      background:
+        radial-gradient(circle at top, rgba(76,111,255,.30) 0, transparent 55%),
+        radial-gradient(circle at 85% 15%, rgba(0,194,168,.18) 0, transparent 55%),
+        linear-gradient(180deg, #020617 0%, #020617 100%);
+      color:var(--text-main);
+      padding: 84px 20px 32px;
+    }
+
+    .progress-bar{
+      position:fixed;top:0;left:0;height:4px;width:0%;
+      background: var(--sig-grad);
+      transition:width .25s ease;
+      z-index:1100;
+    }
+
+    .topbar{
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 2500;
+      padding: 10px 12px;
+      background: rgba(10,12,20,0.70);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 18px 54px rgba(0,0,0,.45);
+    }
+    .topbar::before{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      background:
+        radial-gradient(520px 140px at 50% 50%,
+        rgba(59,130,246,.26),
+        rgba(20,184,166,.22),
+        transparent 68%);
+      pointer-events:none;
+      opacity: 0.95;
+      z-index: 0;
+    }
+
+    .topbar-inner{
+      max-width: 980px;
+      margin: 0 auto;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .home-btn, .menu-btn{
+      position: relative;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:46px;
+      height:42px;
+      border-radius:14px;
+      border:1px solid rgba(229,231,235,0.14);
+      background:rgba(229,231,235,0.03);
+      color:rgba(230,237,247,0.92);
+      cursor:pointer;
+      transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+      text-decoration:none;
+      flex: 0 0 auto;
+      touch-action: manipulation;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .home-btn{ width:42px; }
+    .home-btn:hover, .menu-btn:hover{
+      transform: translateY(-1px);
+      border-color: rgba(20,184,166,0.45);
+      box-shadow: 0 14px 34px rgba(0,0,0,.35);
+    }
+
+    .topbar-center{
+      flex: 1 1 auto;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-width:0;
+    }
+
+    .brand-gradient{
+      font-weight: 900;
+      letter-spacing: .02em;
+      font-size: 1.5rem;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      background: linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.85) 50%, #4c6fff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 4px 16px rgba(76,111,255,0.15);
+    }
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 14px;
+      transform: translateX(-50%);
+      width: min(720px, calc(100% - 24px));
+      z-index: 2000;
+      display:none;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: var(--warn-bg);
+      border: 1px solid var(--warn-line);
+      color: var(--warn-text);
+      font-size: 0.92rem;
+      line-height: 1.35;
+      box-shadow: 0 18px 50px rgba(0,0,0,0.45);
+      backdrop-filter: blur(10px);
+      overflow-wrap: anywhere;
+    }
+    .toast.show{ display:block; }
+
+    .container{
+      max-width:900px;margin:0 auto;
+      background:linear-gradient(145deg, rgba(15,23,42,.96), #020617);
+      border-radius:var(--radius);
+      border:1px solid var(--border-subtle);
+      box-shadow:var(--shadow);
+      padding:32px 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .container::before{
+      content:"";
+      position:absolute;
+      left:0;top:0;right:0;
+      height:2px;
+      background: var(--sig-grad);
+      opacity: .85;
+      pointer-events:none;
+    }
+
+    @media (min-width:768px){.container{padding:36px 32px}}
+
+    h1{
+      text-align:center;
+      font-size:2rem;
+      margin-bottom:6px;
+      letter-spacing:.06em;
+      color:#e5e7eb;
+      text-transform:uppercase;
+    }
+
+    .brand-tag{
+      text-align:center;
+      color:var(--amber);
+      font-weight:900;
+      margin-bottom:10px;
+      font-size:1rem;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      text-shadow:0 0 18px var(--amber-glow);
+    }
+
+    .subtitle{
+      text-align:center;
+      font-size:.98rem;
+      color:var(--text-muted);
+      margin-bottom:10px;
+    }
+
+    .meta{
+      text-align:center;
+      font-size:0.9rem;
+      color:var(--text-muted);
+      margin-bottom:12px;
+      line-height:1.5;
+    }
+    .meta strong{color:var(--text-main)}
+
+    .resume-row{
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom: 18px;
+    }
+    .pill-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(229,231,235,0.14);
+      background: rgba(229,231,235,0.03);
+      color: rgba(229,231,235,0.92);
+      font-weight: 900;
+      font-size: 0.86rem;
+      cursor:pointer;
+      text-decoration:none;
+      transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+      touch-action: manipulation;
+      user-select:none;
+    }
+    .pill-btn:hover{
+      transform: translateY(-1px);
+      border-color: rgba(0,194,168,0.45);
+      box-shadow: 0 14px 34px rgba(0,0,0,.35);
+    }
+    .pill-btn:disabled{
+      opacity: .5;
+      cursor:not-allowed;
+      transform:none;
+      box-shadow:none;
+    }
+
+    .instructions{
+      background:radial-gradient(circle at top left,#111827,#020617);
+      border-radius:14px;
+      border:1px solid var(--border-subtle);
+      padding:16px 16px 14px;
+      margin-bottom:20px;
+      font-size:.9rem;
+    }
+    .instructions h3{font-size:.98rem;margin-bottom:6px;color:#e5e7eb}
+    .instructions p{margin-bottom:4px;color:var(--text-muted)}
+    .instructions ul{margin-left:16px;margin-bottom:6px;color:var(--text-muted)}
+    .instructions li{margin-bottom:2px}
+    .honesty-note{font-size:.85rem;color:var(--text-muted);margin-top:4px}
+
+    .cred-note{
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(148,163,184,.25);
+      background: rgba(2,6,23,.18);
+      color: rgba(229,231,235,.78);
+      font-size: .88rem;
+      line-height: 1.55;
+    }
+    .cred-note strong{ color: rgba(229,231,235,.92); }
+
+    .error{
+      display:none;
+      margin-bottom:16px;
+      padding:10px 12px;
+      background:rgba(15,23,42,.8);
+      border-radius:10px;
+      border:1px solid rgba(248,113,113,.7);
+      color:#fecaca;
+      font-size:.9rem;
+    }
+    .error.show{display:block}
+
+    .question{
+      margin-bottom:18px;
+      padding:16px 14px 12px;
+      border-radius:14px;
+      border:1px solid rgba(55,65,81,.9);
+      background:radial-gradient(circle at top left,#020617,#020617);
+      transition:border-color .2s ease, box-shadow .2s ease, transform .15s ease, background .2s ease;
+    }
+    .question:hover{
+      border-color:rgba(129,140,248,.95);
+      box-shadow:0 12px 26px rgba(15,23,42,.95);
+      background:radial-gradient(circle at top left,#0b1120,#020617);
+      transform:translateY(-1px);
+    }
+    .question.active{
+      border-color:rgba(76,111,255,.95);
+      box-shadow:0 0 0 1px rgba(76,111,255,.45), 0 18px 36px rgba(15,23,42,.90);
+      background:radial-gradient(circle at top left, rgba(76,111,255,.10), #020617);
+    }
+
+    .question-text{font-size:.96rem;margin-bottom:8px;line-height:1.4}
+    .question-number{font-weight:800;color:var(--primary);margin-right:6px}
+
+    .options{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+    .option input[type="radio"]{display:none}
+
+    .option label{
+      display:block;
+      font-size:.9rem;
+      cursor:pointer;
+      border-radius:10px;
+      border:1px solid rgba(55,65,81,.9);
+      padding:8px 10px;
+      background:linear-gradient(135deg, rgba(15,23,42,.95), #020617);
+      transition:all .2s ease;
+    }
+
+    .option label span.choice-letter{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:20px;height:20px;
+      border-radius:999px;
+      border:1px solid rgba(156,163,175,.8);
+      font-size:.75rem;
+      margin-right:6px;
+      color:var(--text-muted);
+      font-weight:900;
+    }
+
+    .option label:hover{
+      border-color:rgba(129,140,248,.9);
+      background:radial-gradient(circle at top left,#111827,#020617);
+    }
+
+    .option input[type="radio"]:checked + label{
+      border-color:rgba(76,111,255,.95);
+      background:radial-gradient(circle at top left, rgba(0,194,168,.10), #020617);
+      box-shadow:0 0 0 1px rgba(76,111,255,.45), 0 16px 32px rgba(15,23,42,.98);
+    }
+    .option input[type="radio"]:checked + label span.choice-letter{
+      border-color:transparent;
+      background: var(--sig-grad);
+      color:#0b1120;
+    }
+
+    .agreement{
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(148,163,184,.35);
+      background: rgba(2,6,23,.22);
+      color: rgba(229,231,235,.82);
+      font-size: 0.92rem;
+      line-height: 1.5;
+      text-align: center;
+    }
+    .agreement label{
+      display:inline-flex;
+      gap: 10px;
+      align-items:flex-start;
+      cursor:pointer;
+      user-select:none;
+    }
+    .agreement input[type="checkbox"]{
+      margin-top: 3px;
+      width: 18px;
+      height: 18px;
+      accent-color: #4c6fff;
+      flex: 0 0 auto;
+    }
+    .agreement a{
+      white-space: nowrap;
+      color: rgba(165,180,252,.95);
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(165,180,252,.55);
+      font-weight: 900;
+    }
+    .agreement a:hover{
+      color: rgba(52,211,153,.95);
+      border-bottom-color: rgba(52,211,153,.55);
+    }
+
+    .submit-btn{
+      width:100%;
+      margin-top:18px;
+      padding:14px 18px;
+      border-radius:999px;
+      border:none;
+      background: var(--sig-grad);
+      color:#fff;
+      font-weight:900;
+      font-size:1rem;
+      cursor:pointer;
+      box-shadow:0 18px 40px rgba(37,99,235,.45);
+      transition:transform .15s ease, box-shadow .15s ease, filter .15s ease, opacity .15s ease;
+      touch-action: manipulation;
+    }
+    .submit-btn:hover{
+      transform:translateY(-1px);
+      filter:brightness(1.04);
+      box-shadow:0 22px 50px rgba(37,99,235,.65);
+    }
+    .submit-btn:disabled{
+      cursor:not-allowed;
+      opacity:.55;
+      transform:none;
+      filter:none;
+      box-shadow:0 12px 26px rgba(0,0,0,.35);
+    }
+
+    .results{
+      display:none;
+      margin-top:22px;
+      padding:20px 16px 16px;
+      border-radius:16px;
+      border:1px solid var(--border-subtle);
+      background:radial-gradient(circle at top left,#020617,#020617);
+    }
+    .results.show{display:block}
+
+    .primary-type{
+      font-size:1.6rem;
+      font-weight:950;
+      margin:4px 0 10px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      background:linear-gradient(120deg,#e5e7eb 0%,#a5b4fc 45%,#34d399 100%);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      text-align:center;
+    }
+
+    .result-title, .result-subtitle{ text-align:center; }
+    .result-subtitle{ color:var(--text-muted); line-height:1.5; margin-bottom:12px; }
+
+    .blurb{
+      margin-top: 10px;
+      padding: 14px 14px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(148,163,184,.25);
+      background: rgba(2,6,23,.22);
+      color: rgba(229,231,235,.86);
+      font-size: .92rem;
+      line-height: 1.55;
+      max-width:720px;
+      margin-left:auto;
+      margin-right:auto;
+    }
+
+    .mini-explain{
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(148,163,184,.25);
+      background: rgba(2,6,23,.18);
+      color: rgba(229,231,235,.80);
+      font-size: .88rem;
+      line-height: 1.55;
+      max-width:720px;
+      margin-left:auto;
+      margin-right:auto;
+      text-align:left;
+    }
+    .mini-explain strong{ color: rgba(229,231,235,.95); }
+
+    .accordion{
+      margin-top: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(148,163,184,.25);
+      overflow: hidden;
+      background: rgba(2,6,23,.18);
+    }
+    .acc-btn{
+      width:100%;
+      text-align:left;
+      padding: 12px 14px;
+      background: rgba(2,6,23,.18);
+      border: none;
+      color: rgba(229,231,235,.90);
+      font-weight: 900;
+      cursor: pointer;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      touch-action: manipulation;
+    }
+    .acc-btn:hover{ background: rgba(2,6,23,.28); }
+
+    .acc-panel{ display:none; padding: 12px 12px 14px; }
+    .acc-panel.show{ display:block; }
+
+    .score-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));
+      gap:12px;
+      margin-top:10px;
+    }
+
+    .score-card{
+      border-radius:14px;
+      border:1px solid rgba(55,65,81,.9);
+      padding:12px 12px 12px;
+      background:radial-gradient(circle at top left,#020617,#020617);
+      font-size:.86rem;
+    }
+
+    .score-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:8px;
+    }
+
+    .score-name{
+      font-weight:900;
+      color:rgba(229,231,235,.95);
+    }
+
+    .score-value{
+      font-size:.74rem;
+      font-weight:900;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid rgba(148,163,184,.28);
+      background:rgba(255,255,255,.04);
+      color:rgba(229,231,235,.82);
+      white-space:nowrap;
+    }
+
+    .score-bar-wrap{
+      width:100%;
+      height:7px;
+      border-radius:999px;
+      background:rgba(30,64,175,.40);
+      overflow:hidden;
+      margin-bottom:10px;
+    }
+    .score-bar{
+      height:100%;
+      width:0;
+      border-radius:999px;
+      background: var(--sig-grad);
+      transition:width .5s ease;
+    }
+
+    .score-detail{
+      color:rgba(229,231,235,.84);
+      font-size:.84rem;
+      line-height:1.5;
+    }
+
+    .results-footer{
+      margin-top:14px;
+      font-size:.85rem;
+      color:var(--text-muted);
+      line-height:1.45;
+      text-align:center;
+    }
+
+    .synth-link{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding:12px 16px;
+      border-radius:999px;
+      border:none;
+      background: var(--sig-grad);
+      color:#fff;
+      font-weight:950;
+      font-size:.92rem;
+      text-decoration:none;
+      box-shadow: 0 18px 40px rgba(37,99,235,.35);
+      transition:transform .15s ease, box-shadow .15s ease, filter .15s ease, opacity .15s ease;
+      touch-action:manipulation;
+      user-select:none;
+    }
+    .synth-link:hover{
+      transform:translateY(-1px);
+      filter: brightness(1.04);
+      box-shadow: 0 22px 50px rgba(37,99,235,.50);
+    }
+
+    .bottom-actions{
+      margin-top: 10px;
+      display: none;
+      justify-content: center;
+    }
+    .bottom-actions.show{ display:flex; }
+
+    .eu-footer{
+      margin-top: 22px;
+      padding: 18px 12px 16px;
+      border-top: 1px solid rgba(148,163,184,.18);
+      background: transparent;
+    }
+    .eu-footer-inner{
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .eu-footer-brand{
+      font-weight: 950;
+      letter-spacing: .14em;
+      font-size: .9rem;
+      background: linear-gradient(90deg, #4c6fff, #00c2a8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      color: transparent;
+      text-shadow:
+        0 0 18px rgba(76,111,255,.18),
+        0 0 18px rgba(0,194,168,.12);
+    }
+    .eu-footer-links{
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+    .eu-footer-links a{
+      font-size: .85rem;
+      font-weight: 800;
+      color: rgba(165,180,252,.85);
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(165,180,252,.35);
+    }
+    .eu-footer-links a:hover{
+      color: rgba(52,211,153,.95);
+      border-bottom-color: rgba(52,211,153,.45);
+    }
+    .eu-footer-meta{
+      font-size: .78rem;
+      color: rgba(229,231,235,.55);
+      line-height: 1.4;
+    }
+
+    .menu-backdrop{
+      position: fixed;
+      inset: 0;
+      z-index: 4000;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+    .menu-backdrop.show{ display:flex; }
+
+    .menu-modal{
+      width: min(740px, 92vw);
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background:
+        radial-gradient(900px 520px at 20% 10%, rgba(96,165,250,0.16), transparent 58%),
+        radial-gradient(900px 520px at 80% 20%, rgba(20,184,166,0.14), transparent 62%),
+        linear-gradient(180deg, rgba(9,12,22,0.98), rgba(6,9,16,0.98));
+      box-shadow: 0 28px 90px rgba(0,0,0,.72);
+      overflow: hidden;
+    }
+    .menu-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 16px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+    }
+    .menu-title{
+      font-weight: 950;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+      font-size: .98rem;
+      color: rgba(230,237,247,0.92);
+    }
+    .menu-close{
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.04);
+      color: rgba(230,237,247,0.9);
+      border-radius: 14px;
+      padding: 10px 12px;
+      cursor: pointer;
+      font-weight: 950;
+      touch-action: manipulation;
+      transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+    }
+    .menu-close:hover{
+      transform: translateY(-1px);
+      border-color: rgba(20,184,166,0.45);
+      box-shadow: 0 14px 34px rgba(0,0,0,.35);
+    }
+    .menu-body{
+      padding: 14px 16px 18px;
+    }
+    .menu-links{
+      display:grid;
+      gap: 12px;
+    }
+    .menu-link{
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding: 14px 14px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.10);
+      background: rgba(255,255,255,0.03);
+      color: rgba(230,237,247,0.90);
+      font-weight: 950;
+      text-decoration: none;
+      cursor:pointer;
+      touch-action: manipulation;
+      transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+      text-align:left;
+      min-width:0;
+    }
+    .menu-link:visited{ color: rgba(230,237,247,0.90); }
+    .menu-link:hover{
+      transform: translateY(-1px);
+      border-color: rgba(20,184,166,0.45);
+      box-shadow: 0 14px 34px rgba(0,0,0,.35);
+    }
+    .menu-link span:first-child{
+      color: rgba(230,237,247,0.92);
+      min-width:0;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+    .menu-link span:last-child{
+      font-weight: 900;
+      color: rgba(230,237,247,0.62);
+      letter-spacing: .02em;
+      flex: 0 0 auto;
+      white-space:nowrap;
+    }
+
+    .modal-backdrop{
+      position: fixed;
+      inset: 0;
+      z-index: 3500;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+    }
+    .modal-backdrop.show{ display:flex; }
+
+    .modal{
+      width: min(740px, 92vw);
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background:
+        radial-gradient(900px 520px at 20% 10%, rgba(96,165,250,0.16), transparent 58%),
+        radial-gradient(900px 520px at 80% 20%, rgba(20,184,166,0.14), transparent 62%),
+        linear-gradient(180deg, rgba(9,12,22,0.98), rgba(6,9,16,0.98));
+      box-shadow: 0 28px 90px rgba(0,0,0,.72);
+      overflow: hidden;
+    }
+    .modal-header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 16px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+    }
+    .modal-title{
+      font-weight: 950;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+      font-size: .98rem;
+      color: rgba(230,237,247,0.92);
+    }
+    .modal-close{
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.04);
+      color: rgba(230,237,247,0.9);
+      border-radius: 14px;
+      padding: 10px 12px;
+      cursor: pointer;
+      font-weight: 950;
+      touch-action: manipulation;
+      transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+    }
+    .modal-close:hover{
+      transform: translateY(-1px);
+      border-color: rgba(20,184,166,0.45);
+      box-shadow: 0 14px 34px rgba(0,0,0,.35);
+    }
+    .modal-body{
+      padding: 14px 16px 18px;
+      color: rgba(229,231,235,.86);
+      font-size: .92rem;
+      line-height: 1.55;
+      max-height: min(70vh, 560px);
+      overflow: auto;
+    }
+    .modal-body h4{
+      margin: 12px 0 6px;
+      font-size: .95rem;
+      color: rgba(229,231,235,.95);
+    }
+    .modal-body p, .modal-body li{ color: rgba(229,231,235,.78); }
+    .modal-body ul{ margin-left: 18px; margin-top: 6px; }
+    .modal-body li{ margin-bottom: 6px; }
+
+    @media (max-width:480px){
+      body{ padding: 78px 12px 26px; }
+      h1{font-size:1.6rem}
+      .container{padding:26px 14px}
+      .question{padding:12px 11px 10px}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="progress-bar" id="progressBar"></div>
+
+  <header class="topbar" role="banner">
+    <div class="topbar-inner">
+      <a class="home-btn" href="som.html" aria-label="Home" title="Home">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M3 10.5L12 3l9 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M5.5 10.5V21h13V10.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+
+      <div class="topbar-center" aria-label="Page title">
+        <div class="brand-gradient">Empower.U</div>
+      </div>
+
+      <button class="menu-btn" id="btnMenu" type="button" aria-label="Menu" title="Menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M4 7h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M4 12h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="toast" id="toast"></div>
+
+  <div class="container">
+    <h1>SOM Assessment</h1>
+    <div class="brand-tag">Powered by Empower.U</div>
+    <p class="subtitle">Seasonal Operating Mode - Current Life Phase</p>
+
+    <p class="meta">Estimated time: <strong>4 to 6 minutes</strong>.</p>
+
+    <div class="resume-row">
+      <button class="pill-btn" id="resumeBtn" type="button" disabled>Resume saved answers</button>
+      <button class="pill-btn" id="clearBtn" type="button" disabled>Clear saved answers</button>
+    </div>
+
+    <div class="instructions">
+      <h3>How to answer</h3>
+      <p>Each question shows <strong>three statements</strong>. Pick the one that fits you best <strong>lately</strong> (last few months).</p>
+      <ul>
+        <li>Choose the <strong>best fit</strong>, even if the other two feel partly true.</li>
+        <li>Answer based on what you have been <strong>actually doing, defaulting to, or feeling in real life</strong>, not what sounds ideal.</li>
+        <li>If you are unsure, pick the one that has shown up <strong>most often</strong>.</li>
+      </ul>
+      <p class="honesty-note">Forced choice is intentional. It reduces overthinking and makes the signal cleaner.</p>
+    </div>
+
+    <div id="errorMessage" class="error"></div>
+    <form id="somForm"></form>
+
+    <div class="agreement" id="agreementBox">
+      <label>
+        <input type="checkbox" id="agreeChk" />
+        <div>I am a human being completing this assessment personally. I agree to the <a href="#" id="openAgreement" onclick="event.preventDefault();event.stopPropagation();openAgreementModal();">Empower.U User Agreement</a>.</div>
+      </label>
+    </div>
+
+    <button type="button" class="submit-btn" id="submitBtn" disabled>Calculate My Mode</button>
+
+    <div id="results" class="results">
+      <h2 class="result-title">Your Seasonal Operating Mode</h2>
+      <div id="primaryType" class="primary-type"></div>
+
+      <p class="result-subtitle">
+        This reflects the pattern your recent answers point to most strongly. It runs alongside your core Cognitive Operating Mode.
+      </p>
+
+      <div class="blurb" id="somBlurb"></div>
+      <div class="mini-explain" id="seasonBlend"></div>
+
+      <div class="accordion" id="scoreAccordion">
+        <button type="button" class="acc-btn" id="toggleScores">
+          <span>Show seasonal trait map</span>
+          <span id="accChevron">▼</span>
+        </button>
+        <div class="acc-panel" id="scorePanel">
+          <div id="scoreGrid" class="score-grid"></div>
+          <div class="cred-note">
+            <strong>Note:</strong> Each card shows how strongly that trait showed up across your answers in this version.
+          </div>
+        </div>
+      </div>
+
+      <p class="results-footer">Next step: combine your COM and SOM on the synthesis page.</p>
+
+      <div class="bottom-actions" id="bottomActions">
+        <a class="synth-link" id="synthLinkBottom" href="#" rel="noopener">Get UTF Profile</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Menu Modal -->
+  <div class="menu-backdrop" id="menuModal" aria-hidden="true">
+    <div class="menu-modal" role="dialog" aria-modal="true" aria-labelledby="menuTitle">
+      <div class="menu-header">
+        <div class="menu-title" id="menuTitle">Menu</div>
+        <button class="menu-close" id="btnCloseMenu" type="button">Close</button>
+      </div>
+      <div class="menu-body">
+        <div class="menu-links">
+          <a class="menu-link" href="index.html"><span>Home</span><span>Empower.U</span></a>
+          <a class="menu-link" href="com.html"><span>COM Calculator</span><span>Cognitive</span></a>
+          <a class="menu-link" href="som.html"><span>SOM Assessment</span><span>Seasonal</span></a>
+          <a class="menu-link" href="synthesis.html"><span>UTF Profile</span><span>Synthesis</span></a>
+          <a class="menu-link" href="explain.html"><span>What is UTF?</span><span>Guide</span></a>
+          <a class="menu-link" href="about.html"><span>About / Contact</span><span>Info</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Agreement Modal -->
+  <div class="modal-backdrop" id="agreementModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="agreementTitle">
+      <div class="modal-header">
+        <div class="modal-title" id="agreementTitle">Empower.U User Agreement</div>
+        <button class="modal-close" id="closeAgreement" type="button">Close</button>
+      </div>
+      <div class="modal-body">
+        <h4>1) Purpose</h4>
+        <p>The SOM assessment is an educational self-reflection tool designed to help you notice patterns in how you are operating in your current season of life.</p>
+
+        <h4>2) Not therapy or diagnosis</h4>
+        <p>This assessment is not medical or mental-health treatment, not therapy, and not a diagnostic tool. It does not provide clinical advice.</p>
+
+        <h4>3) Data usage and storage</h4>
+        <p>Empower.U processes assessment responses to generate results and improve system accuracy.</p>
+        <p>Responses may be stored locally on your device or securely on Empower.U systems for analytics, continuity, and feature improvement.</p>
+        <p>Empower.U does not collect personal information by default. Any collection of personal data will only occur with clear user authorization and consent.</p>
+
+        <h4>4) No copying or redistribution</h4>
+        <p>The assessment questions, structure, scoring design, and presentation are proprietary to Empower.U.</p>
+
+        <h4>5) Acceptable use</h4>
+        <ul>
+          <li>Do not use the tool in ways that violate laws or infringe the rights of others.</li>
+          <li>Do not attempt to reverse engineer, scrape, or automate extraction of the assessment content.</li>
+        </ul>
+
+        <h4>6) Automated and AI access</h4>
+        <p>This assessment is intended for human participants only. The use of any automated system, including bots, AI agents, crawlers, scrapers, or any other software, to access, complete, or submit data to this assessment is strictly prohibited without prior express written permission from Empower.U.</p>
+        <p>By checking the agreement box, you certify that you are a human being completing this assessment personally, and that you will not use any automated means to interact with it. Any detected use of automated systems will render the submission void.</p>
+
+        <h4>7) User Responsibility and Use of Atlas</h4>
+        <p>Atlas is a user-controlled reflection and decision-support tool. All outputs are provided for personal insight and consideration only.</p>
+
+        <h4>8) Consent</h4>
+        <p>Checking the agreement box and proceeding indicates your consent to these terms.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tie-breaker Modal -->
+  <div class="modal-backdrop" id="tieModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="tieTitle">
+      <div class="modal-header">
+        <div class="modal-title" id="tieTitle">Tie-breaker</div>
+        <button class="modal-close" id="closeTie" type="button">Close</button>
+      </div>
+      <div class="modal-body">
+        <p id="tieIntro" style="margin-bottom:10px;">
+          Your results are close. Answer these 6 quick forced-choice items to confirm the best fit.
+        </p>
+
+        <div id="tieForm"></div>
+
+        <div class="resume-row" style="margin-top: 12px; margin-bottom: 0;">
+          <button class="pill-btn" id="tieSkipBtn" type="button">Skip (use original)</button>
+          <button class="pill-btn" id="tieConfirmBtn" type="button">Confirm</button>
+        </div>
+
+        <div class="cred-note" style="margin-top: 12px;">
+          <strong>Note:</strong> Tie-breaker only helps choose between two close modes.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="eu-footer" aria-label="Footer">
+    <div class="eu-footer-inner">
+      <div class="eu-footer-brand">Empower.U</div>
+      <div class="eu-footer-links">
+        <a href="index.html">Home</a>
+        <a href="explain.html">What is UTF?</a>
+        <a href="about.html">About</a>
+      </div>
+      <div class="eu-footer-meta">
+        self-reflection tools built for clarity.<br />
+        © 2025
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    var EMPOWERU_COMSOM_URL = "synthesis.html";
+    var EMPOWERU_SCORE_ENDPOINT = "https://nnexuss-empoweru-backend.hf.space/api/som/score";
+    var EMPOWERU_AUTOSAVE_LOCAL = true;
+    var EMPOWERU_STORE_RESULT_LOCAL = true;
+
+    var SOM_UI_VERSION   = "1.0.1";
+    var SOM_VERSION      = "3.1.0";
+    var SOM_MATH_VERSION = "3.1.0";
+    var SOM_QBANK_ID     = "SOM27_FORCEDCHOICE_ABC_DIMS5_GRID9_v3_1_0";
+
+    var AUTOSAVE_KEY = "empoweru_utf2_som_v3_1_0_autosave";
+    var RESULT_KEY   = "empoweru_utf2_som_latest";
+
+    var TIE_TRIGGER_POINTS = 1;
+
+    function showToast(message){
+      var t = document.getElementById('toast');
+      if (!t) { alert(message); return; }
+      t.textContent = message;
+      t.classList.add('show');
+      window.clearTimeout(window.__toastTimer);
+      window.__toastTimer = window.setTimeout(function(){ t.classList.remove('show'); }, 5200);
+    }
+
+    function hardError(msg){
+      var el = document.getElementById("errorMessage");
+      if (el){
+        el.textContent = msg;
+        el.classList.add("show");
+      } else {
+        alert(msg);
+      }
+    }
+
+    function showError(msg){
+      var el = document.getElementById("errorMessage");
+      if (!el) return;
+      el.textContent = msg;
+      el.classList.add("show");
+      setTimeout(function(){ el.classList.remove("show"); }, 5200);
+    }
+
+    window.onerror = function(msg, src, line){
+      showToast("JS error: " + msg + " (line " + line + ")");
+      return false;
+    };
+
+    function clearAllSelections(){
+      var radios = document.querySelectorAll('input[type="radio"]');
+      for (var i=0;i<radios.length;i++) radios[i].checked = false;
+    }
+
+    function openMenu(){
+      var m = document.getElementById("menuModal");
+      if (!m) return;
+      m.classList.add("show");
+      m.setAttribute("aria-hidden","false");
+      document.body.style.overflow="hidden";
+    }
+    function closeMenu(){
+      var m = document.getElementById("menuModal");
+      if (!m) return;
+      m.classList.remove("show");
+      m.setAttribute("aria-hidden","true");
+      document.body.style.overflow="";
+    }
+
+    function openAgreementModal(){
+      var m = document.getElementById("agreementModal");
+      if (!m) return;
+      m.classList.add("show");
+      m.setAttribute("aria-hidden","false");
+      document.body.style.overflow = "hidden";
+    }
+    function closeAgreementModal(){
+      var m = document.getElementById("agreementModal");
+      if (!m) return;
+      m.classList.remove("show");
+      m.setAttribute("aria-hidden","true");
+      document.body.style.overflow = "";
+    }
+
+    function openTieModal(){
+      var m = document.getElementById("tieModal");
+      if (!m) return;
+      m.classList.add("show");
+      m.setAttribute("aria-hidden","false");
+      document.body.style.overflow = "hidden";
+    }
+    function closeTieModal(){
+      var m = document.getElementById("tieModal");
+      if (!m) return;
+      m.classList.remove("show");
+      m.setAttribute("aria-hidden","true");
+      document.body.style.overflow = "";
+    }
+
+    function setSubmitEnabled(){
+      var agree = document.getElementById("agreeChk");
+      var btn = document.getElementById("submitBtn");
+      if (!btn) return;
+      btn.disabled = !(agree && agree.checked);
+    }
+
+    function updateProgress(){
+      var total = questions.length;
+      var answered = 0;
+      for (var i=1;i<=total;i++){
+        if (document.querySelector('input[name="q' + i + '"]:checked')) answered++;
+      }
+      var bar = document.getElementById("progressBar");
+      if (bar) bar.style.width = ((answered/total)*100) + "%";
+    }
+
+    function toggleAccordion(){
+      var panel = document.getElementById("scorePanel");
+      var chev = document.getElementById("accChevron");
+      if (!panel) return;
+      var isOpen = panel.classList.toggle("show");
+      if (chev) chev.textContent = isOpen ? "▲" : "▼";
+    }
+
+    function escapeHtml(s){
+      return String(s)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+    }
+
+    function storePayload(payload){
+      if (!EMPOWERU_SCORE_ENDPOINT || EMPOWERU_SCORE_ENDPOINT === "YOUR_SCORE_ENDPOINT_HERE") return;
+      try{
+        fetch(EMPOWERU_SCORE_ENDPOINT, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        }).catch(function(){});
+      } catch(e){}
+    }
+
+    var SOM_DIMS = [
+      {
+        code:"EP",
+        tech:"Energy Available",
+        ui:"Current Capacity",
+        blurb:"How much usable energy and lift you seem to have lately."
+      },
+      {
+        code:"EM",
+        tech:"Recovery Need",
+        ui:"Recovery Pull",
+        blurb:"How strongly your system seems to want rest, simplicity, or lower load."
+      },
+      {
+        code:"OUT",
+        tech:"Output Focus",
+        ui:"Build Focus",
+        blurb:"How much your season is leaning toward progress, work, and tangible output."
+      },
+      {
+        code:"PPL",
+        tech:"People Focus",
+        ui:"People Pull",
+        blurb:"How much relationships, connection, and social alignment are showing up lately."
+      },
+      {
+        code:"CHG",
+        tech:"Change Focus",
+        ui:"Change Pull",
+        blurb:"How much you are leaning toward novelty, experimentation, or trying a new angle."
+      }
+    ];
+
+    function emptyDimScores(){
+      var s = {};
+      for (var i=0;i<SOM_DIMS.length;i++) s[SOM_DIMS[i].code] = 0;
+      return s;
+    }
+
+    function Wdim(dim){ return { dim: dim, delta: 1 }; }
+
+    var QUESTIONS_RAW = [
+      { prompt:"Most days lately, your default pace feels like…",
+        A:{t:"I have a lot of usable energy, even after a full day.", w:Wdim("EP")},
+        B:{t:"I naturally move toward work, tasks, or steady progress.", w:Wdim("OUT")},
+        C:{t:"I need to keep things lighter so I do not run myself down.", w:Wdim("EM")}
+      },
+      { prompt:"When a free window actually appeared in the last few weeks, what happened most?",
+        A:{t:"I used it to get ahead on something or close a task.", w:Wdim("OUT")},
+        B:{t:"I slowed down and let myself genuinely rest.", w:Wdim("EM")},
+        C:{t:"I reached out to someone or ended up spending time with people.", w:Wdim("PPL")}
+      },
+      { prompt:"In the past few weeks, the days that actually went well tended to start with…",
+        A:{t:"waking up with real energy and feeling ready to go.", w:Wdim("EP")},
+        B:{t:"having something specific to build or finish lined up.", w:Wdim("OUT")},
+        C:{t:"a conversation or connection that felt easy and natural.", w:Wdim("PPL")}
+      },
+      { prompt:"When life gets busy, you are most likely to protect…",
+        A:{t:"your downtime and recovery time.", w:Wdim("EM")},
+        B:{t:"your key relationships and the tone between people.", w:Wdim("PPL")},
+        C:{t:"your ability to keep producing and finishing.", w:Wdim("OUT")}
+      },
+      { prompt:"If something feels off lately, your first instinct is…",
+        A:{t:"take a break or lower the load so you can reset.", w:Wdim("EM")},
+        B:{t:"switch it up and see if a fresh angle helps.", w:Wdim("CHG")},
+        C:{t:"get one useful thing done so the day feels back on track.", w:Wdim("OUT")}
+      },
+      { prompt:"Over the last few weeks, what has actually been competing most for your attention?",
+        A:{t:"People, conversations, or relationship dynamics.", w:Wdim("PPL")},
+        B:{t:"My energy level and whether I can keep up with what is on my plate.", w:Wdim("EP")},
+        C:{t:"Ideas, options, or possible changes I keep circling back to.", w:Wdim("CHG")}
+      },
+      { prompt:"In conversation lately, you tend to…",
+        A:{t:"enjoy it, and it often gives you more energy.", w:Wdim("PPL")},
+        B:{t:"keep it brief if you need your battery for other things.", w:Wdim("EM")},
+        C:{t:"turn it toward solving something or moving something forward.", w:Wdim("OUT")}
+      },
+      { prompt:"When you start your day, you most often notice…",
+        A:{t:"I feel charged up and ready to go.", w:Wdim("EP")},
+        B:{t:"I want to pace myself so I do not overdo it.", w:Wdim("EM")},
+        C:{t:"I want at least one thing in the day to feel new or different.", w:Wdim("CHG")}
+      },
+      { prompt:"If a plan falls apart, you are most likely to…",
+        A:{t:"adapt quickly and test a different route.", w:Wdim("CHG")},
+        B:{t:"focus on what still matters and rebuild from there.", w:Wdim("OUT")},
+        C:{t:"reduce the pressure and keep the day manageable.", w:Wdim("EM")}
+      },
+      { prompt:"In the past few weeks, the days you actually felt solid usually had…",
+        A:{t:"enough fuel that things felt doable instead of forced.", w:Wdim("EP")},
+        B:{t:"a clear task that I made real progress on.", w:Wdim("OUT")},
+        C:{t:"some room to switch gears or try a different approach.", w:Wdim("CHG")}
+      },
+      { prompt:"Thinking about your energy lately, it most honestly looks like…",
+        A:{t:"I have been running at a noticeably lower level than I want to.", w:Wdim("EM")},
+        B:{t:"I have had real fuel available, and it shows in what I can do.", w:Wdim("EP")},
+        C:{t:"I have been pushing things forward regardless of how my energy feels.", w:Wdim("OUT")}
+      },
+      { prompt:"When you hit a wall lately, it is usually because…",
+        A:{t:"my system needs recovery more than I want to admit.", w:Wdim("EM")},
+        B:{t:"things feel too repetitive and I need a change.", w:Wdim("CHG")},
+        C:{t:"too many people demands stack up at once.", w:Wdim("PPL")}
+      },
+      { prompt:"When motivation actually showed up lately, where did it go?",
+        A:{t:"Into producing something or getting ahead on work.", w:Wdim("OUT")},
+        B:{t:"Into connecting with someone or investing in a relationship.", w:Wdim("PPL")},
+        C:{t:"Into trying something different or exploring a new direction.", w:Wdim("CHG")}
+      },
+      { prompt:"Your relationship to effort lately feels most like…",
+        A:{t:"I can put in a lot and still have gas left.", w:Wdim("EP")},
+        B:{t:"I can put in effort, but recovery has to be part of the picture.", w:Wdim("EM")},
+        C:{t:"Even on a normal day, I can stay with one thing and make progress.", w:Wdim("OUT")}
+      },
+      { prompt:"Lately, the thing that has been taking up most of your head space is…",
+        A:{t:"How much I have to do and whether I have the energy to do it.", w:Wdim("EP")},
+        B:{t:"A specific project or outcome I am trying to move forward.", w:Wdim("OUT")},
+        C:{t:"A relationship or group dynamic that needs attention.", w:Wdim("PPL")}
+      },
+      { prompt:"Your better nights lately usually include…",
+        A:{t:"quiet recovery, lower stimulation, and a clean reset.", w:Wdim("EM")},
+        B:{t:"meaningful connection with someone or a good group.", w:Wdim("PPL")},
+        C:{t:"progress on something you care about.", w:Wdim("OUT")}
+      },
+      { prompt:"When something new came up in the last few weeks, your first actual response was usually…",
+        A:{t:"Checking whether I had bandwidth before getting interested.", w:Wdim("EM")},
+        B:{t:"Thinking about whether it moved something important forward.", w:Wdim("OUT")},
+        C:{t:"Feeling pulled toward it and wanting to explore.", w:Wdim("CHG")}
+      },
+      { prompt:"Your current season runs best when…",
+        A:{t:"your energy is high and you can handle more.", w:Wdim("EP")},
+        B:{t:"your commitments stay light enough that you recover well.", w:Wdim("EM")},
+        C:{t:"your life includes a bit of novelty and movement.", w:Wdim("CHG")}
+      },
+      { prompt:"Your week lately tends to lean most toward…",
+        A:{t:"Build.", w:Wdim("OUT")},
+        B:{t:"Connect.", w:Wdim("PPL")},
+        C:{t:"Explore.", w:Wdim("CHG")}
+      },
+      { prompt:"When your schedule is full, what keeps you from burning out is usually…",
+        A:{t:"enough downtime and recovery built in.", w:Wdim("EM")},
+        B:{t:"supportive people and good connection.", w:Wdim("PPL")},
+        C:{t:"having enough energy to stay ahead of it.", w:Wdim("EP")}
+      },
+      { prompt:"After a full day lately, what most often made it feel like a good one?",
+        A:{t:"Getting through it without running out of gas.", w:Wdim("EP")},
+        B:{t:"Having something real to show for the time.", w:Wdim("OUT")},
+        C:{t:"Spending meaningful time with people I care about.", w:Wdim("PPL")}
+      },
+      { prompt:"When you decide what to say yes to lately, you most often ask…",
+        A:{t:"Will this drain me, or can I recover from it?", w:Wdim("EM")},
+        B:{t:"Will this move something forward in a real way?", w:Wdim("OUT")},
+        C:{t:"Will this bring in some variety or open a new door?", w:Wdim("CHG")}
+      },
+      { prompt:"In day-to-day life lately, your system acts more like it needs…",
+        A:{t:"more energy and momentum.", w:Wdim("EP")},
+        B:{t:"more rest and simplicity.", w:Wdim("EM")},
+        C:{t:"more variety and movement.", w:Wdim("CHG")}
+      },
+      { prompt:"When you think about people lately, it feels most like…",
+        A:{t:"I want more connection and better alignment.", w:Wdim("PPL")},
+        B:{t:"I need more space from social noise.", w:Wdim("EM")},
+        C:{t:"I like people, but output is what my days keep centering on.", w:Wdim("OUT")}
+      },
+      { prompt:"When you are energized lately, you usually…",
+        A:{t:"take on more and feel capable doing it.", w:Wdim("EP")},
+        B:{t:"produce more and get ahead.", w:Wdim("OUT")},
+        C:{t:"explore more and chase novelty.", w:Wdim("CHG")}
+      },
+      { prompt:"When you are tired lately, you usually…",
+        A:{t:"simplify and protect recovery time.", w:Wdim("EM")},
+        B:{t:"pull toward people you trust for steadiness.", w:Wdim("PPL")},
+        C:{t:"switch tasks, scenery, or approach.", w:Wdim("CHG")}
+      },
+      { prompt:"Looking at the past few weeks, the weeks that actually went well had…",
+        A:{t:"enough energy that I was not operating on fumes.", w:Wdim("EP")},
+        B:{t:"solid time with people who actually matter to me.", w:Wdim("PPL")},
+        C:{t:"space to build or finish something that mattered.", w:Wdim("OUT")}
+      }
+    ];
+
+    var SOM_MODES = [
+      { code:"DRV", name:"Driver" },
+      { code:"HRB", name:"Harbor" },
+      { code:"TBZ", name:"Trailblazer" },
+      { code:"BLD", name:"Builder" },
+      { code:"EQZ", name:"Equalizer" },
+      { code:"ENH", name:"Enhancer" },
+      { code:"BST", name:"Bastion" },
+      { code:"HVN", name:"Haven" },
+      { code:"REF", name:"Reformer" }
+    ];
+
+    var SOM_MODE_DESC = {
+      DRV: "Full capacity, output focused. This is an execution season. You have real momentum and the fuel to sustain it. Point it at something worth building and keep recovery intentional so output stays clean.",
+      HRB: "Full capacity, people focused. Relationships, tone, and trust feel unusually important right now. You have the lift to stay genuinely present with people. Keep boundaries so connection stays nourishing, not draining.",
+      TBZ: "Full capacity, change focused. Novelty and movement feel genuinely energizing this season. You are learning fast through experience and iteration. Run experiments with limits, then keep the winners.",
+      BLD: "Steady capacity, output focused. This is a deep work season. Quiet momentum beats bursts right now. Reduce distractions, stay with what matters, and let the consistency compound.",
+      EQZ: "Steady capacity, people focused. Connection is present and sustainable, not intense. You do best with simple routines and steady relationships. Keep the pace warm and manageable.",
+      ENH: "Steady capacity, change focused. You are expanding through smart adjustments, not overhauls. Small improvements compound when you keep them realistic. Trust the process over the pace.",
+      BST: "Protected capacity, output focused. Fewer priorities and strong boundaries are your best move right now. Make progress through smaller, reliable steps. Protecting your stability is not retreat.",
+      HVN: "Protected capacity, people focused. Comfort, trust, and restoration are what this season is asking for. Lean into safe connection and reduced load. Give yourself permission to rebuild before pushing again.",
+      REF: "Protected capacity, change focused. You are recalibrating and updating direction. Progress can look uneven from the inside, but it is still progress. Keep changes small enough that your system can absorb them."
+    };
+
+    function mulberry32(seed){
+      return function(){
+        var t = seed += 0x6D2B79F5;
+        t = Math.imul(t ^ (t >>> 15), t | 1);
+        t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
+    }
+
+    function shuffleWithRng(arr, rng){
+      for (var i=arr.length-1;i>0;i--){
+        var j = Math.floor(rng()*(i+1));
+        var tmp = arr[i]; arr[i]=arr[j]; arr[j]=tmp;
+      }
+      return arr;
+    }
+
+    var __seed = null;
+    var questions = [];
+
+    function buildQuestionsFromRaw(seed){
+      var rng = mulberry32(seed >>> 0);
+      var out = [];
+
+      for (var i=0;i<QUESTIONS_RAW.length;i++){
+        var q = QUESTIONS_RAW[i];
+        var order = ["A","B","C"];
+        shuffleWithRng(order, rng);
+
+        var q2 = { prompt: q.prompt };
+        q2.A = q[order[0]];
+        q2.B = q[order[1]];
+        q2.C = q[order[2]];
+        q2.__order = order.slice(0);
+        out.push(q2);
+      }
+      return out;
+    }
+
+    function emptyModeScores(){
+      var s = {};
+      for (var i=0;i<SOM_MODES.length;i++) s[SOM_MODES[i].code] = 0;
+      return s;
+    }
+
+    function computeDimScoresFromAnswers(answersABC){
+      var scores = emptyDimScores();
+      for (var i=0;i<questions.length;i++){
+        var choice = answersABC[i];
+        var q = questions[i];
+        var stmt = q && q[choice];
+        if (!stmt || !stmt.w || !stmt.w.dim) continue;
+        var d = stmt.w.dim;
+        var delta = (typeof stmt.w.delta === "number") ? stmt.w.delta : 1;
+        if (scores.hasOwnProperty(d)) scores[d] += delta;
+      }
+      return scores;
+    }
+
+    function clamp(n, lo, hi){
+      if (n < lo) return lo;
+      if (n > hi) return hi;
+      return n;
+    }
+
+    function computeGridPrimary(dimScores){
+      var ep = dimScores.EP || 0;
+      var em = dimScores.EM || 0;
+      var net = ep - em;
+
+      var tier = "STEADY";
+      if (net >= 5) tier = "HIGH";
+      else if (net <= -5) tier = "LOW";
+
+      var o = dimScores.OUT || 0;
+      var p = dimScores.PPL || 0;
+      var c = dimScores.CHG || 0;
+
+      var orient = "OUT";
+      if (p > o && p >= c) orient = "PPL";
+      else if (c > o && c > p) orient = "CHG";
+
+      var primary = null;
+      if (tier === "HIGH" && orient === "OUT") primary = "DRV";
+      if (tier === "HIGH" && orient === "PPL") primary = "HRB";
+      if (tier === "HIGH" && orient === "CHG") primary = "TBZ";
+      if (tier === "STEADY" && orient === "OUT") primary = "BLD";
+      if (tier === "STEADY" && orient === "PPL") primary = "EQZ";
+      if (tier === "STEADY" && orient === "CHG") primary = "ENH";
+      if (tier === "LOW" && orient === "OUT") primary = "BST";
+      if (tier === "LOW" && orient === "PPL") primary = "HVN";
+      if (tier === "LOW" && orient === "CHG") primary = "REF";
+
+      return { tier: tier, orient: orient, net: net, primary: primary };
+    }
+
+    function computeModeScores(dimScores){
+      var modeScores = emptyModeScores();
+      var ep = dimScores.EP || 0;
+      var em = dimScores.EM || 0;
+      var net = ep - em;
+
+      function orientStrength(modeCode){
+        if (modeCode === "DRV" || modeCode === "BLD" || modeCode === "BST") return (dimScores.OUT || 0);
+        if (modeCode === "HRB" || modeCode === "EQZ" || modeCode === "HVN") return (dimScores.PPL || 0);
+        return (dimScores.CHG || 0);
+      }
+
+      function tierTarget(modeCode){
+        if (modeCode === "DRV" || modeCode === "HRB" || modeCode === "TBZ") return 8;
+        if (modeCode === "BST" || modeCode === "HVN" || modeCode === "REF") return -8;
+        return 0;
+      }
+
+      for (var i=0;i<SOM_MODES.length;i++){
+        var code = SOM_MODES[i].code;
+        var o = orientStrength(code);
+        var target = tierTarget(code);
+        var closeness = 18 - Math.abs(net - target);
+        closeness = clamp(closeness, 0, 18);
+        modeScores[code] = (o * 10) + (closeness * 2);
+      }
+      return modeScores;
+    }
+
+    function rankModes(modeScores){
+      var arr = SOM_MODES.map(function(m){
+        return { code:m.code, name:m.name, score: modeScores[m.code] };
+      });
+      arr.sort(function(a,b){
+        if (b.score !== a.score) return b.score - a.score;
+        return (a.code < b.code) ? -1 : 1;
+      });
+      return arr;
+    }
+
+    function generateForm(){
+      var form = document.getElementById("somForm");
+      if (!form) return hardError("somForm not found.");
+
+      var html = "";
+      for (var i=0; i<questions.length; i++){
+        var q = questions[i];
+        var qNum = i+1;
+
+        html += '\
+          <div class="question">\
+            <div class="question-text">\
+              <span class="question-number">Q' + qNum + '.</span>' + escapeHtml(q.prompt) + '\
+            </div>\
+            <div class="options">\
+              ' + ["A","B","C"].map(function(letter){
+                var stmt = q[letter];
+                return '\
+                <div class="option">\
+                  <input type="radio" id="q' + qNum + '_' + letter + '" name="q' + qNum + '" value="' + letter + '">\
+                  <label for="q' + qNum + '_' + letter + '">\
+                    <span class="choice-letter">' + letter + '</span>\
+                    ' + escapeHtml(stmt.t) + '\
+                  </label>\
+                </div>';
+              }).join("") + '\
+            </div>\
+          </div>';
+      }
+      form.innerHTML = html;
+    }
+
+    function getAnswersArrayFromUI(){
+      var arr = [];
+      for (var i = 1; i <= questions.length; i++){
+        var checked = document.querySelector('input[name="q' + i + '"]:checked');
+        arr.push(checked ? checked.value : null);
+      }
+      return arr;
+    }
+
+    function saveAnswersLocal(){
+      if (!EMPOWERU_AUTOSAVE_LOCAL) return;
+      try{
+        var payload = {
+          schema: "empoweru_som_autosave",
+          schema_v: 2,
+          ui_v: SOM_UI_VERSION,
+          som_v: SOM_VERSION,
+          som_math: SOM_MATH_VERSION,
+          qbank: SOM_QBANK_ID,
+          q_count: questions.length,
+          seed: __seed,
+          answers: getAnswersArrayFromUI(),
+          updatedAt: new Date().toISOString()
+        };
+        localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(payload));
+      } catch(e){}
+    }
+
+    function readAutosave(){
+      try{
+        var raw = localStorage.getItem(AUTOSAVE_KEY);
+        if (!raw) return null;
+        var data = JSON.parse(raw);
+        if (!data || data.schema !== "empoweru_som_autosave") return null;
+        if (data.qbank !== SOM_QBANK_ID) return null;
+        if (data.q_count !== 27) return null;
+        if (!Array.isArray(data.answers) || data.answers.length !== 27) return null;
+        if (typeof data.seed !== "number") return null;
+        return data;
+      } catch(e){ return null; }
+    }
+
+    function hasSavedAnswers(){
+      var data = readAutosave();
+      if (!data) return false;
+      return data.answers.some(function(x){ return x !== null && x !== undefined; });
+    }
+
+    function getNextQuestionIndex(){
+      for (var i=1;i<=questions.length;i++){
+        if (!document.querySelector('input[name="q' + i + '"]:checked')) return i-1;
+      }
+      return questions.length - 1;
+    }
+
+    function setActiveQuestion(idx){
+      var cards = document.querySelectorAll(".question");
+      for (var i=0;i<cards.length;i++) cards[i].classList.remove("active");
+      if (idx >= 0 && cards[idx]) cards[idx].classList.add("active");
+    }
+
+    function syncActiveQuestion(preferredIdx){
+      if (typeof preferredIdx === "number" && preferredIdx >= 0){
+        setActiveQuestion(preferredIdx);
+      } else {
+        setActiveQuestion(getNextQuestionIndex());
+      }
+    }
+
+    function restoreAnswersLocal(){
+      if (!EMPOWERU_AUTOSAVE_LOCAL) return false;
+      var data = readAutosave();
+      if (!data) return false;
+
+      __seed = data.seed >>> 0;
+      questions = buildQuestionsFromRaw(__seed);
+      generateForm();
+
+      for (var i = 1; i <= questions.length; i++){
+        var v = data.answers[i-1];
+        if (!v) continue;
+        var el = document.getElementById('q' + i + '_' + v);
+        if (el) el.checked = true;
+      }
+
+      var last = -1;
+      for (var k=0;k<data.answers.length;k++){
+        if (data.answers[k]) last = k;
+      }
+
+      if (last >= 0){
+        var nextIdx = (last + 1 < questions.length) ? (last + 1) : last;
+        syncActiveQuestion(nextIdx);
+
+        var target = document.querySelectorAll(".question")[nextIdx];
+        if (target && target.scrollIntoView){
+          setTimeout(function(){
+            target.scrollIntoView({behavior:"smooth", block:"center"});
+          }, 60);
+        }
+      } else {
+        syncActiveQuestion(0);
+      }
+
+      return true;
+    }
+
+    function clearSavedAnswers(){
+      try{ localStorage.removeItem(AUTOSAVE_KEY); } catch(e){}
+    }
+
+    function syncResumeControls(){
+      var resumeBtn = document.getElementById("resumeBtn");
+      var clearBtn  = document.getElementById("clearBtn");
+      var has = hasSavedAnswers();
+      if (resumeBtn) resumeBtn.disabled = !has;
+      if (clearBtn)  clearBtn.disabled  = !has;
+    }
+
+    function renderSomBlurb(modeCode){
+      var el = document.getElementById("somBlurb");
+      if (!el) return;
+
+      var mode = SOM_MODES.filter(function(m){ return m.code === modeCode; })[0] || {name:modeCode};
+      var desc = SOM_MODE_DESC[modeCode] || "This reflects your current operating emphasis.";
+
+      el.innerHTML =
+        "<strong>" + escapeHtml(mode.name) + "</strong>. " +
+        escapeHtml(desc);
+    }
+
+    function renderSeasonBlend(gridMeta){
+      var el = document.getElementById("seasonBlend");
+      if (!el || !gridMeta) return;
+
+      var key = (gridMeta.tier || "STEADY") + "_" + (gridMeta.orient || "OUT");
+
+      var blendMap = {
+        HIGH_OUT:
+          "Right now, your season looks action-heavy and forward-moving. Your capacity is available and pointing toward output. This usually feels like a push to build, execute, and make visible progress. The healthiest version of this season is sharp and productive, not frantic.",
+
+        HIGH_PPL:
+          "Right now, your season looks warm, social, and outward-facing. Your capacity is available and oriented toward people. Connection is not just present, it matters. This usually feels like a season of check-ins, closeness, shared energy, and stronger relational focus. The healthiest version of this season stays open without becoming overextended.",
+
+        HIGH_CHG:
+          "Right now, your season looks energized by movement and newness. Your capacity is available and pointing toward movement. You can explore, test, and follow fresh ideas. This usually feels like a season of experimentation, variety, and curiosity. The healthiest version of this season keeps the momentum, but still gives the changes enough structure to become something real.",
+
+        STEADY_OUT:
+          "Right now, your season looks grounded and productive. You may not be in a huge surge, but there is enough steadiness here to build something meaningful over time. This usually feels like quiet momentum, consistency, and staying with what matters. The healthiest version of this season values rhythm over pressure.",
+
+        STEADY_PPL:
+          "Right now, your season looks balanced and relational. People matter, but not in a chaotic or draining way. This usually feels like steady connection, calmer social energy, and wanting your relationships to feel solid and healthy. The healthiest version of this season keeps things warm, simple, and sustainable.",
+
+        STEADY_CHG:
+          "Right now, your season looks like gradual growth through adjustment. There is enough steadiness here to stay grounded, but also enough openness to keep improving what is not working. This usually feels like smart shifts, small upgrades, and trying better ways of doing things. The healthiest version of this season grows without forcing reinvention every five minutes.",
+
+        LOW_OUT:
+          "Right now, your season looks protective but still purposeful. Part of you still wants progress, but your system also seems to want tighter boundaries and fewer moving pieces. This usually feels like simplifying, guarding your energy, and focusing only on what truly matters. The healthiest version of this season accepts smaller wins without treating them like failure.",
+
+        LOW_PPL:
+          "Right now, your season looks softer, quieter, and more restorative. Connection still matters, but it likely needs to feel safe, easy, and low-pressure. This usually feels like wanting comfort, steadiness, and closeness without too much demand. The healthiest version of this season gives yourself permission to recover without disappearing from the people who matter.",
+
+        LOW_CHG:
+          "Right now, your season looks transitional. Part of you seems ready for a shift, but your system may not want a huge push all at once. This usually feels like rethinking things, shedding what no longer fits, and testing change in smaller pieces. The healthiest version of this season lets the transition happen without forcing clarity too early."
+      };
+
+      el.innerHTML = "<strong>What this combination suggests:</strong> " + escapeHtml(blendMap[key] || "");
+    }
+
+    function computeDimMaxCounts(){
+      var max = emptyDimScores();
+      for (var q=0;q<QUESTIONS_RAW.length;q++){
+        ["A","B","C"].forEach(function(L){
+          var s = QUESTIONS_RAW[q][L];
+          if (s && s.w && s.w.dim && max.hasOwnProperty(s.w.dim)) max[s.w.dim] += 1;
+        });
+      }
+      return max;
+    }
+    var DIM_MAX = computeDimMaxCounts();
+
+    function dimScoreToPct(score, dimCode){
+      var denom = DIM_MAX[dimCode] || questions.length;
+      var pct = (score / denom) * 100;
+      if (pct < 0) pct = 0;
+      if (pct > 100) pct = 100;
+      return pct;
+    }
+
+    function getTraitLevel(score, maxScore){
+      var pct = maxScore ? (score / maxScore) : 0;
+      if (pct >= 0.67) return "Strong";
+      if (pct >= 0.34) return "Moderate";
+      return "Light";
+    }
+
+    function getTraitExplanation(dimCode, score, maxScore){
+      var pct = maxScore ? (score / maxScore) : 0;
+
+      if (dimCode === "EP"){
+        if (pct >= 0.67) return "Usable energy showed up often in your answers.";
+        if (pct >= 0.34) return "Capacity is present, but not the loudest signal.";
+        return "Capacity did not stand out as a dominant pattern.";
+      }
+
+      if (dimCode === "EM"){
+        if (pct >= 0.67) return "Your answers often pointed toward needing more recovery.";
+        if (pct >= 0.34) return "Recovery matters, but it is only part of the picture.";
+        return "Recovery was not one of the strongest signals.";
+      }
+
+      if (dimCode === "OUT"){
+        if (pct >= 0.67) return "Your answers strongly leaned toward building and progress.";
+        if (pct >= 0.34) return "Progress matters, though other pulls are present too.";
+        return "Building was not the main center of gravity here.";
+      }
+
+      if (dimCode === "PPL"){
+        if (pct >= 0.67) return "Connection and people were strongly present in your answers.";
+        if (pct >= 0.34) return "The people side matters, but it shares space with other needs.";
+        return "People were present, but not the strongest pull.";
+      }
+
+      if (dimCode === "CHG"){
+        if (pct >= 0.67) return "Your answers strongly leaned toward change and fresh movement.";
+        if (pct >= 0.34) return "There is some pull toward change, but it is balanced.";
+        return "Change was not the strongest visible signal.";
+      }
+
+      return "";
+    }
+
+    function renderDimBars(dimScores){
+      var grid = document.getElementById("scoreGrid");
+      if (!grid) return;
+      grid.innerHTML = "";
+
+      for (var i=0;i<SOM_DIMS.length;i++){
+        var d = SOM_DIMS[i];
+        var v = dimScores[d.code] || 0;
+        var denom = DIM_MAX[d.code] || questions.length;
+        var pct = dimScoreToPct(v, d.code);
+        var level = getTraitLevel(v, denom);
+        var detail = getTraitExplanation(d.code, v, denom);
+
+        var card = document.createElement("div");
+        card.className = "score-card";
+
+        card.innerHTML =
+          '<div class="score-head">' +
+            '<div class="score-name">' + escapeHtml(d.ui) + '</div>' +
+            '<div class="score-value">' + escapeHtml(level) + '</div>' +
+          '</div>' +
+          '<div class="score-bar-wrap">' +
+            '<div class="score-bar" style="width:' + pct.toFixed(0) + '%"></div>' +
+          '</div>' +
+          '<div class="score-detail">' + escapeHtml(detail) + '</div>';
+
+        grid.appendChild(card);
+      }
+    }
+
+    function setSynthesisLink(primaryCode, meta){
+      var bottom = document.getElementById("synthLinkBottom");
+      if (!bottom) return;
+
+      if (!EMPOWERU_COMSOM_URL || EMPOWERU_COMSOM_URL === "YOUR_COM_SOM_SYNTHESIS_PAGE_HERE"){
+        bottom.href = "#";
+        return;
+      }
+
+      try{
+        var current = new URL(window.location.href);
+        var u = new URL(EMPOWERU_COMSOM_URL, window.location.href);
+
+        current.searchParams.forEach(function(v,k){
+          u.searchParams.set(k, v);
+        });
+
+        if (primaryCode) u.searchParams.set("som", primaryCode);
+
+        u.searchParams.set("som_source", "som.html");
+        u.searchParams.set("som_v", SOM_VERSION);
+        u.searchParams.set("som_math", SOM_MATH_VERSION);
+        u.searchParams.set("som_qbank", SOM_QBANK_ID);
+        u.searchParams.set("som_tb_used", meta && meta.tieBreaker ? (meta.tieBreaker.used ? "1" : "0") : "0");
+
+        bottom.href = u.toString();
+      } catch(e){
+        bottom.href = EMPOWERU_COMSOM_URL;
+      }
+    }
+
+    function saveSomResultLocal(resultObj){
+      if (!EMPOWERU_STORE_RESULT_LOCAL) return;
+      try{
+        localStorage.setItem(RESULT_KEY, JSON.stringify(resultObj));
+      } catch(e){}
+    }
+
+    var __pending = null;
+
+    var TIEBANK = {
+      DRV: [
+        "I want output and results more than reflection lately.",
+        "I feel best when I am producing and finishing.",
+        "Progress matters more than comfort right now."
+      ],
+      HRB: [
+        "Connection and trust feel unusually important lately.",
+        "I am drawn to check-ins and being present with people.",
+        "The people side feels central in this season."
+      ],
+      TBZ: [
+        "I want novelty and exploration right now.",
+        "Trying new paths feels energizing lately.",
+        "I learn best by experimenting and moving."
+      ],
+      BLD: [
+        "Consistency and steady building feel right for me.",
+        "Deep work beats scattered effort lately.",
+        "I want to build something real at a sustainable pace."
+      ],
+      EQZ: [
+        "I am aiming for balance and steadiness with people.",
+        "I want connection without overextending.",
+        "My season is about stable relationships and a calm baseline."
+      ],
+      ENH: [
+        "Small upgrades and smart adjustments feel most useful.",
+        "I am expanding capacity without forcing big leaps.",
+        "My season is growth through better systems and choices."
+      ],
+      BST: [
+        "I am simplifying and protecting my stability.",
+        "Boundaries matter more than extra commitments lately.",
+        "I want progress, but in smaller and safer steps."
+      ],
+      HVN: [
+        "Recovery and restoration feel like the priority.",
+        "Safe connection matters while I rebuild my baseline.",
+        "My system needs rest before it needs a push."
+      ],
+      REF: [
+        "This season feels like a transition phase.",
+        "I am recalibrating priorities and direction.",
+        "Progress is real, even if it looks uneven."
+      ]
+    };
+
+    function shuffleInPlace(arr){
+      for (var i=arr.length-1;i>0;i--){
+        var j = Math.floor(Math.random()*(i+1));
+        var tmp = arr[i]; arr[i]=arr[j]; arr[j]=tmp;
+      }
+      return arr;
+    }
+
+    function buildTieItems(modeA, modeB){
+      var a = (TIEBANK[modeA] || []).slice(0,3);
+      var b = (TIEBANK[modeB] || []).slice(0,3);
+      while (a.length < 3) a.push("This fits me better lately.");
+      while (b.length < 3) b.push("This fits me better lately.");
+
+      var items = [];
+      for (var i=0;i<3;i++){
+        items.push({ ownerA:modeA, ownerB:modeB, A:a[i], B:b[i], C:"Both are partly true; I am mixed." });
+      }
+      for (var j=0;j<3;j++){
+        items.push({ ownerA:modeA, ownerB:modeB, A:a[j], B:b[j], C:"Hard to choose; it varies by day." });
+      }
+      shuffleInPlace(items);
+      return items;
+    }
+
+    function renderTieForm(items){
+      var holder = document.getElementById("tieForm");
+      if (!holder) return;
+
+      var html = "";
+      for (var i=0;i<items.length;i++){
+        var tNum = i+1;
+        html += '\
+          <div class="question">\
+            <div class="question-text">\
+              <span class="question-number">T' + tNum + '.</span>Pick the best fit lately.\
+            </div>\
+            <div class="options">\
+              ' + ["A","B","C"].map(function(letter){
+                var stmt = items[i][letter];
+                return '\
+                <div class="option">\
+                  <input type="radio" id="t' + tNum + '_' + letter + '" name="t' + tNum + '" value="' + letter + '">\
+                  <label for="t' + tNum + '_' + letter + '">\
+                    <span class="choice-letter">' + letter + '</span>\
+                    ' + escapeHtml(stmt) + '\
+                  </label>\
+                </div>';
+              }).join("") + '\
+            </div>\
+          </div>';
+      }
+      holder.innerHTML = html;
+    }
+
+    function getTieAnswers(items){
+      var answers = [];
+      for (var i=0;i<items.length;i++){
+        var tNum = i+1;
+        var sel = document.querySelector('input[name="t' + tNum + '"]:checked');
+        answers.push(sel ? sel.value : null);
+      }
+      return answers;
+    }
+
+    function computeTieWinner(items, answersABC){
+      var sum = {};
+      var modeA = items[0].ownerA;
+      var modeB = items[0].ownerB;
+      sum[modeA]=0; sum[modeB]=0;
+
+      var pickedAorB = 0;
+
+      for (var i=0;i<items.length;i++){
+        var ans = answersABC[i];
+        if (ans === "A"){ sum[items[i].ownerA] += 1; pickedAorB++; }
+        else if (ans === "B"){ sum[items[i].ownerB] += 1; pickedAorB++; }
+      }
+
+      if (pickedAorB < 2){
+        return { sums: sum, winner: null, note: "insufficient_signal" };
+      }
+
+      var winner = null;
+      if (sum[modeA] > sum[modeB]) winner = modeA;
+      else if (sum[modeB] > sum[modeA]) winner = modeB;
+
+      return { sums: sum, winner: winner, note: "ok" };
+    }
+
+    function requireAllAnsweredOrWarn(){
+      var totalQs = questions.length;
+      for (var i=1;i<=totalQs;i++){
+        if (!document.querySelector('input[name="q' + i + '"]:checked')){
+          showToast("Please answer question " + i + " before calculating.");
+          showError("Please answer question " + i + " before calculating your mode.");
+          setActiveQuestion(i-1);
+          var any = document.querySelector('input[name="q' + i + '"]');
+          if (any && any.closest) any.closest(".question").scrollIntoView({behavior:"smooth", block:"center"});
+          return false;
+        }
+      }
+      return true;
+    }
+
+    function getAnsweredLetters(){
+      var total = questions.length;
+      var out = [];
+      for (var i=1;i<=total;i++){
+        out.push(document.querySelector('input[name="q' + i + '"]:checked').value);
+      }
+      return out;
+    }
+
+    function calculateProvisional(){
+      var answersABC = getAnsweredLetters();
+      var dimScores = computeDimScoresFromAnswers(answersABC);
+      var modeScores = computeModeScores(dimScores);
+      var ranked = rankModes(modeScores);
+      var top1 = ranked[0];
+      var top2 = ranked[1];
+      var gapPoints = (top1 && top2) ? (top1.score - top2.score) : 999;
+      var grid = computeGridPrimary(dimScores);
+
+      return {
+        answersABC: answersABC,
+        dimScores: dimScores,
+        modeScores: modeScores,
+        ranked: ranked,
+        top1: top1,
+        top2: top2,
+        gapPoints: gapPoints,
+        grid: grid
+      };
+    }
+
+    function finalizeAndRender(primaryCode, provisional, tieMeta){
+      var m = SOM_MODES.filter(function(x){ return x.code === primaryCode; })[0] || { code: primaryCode, name: primaryCode };
+
+      document.getElementById("primaryType").textContent = m.code + " - " + m.name;
+      renderSomBlurb(m.code);
+      renderSeasonBlend(provisional.grid);
+      renderDimBars(provisional.dimScores);
+
+      var createdAt = new Date().toISOString();
+      var resultObj = {
+        schema: "empoweru_utf2_som_result",
+        schema_v: 5,
+        assessment: "UTF-II_SOM",
+        ui_v: SOM_UI_VERSION,
+        som_v: SOM_VERSION,
+        som_math: SOM_MATH_VERSION,
+        som_qbank: SOM_QBANK_ID,
+        q_count: questions.length,
+        dims: SOM_DIMS.map(function(d){ return { code:d.code, tech:d.tech, ui:d.ui }; }),
+        modes: SOM_MODES.map(function(x){ return x.code; }),
+        primaryType: m.code,
+        primaryName: m.name,
+        dimScores: provisional.dimScores,
+        modeScores: provisional.modeScores,
+        ranked: provisional.ranked,
+        meta: {
+          scoring: "forced_choice_single_dim_per_statement_then_grid_primary_with_rank_scores",
+          seed: __seed,
+          tieTriggerPoints: TIE_TRIGGER_POINTS,
+          top1: provisional.top1 ? { code: provisional.top1.code, score: provisional.top1.score } : null,
+          top2: provisional.top2 ? { code: provisional.top2.code, score: provisional.top2.score } : null,
+          gapPoints: provisional.gapPoints,
+          grid: provisional.grid ? { tier: provisional.grid.tier, orient: provisional.grid.orient, net: provisional.grid.net } : null,
+          dimMax: DIM_MAX
+        },
+        tieBreaker: tieMeta || { used:false, skipped:false, considered:false },
+        answers: {
+          format: "ABC_forced_choice",
+          values: provisional.answersABC.slice(0)
+        },
+        createdAt: createdAt
+      };
+
+      saveSomResultLocal(resultObj);
+      setSynthesisLink(m.code, resultObj);
+
+      storePayload({
+        assessment: "UTF-II_SOM",
+        primaryType: m.code,
+        primaryName: m.name,
+        ranked: provisional.ranked,
+        dimScores: provisional.dimScores,
+        modeScores: provisional.modeScores,
+        meta: resultObj.meta,
+        tieBreaker: resultObj.tieBreaker,
+        createdAt: createdAt,
+        v: SOM_VERSION,
+        qbank: SOM_QBANK_ID
+      });
+
+      var results = document.getElementById("results");
+      results.classList.add("show");
+
+      var bottomActions = document.getElementById("bottomActions");
+      bottomActions && bottomActions.classList.add("show");
+
+      results.scrollIntoView({behavior:"smooth", block:"start"});
+      updateProgress();
+      setActiveQuestion(questions.length - 1);
+    }
+
+    function calculateResults(){
+      var agree = document.getElementById("agreeChk");
+      if (!agree || !agree.checked){
+        showToast("Please check the User Agreement box before calculating your mode.");
+        var box = document.getElementById("agreementBox");
+        box && box.scrollIntoView && box.scrollIntoView({behavior:"smooth", block:"center"});
+        return;
+      }
+
+      if (!requireAllAnsweredOrWarn()) return;
+
+      var provisional = calculateProvisional();
+      var basePrimary = provisional.grid && provisional.grid.primary ? provisional.grid.primary : provisional.top1.code;
+
+      var net = provisional.grid ? provisional.grid.net : 0;
+      var borderlineEnergy = (net >= -3 && net <= 3);
+      var shouldTie = !!(provisional.top1 && provisional.top2 && (provisional.gapPoints <= TIE_TRIGGER_POINTS) && borderlineEnergy);
+
+      if (shouldTie){
+        __pending = {
+          provisional: provisional,
+          basePrimary: basePrimary,
+          topA: provisional.top1.code,
+          topB: provisional.top2.code,
+          tieItems: null
+        };
+
+        var intro = document.getElementById("tieIntro");
+        if (intro){
+          intro.textContent =
+            "Your results are close between " + provisional.top1.code + " and " + provisional.top2.code +
+            ". Pick the best-fit statement in each item.";
+        }
+
+        var tieItems = buildTieItems(provisional.top1.code, provisional.top2.code);
+        __pending.tieItems = tieItems;
+        renderTieForm(tieItems);
+
+        openTieModal();
+        return;
+      }
+
+      finalizeAndRender(basePrimary, provisional, { used:false, skipped:false, considered:false });
+    }
+
+    function handleTieSkip(){
+      if (!__pending) { closeTieModal(); return; }
+      var p = __pending.provisional;
+      var basePrimary = __pending.basePrimary;
+
+      var tieMeta = {
+        considered: true,
+        used: false,
+        skipped: true,
+        triggerPoints: TIE_TRIGGER_POINTS,
+        topA: __pending.topA,
+        topB: __pending.topB
+      };
+
+      closeTieModal();
+      finalizeAndRender(basePrimary, p, tieMeta);
+      __pending = null;
+    }
+
+    function handleTieConfirm(){
+      if (!__pending) { closeTieModal(); return; }
+
+      var items = __pending.tieItems || [];
+      var answers = getTieAnswers(items);
+
+      for (var i=0;i<answers.length;i++){
+        if (!answers[i]){
+          showToast("Please answer all tie-breaker items (T" + (i+1) + "). Or skip.");
+          return;
+        }
+      }
+
+      var tie = computeTieWinner(items, answers);
+      var chosen = tie.winner ? tie.winner : __pending.basePrimary;
+
+      var tieMeta = {
+        considered: true,
+        used: !!tie.winner,
+        skipped: false,
+        triggerPoints: TIE_TRIGGER_POINTS,
+        topA: __pending.topA,
+        topB: __pending.topB,
+        answers: answers.slice(0),
+        sums: tie.sums,
+        winner: tie.winner,
+        chosen: chosen,
+        note: tie.note
+      };
+
+      closeTieModal();
+      finalizeAndRender(chosen, __pending.provisional, tieMeta);
+      __pending = null;
+    }
+
+    function SOM_SCORE_INTEGRITY_CHECK(){
+      var issues = [];
+      var expectedQ = 27;
+      if (!Array.isArray(QUESTIONS_RAW) || QUESTIONS_RAW.length !== expectedQ) issues.push("Question count must be " + expectedQ + ".");
+
+      var dimCounts = emptyDimScores();
+
+      for (var q=0;q<QUESTIONS_RAW.length;q++){
+        var seen = {};
+        ["A","B","C"].forEach(function(L){
+          var s = QUESTIONS_RAW[q][L];
+          if (!s || !s.t || !s.w || !s.w.dim){
+            issues.push("Missing statement or weight at Q" + (q+1) + " " + L);
+            return;
+          }
+          var dim = s.w.dim;
+          if (!dimCounts.hasOwnProperty(dim)){
+            issues.push("Invalid dim at Q" + (q+1) + " " + L + ": " + dim);
+            return;
+          }
+          if (seen[dim]) issues.push("Dim overlap inside Q" + (q+1) + " (duplicate " + dim + ")");
+          seen[dim] = true;
+          dimCounts[dim] += 1;
+        });
+      }
+
+      console.log("[SOM_SCORE_INTEGRITY_CHECK] dim statement counts:", dimCounts);
+      console.log("[SOM_SCORE_INTEGRITY_CHECK] dim max used for bars:", DIM_MAX);
+      var ok = issues.length === 0;
+      console.log("[SOM_SCORE_INTEGRITY_CHECK] ok =", ok);
+      if (!ok) console.warn("Issues:", issues);
+      return { ok: ok, issues: issues, dimCounts: dimCounts, dimMax: DIM_MAX };
+    }
+    window.SOM_SCORE_INTEGRITY_CHECK = SOM_SCORE_INTEGRITY_CHECK;
+
+    try{
+      setSynthesisLink(null, null);
+
+      var data = readAutosave();
+      __seed = data ? (data.seed >>> 0) : ((Date.now() & 0xffffffff) >>> 0);
+
+      questions = buildQuestionsFromRaw(__seed);
+      generateForm();
+      clearAllSelections();
+      updateProgress();
+      setSubmitEnabled();
+      syncResumeControls();
+      syncActiveQuestion(0);
+
+      var form = document.getElementById("somForm");
+      form.addEventListener("change", function(e){
+        if (e.target && e.target.matches('input[type="radio"]')){
+          updateProgress();
+          saveAnswersLocal();
+          syncResumeControls();
+
+          var qNum = parseInt(String(e.target.name).replace("q",""), 10) - 1;
+          var nextIdx = qNum + 1;
+          while (nextIdx < questions.length && document.querySelector('input[name="q' + (nextIdx + 1) + '"]:checked')) {
+            nextIdx++;
+          }
+          if (nextIdx >= questions.length) nextIdx = qNum;
+          setActiveQuestion(nextIdx);
+        }
+      });
+
+      form.addEventListener("click", function(e){
+        var card = e.target.closest(".question");
+        if (!card) return;
+        var cards = Array.prototype.slice.call(document.querySelectorAll(".question"));
+        var idx = cards.indexOf(card);
+        if (idx >= 0) setActiveQuestion(idx);
+      });
+
+      var agreeChk = document.getElementById("agreeChk");
+      agreeChk && agreeChk.addEventListener("change", function(){ setSubmitEnabled(); });
+
+      document.getElementById("submitBtn").addEventListener("click", function(e){
+        e.preventDefault();
+        calculateResults();
+      });
+
+      document.getElementById("toggleScores").addEventListener("click", function(e){
+        e.preventDefault();
+        toggleAccordion();
+      });
+
+      var resumeBtn = document.getElementById("resumeBtn");
+      var clearBtn  = document.getElementById("clearBtn");
+
+      resumeBtn && resumeBtn.addEventListener("click", function(){
+        clearAllSelections();
+        var ok = restoreAnswersLocal();
+        updateProgress();
+        syncResumeControls();
+        if (ok){
+          showToast("Saved answers restored.");
+        } else {
+          showToast("No compatible saved answers found.");
+          syncActiveQuestion(0);
+        }
+      });
+
+      clearBtn && clearBtn.addEventListener("click", function(){
+        var ok = window.confirm("Clear saved SOM answers?\n\nThis cannot be undone.");
+        if (!ok) return;
+
+        clearSavedAnswers();
+        clearAllSelections();
+        updateProgress();
+        syncResumeControls();
+        syncActiveQuestion(0);
+        showToast("Saved answers cleared.");
+      });
+
+      var openA = document.getElementById("openAgreement");
+      var closeA = document.getElementById("closeAgreement");
+      var backdropA = document.getElementById("agreementModal");
+
+      openA && openA.addEventListener("click", function(e){ e.preventDefault(); openAgreementModal(); });
+      closeA && closeA.addEventListener("click", function(e){ e.preventDefault(); closeAgreementModal(); });
+      backdropA && backdropA.addEventListener("click", function(e){ if (e.target === backdropA) closeAgreementModal(); });
+
+      var btnMenu = document.getElementById("btnMenu");
+      var btnCloseMenu = document.getElementById("btnCloseMenu");
+      var menuModal = document.getElementById("menuModal");
+
+      btnMenu && btnMenu.addEventListener("click", openMenu);
+      btnCloseMenu && btnCloseMenu.addEventListener("click", closeMenu);
+      menuModal && menuModal.addEventListener("click", function(e){ if (e.target === menuModal) closeMenu(); });
+
+      var closeTie = document.getElementById("closeTie");
+      var tieModal = document.getElementById("tieModal");
+      var tieSkipBtn = document.getElementById("tieSkipBtn");
+      var tieConfirmBtn = document.getElementById("tieConfirmBtn");
+
+      closeTie && closeTie.addEventListener("click", function(e){ e.preventDefault(); closeTieModal(); });
+      tieModal && tieModal.addEventListener("click", function(e){ if (e.target === tieModal) closeTieModal(); });
+      tieSkipBtn && tieSkipBtn.addEventListener("click", function(e){ e.preventDefault(); handleTieSkip(); });
+      tieConfirmBtn && tieConfirmBtn.addEventListener("click", function(e){ e.preventDefault(); handleTieConfirm(); });
+
+      document.addEventListener("keydown", function(e){
+        if (e.key === "Escape"){
+          closeAgreementModal();
+          closeMenu();
+          closeTieModal();
+        }
+      });
+
+      SOM_SCORE_INTEGRITY_CHECK();
+
+    } catch (e){
+      showToast("Setup error: " + (e && e.message ? e.message : String(e)));
+      hardError("Setup error: " + (e && e.message ? e.message : String(e)));
+    }
+  </script>
+</body>
+</html>

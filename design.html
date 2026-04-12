@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Empower.U Complete Brand Guide</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  background: #ffffff;
+  color: #1e293b;
+  padding: 0;
+  line-height: 1.6;
+}
+
+@media print {
+  body { background: white; color: black; }
+  .section { page-break-inside: avoid; }
+  .color-swatch { border: 2px solid #000 !important; }
+}
+
+.header {
+  background: #020617;
+  color: white;
+  padding: 60px 40px;
+  text-align: center;
+}
+
+.header h1 {
+  font-size: 3rem;
+  margin-bottom: 10px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  background: linear-gradient(135deg, #4c6fff 0%, #00c2a8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.header p {
+  font-size: 1.2rem;
+  opacity: 0.85;
+  color: #cbd5e1;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 40px;
+}
+
+.toc {
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 30px;
+  margin-bottom: 60px;
+}
+
+.toc h2 {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  color: #1e293b;
+}
+
+.toc ul {
+  list-style: none;
+  columns: 2;
+  gap: 20px;
+}
+
+.toc li {
+  margin-bottom: 12px;
+  padding-left: 20px;
+  position: relative;
+}
+
+.toc li::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: #4c6fff;
+  font-weight: bold;
+}
+
+.toc a {
+  color: #4c6fff;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.toc a:hover {
+  color: #00c2a8;
+}
+
+.section {
+  margin-bottom: 80px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 40px;
+}
+
+.section h2 {
+  font-size: 2.2rem;
+  margin-bottom: 15px;
+  color: #1e293b;
+  border-bottom: 3px solid #4c6fff;
+  padding-bottom: 10px;
+}
+
+.section h3 {
+  font-size: 1.6rem;
+  margin: 30px 0 20px;
+  color: #334155;
+}
+
+.section p {
+  margin-bottom: 15px;
+  color: #475569;
+  font-size: 1.05rem;
+}
+
+.color-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+  margin: 30px 0;
+}
+
+.color-card {
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.color-swatch {
+  width: 100%;
+  height: 140px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  border: 2px solid #cbd5e1;
+  position: relative;
+}
+
+.color-swatch::after {
+  content: attr(data-label);
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(255,255,255,0.9);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.color-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #1e293b;
+}
+
+.color-codes {
+  font-size: 0.9rem;
+  color: #64748b;
+  line-height: 1.8;
+}
+
+.color-codes div {
+  margin: 6px 0;
+  font-family: 'Courier New', monospace;
+}
+
+.color-codes strong {
+  color: #334155;
+  font-family: ui-sans-serif, system-ui;
+}
+
+.usage-note {
+  background: #f1f5f9;
+  border-left: 4px solid #4c6fff;
+  padding: 12px 15px;
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #475569;
+  border-radius: 4px;
+}
+
+.gradient-card {
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+.gradient-swatch {
+  width: 100%;
+  height: 100px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  border: 2px solid #cbd5e1;
+}
+
+.gradient-name {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #1e293b;
+}
+
+.gradient-usage {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin-bottom: 12px;
+  font-style: italic;
+}
+
+.gradient-code {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  padding: 15px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  color: #a5f3fc;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin: 30px 0;
+}
+
+.theme-example {
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.theme-example-header {
+  padding: 15px 20px;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.dark-theme-header {
+  background: #1e293b;
+  color: white;
+}
+
+.light-theme-header {
+  background: #f8fafc;
+  color: #1e293b;
+  border-bottom: 2px solid #e2e8f0;
+}
+
+.theme-example-body {
+  padding: 30px 20px;
+  min-height: 300px;
+}
+
+.dark-theme-body {
+  background: #020617;
+  color: #f1f5f9;
+}
+
+.light-theme-body {
+  background: #ffffff;
+  color: #1e293b;
+}
+
+.theme-button {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  margin: 10px 10px 10px 0;
+  font-size: 0.95rem;
+}
+
+.specs-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  background: white;
+}
+
+.specs-table th {
+  background: #f1f5f9;
+  padding: 12px;
+  text-align: left;
+  font-weight: 700;
+  border: 1px solid #cbd5e1;
+  color: #1e293b;
+}
+
+.specs-table td {
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+}
+
+.wcag-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-left: 10px;
+}
+
+.wcag-aaa {
+  background: #10b981;
+  color: white;
+}
+
+.wcag-aa {
+  background: #3b82f6;
+  color: white;
+}
+
+.wcag-fail {
+  background: #ef4444;
+  color: white;
+}
+
+.logo-examples {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin: 30px 0;
+}
+
+.logo-example {
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 30px;
+  text-align: center;
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-text {
+  font-size: 2rem;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+}
+
+.warning-box {
+  background: #fef3c7;
+  border: 2px solid #fbbf24;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.warning-box h4 {
+  color: #92400e;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+.warning-box p {
+  color: #78350f;
+  margin: 0;
+}
+
+.do-dont-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 30px 0;
+}
+
+.do-box, .dont-box {
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.do-box {
+  background: #dcfce7;
+  border: 2px solid #22c55e;
+}
+
+.dont-box {
+  background: #fee2e2;
+  border: 2px solid #ef4444;
+}
+
+.do-box h4 {
+  color: #166534;
+  margin-bottom: 15px;
+}
+
+.dont-box h4 {
+  color: #991b1b;
+  margin-bottom: 15px;
+}
+
+.do-box ul, .dont-box ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.do-box li::before {
+  content: "✓ ";
+  color: #22c55e;
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.dont-box li::before {
+  content: "✗ ";
+  color: #ef4444;
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.export-formats {
+  background: #f1f5f9;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.export-formats h4 {
+  margin-bottom: 15px;
+  color: #1e293b;
+}
+
+.export-formats ul {
+  list-style: none;
+  columns: 2;
+}
+
+.export-formats li {
+  margin-bottom: 10px;
+  padding-left: 20px;
+  position: relative;
+}
+
+.export-formats li::before {
+  content: "📄";
+  position: absolute;
+  left: 0;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Empower.U</h1>
+  <p>Complete Brand Identity System & Style Guide</p>
+</div>
+
+<div class="container">
+
+  <div class="toc">
+    <h2>📋 Table of Contents</h2>
+    <ul>
+      <li><a href="#primary-colors">Primary Brand Colors</a></li>
+      <li><a href="#dark-mode">Dark Mode Colors</a></li>
+      <li><a href="#light-mode">Light Mode Colors</a></li>
+      <li><a href="#print-colors">Print & Physical Colors</a></li>
+      <li><a href="#gradients">Brand Gradients</a></li>
+      <li><a href="#typography">Typography</a></li>
+      <li><a href="#logo-usage">Logo Usage</a></li>
+      <li><a href="#accessibility">Accessibility & Contrast</a></li>
+      <li><a href="#examples">Usage Examples</a></li>
+      <li><a href="#dos-donts">Do's & Don'ts</a></li>
+    </ul>
+  </div>
+
+  <div class="section" id="primary-colors">
+    <h2>🎨 Primary Brand Colors</h2>
+    <p>These are the three core colors that define the Empower.U brand across all media.</p>
+    
+    <div class="color-grid">
+      
+      <div class="color-card">
+        <div class="color-swatch" style="background: #4c6fff;" data-label="PRIMARY"></div>
+        <div class="color-name">Royal Blue</div>
+        <div class="color-codes">
+          <div><strong>Hex:</strong> #4C6FFF</div>
+          <div><strong>RGB:</strong> 76, 111, 255</div>
+          <div><strong>CMYK:</strong> 70, 56, 0, 0</div>
+          <div><strong>Pantone:</strong> 2727 C (closest match)</div>
+        </div>
+        <div class="usage-note">
+          <strong>Primary Use:</strong> Main accent color, primary buttons, links, section headers, brand emphasis
+        </div>
+      </div>
+
+      <div class="color-card">
+        <div class="color-swatch" style="background: #00c2a8;" data-label="SECONDARY"></div>
+        <div class="color-name">Teal</div>
+        <div class="color-codes">
+          <div><strong>Hex:</strong> #00C2A8</div>
+          <div><strong>RGB:</strong> 0, 194, 168</div>
+          <div><strong>CMYK:</strong> 76, 0, 39, 0</div>
+          <div><strong>Pantone:</strong> 3262 C (closest match)</div>
+        </div>
+        <div class="usage-note">
+          <strong>Secondary Use:</strong> Complementary accent, hover states, secondary elements, paired with Royal Blue
+        </div>
+      </div>
+
+      <div class="color-card">
+        <div class="color-swatch" style="background: #f59e0b;" data-label="ACCENT"></div>
+        <div class="color-name">Amber</div>
+        <div class="color-codes">
+          <div><strong>Light Hex:</strong> #F59E0B</div>
+          <div><strong>Light RGB:</strong> 245, 158, 11</div>
+          <div><strong>Dark Hex:</strong> #D97706</div>
+          <div><strong>Dark RGB:</strong> 217, 119, 6</div>
+          <div><strong>CMYK:</strong> 0, 40, 95, 0 (light)</div>
+          <div><strong>Pantone:</strong> 1375 C (closest match)</div>
+        </div>
+        <div class="usage-note">
+          <strong>Limited Use:</strong> Landing page hero heading, accent gradients, creates warm contrast against cool blues
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section" id="dark-mode" style="background: linear-gradient(180deg, #020617 0%, #0f172a 100%); color: #f1f5f9; border: 1px solid rgba(255,255,255,0.1);">
+    <h2 style="color: #f1f5f9;">🌙 Dark Mode Color System</h2>
+    <p style="color: #cbd5e1;"><strong>Primary Application:</strong> Website, web app, digital interfaces (DEFAULT)</p>
+    
+    <h3 style="color: #f1f5f9;">Background Colors</h3>
+    <div class="color-grid">
+      
+      <div class="color-card">
+        <div class="color-swatch" style="background: #020617;" data-label="BG"></div>
+        <div class="color-name">Primary Background</div>
+        <div class="color-codes">
+          <div><strong>Hex:</strong> #020617</div>
+          <div><strong>RGB:</strong> 2, 6, 23</div>
+          <div><strong>Usage:</strong> Main page background</div>
+        </div>
+      </div>
+
+      <div class="color-card">
+        <div class="color-swatch" style="background: #1e293b;" data-label="BG-ELEVATED"></div>
+        <div class="color-name">Elevated Background</div>
+        <div class="color-codes">
+          <div><strong>Hex:</strong> #1E293B</div>
+          <div><strong>RGB:</strong> 30, 41, 59</div>
+          <div><strong>Usage:</strong> Cards, modals, elevated surfaces</div>
+        </div>
+      </div>
+
+      <div class="color-card">
+        <div class="color-swatch" style="background: rgba(255,255,255,0.12); border: 2px solid rgba(255,255,255,0.35);" data-label="BG-BUTTON"></div>
+        <div class="color-name">Secondary Button Background</div>
+        <div class="color-codes">
+          <div><strong>Value:</strong> rgba(255,255,255,0.12)</div>
+          <div><strong>Border:</strong> rgba(255,255,255,0.35)</div>
+          <div><strong>Usage:</strong> Secondary buttons, subtle containers</div>
+          <div><strong>Note:</strong> Improved visibility (was 0.08 bg / 0.25 border)</div>
+        </div>
+      </div>
+
+    </div>
+
+    <h3 style="color: #f1f5f9;">Text Colors (Dark Mode)</h3>
+    <div class="color-grid">
+      
+      <div class="color-card">
+        <div class="color-swatch" style="background: #f1f5f9; border-color: #94a3b8;" data-label="TEXT"></div>
+        <div class="color-name">Primary Text</div>
+        <div class="color-codes">
+          <div><strong>Hex:</strong> #F1F5F9</div>
+          <div><strong>RGB:</strong> 241, 245, 249</div>
+          <div><strong>Opacity:</strong> 92-98% typical</div>
+          <div><strong>Usage:</strong> Main body text, headings</div>
+        </div>
+      </div>
+
+      <div class="color-card">
+        <div class="color-swatch" style="background: #cbd5e1; border-color: #94a3b8;" data-label="TEXT-MUTED"></div>
+        <div class="color-name">Muted Text</div>
+        <div class="color-codes">
+          <div><strong>Hex:</strong> #CBD5E1</div>
+          <div><strong>RGB:</strong> 203, 213, 225</div>
+          <div><strong>Usage:</strong> Descriptions, secondary text</div>
+        </div>
+      </div>
+
+      <div class="color-card">
+        <div class="color-swatch" style="background: #94a3b8; border-color: #64748b;" data-label="TEXT-SUBTLE"></div>
+        <div class="color-name">Subtle Text</div>
+        <div class="color-codes">
+          <div><strong>Hex:</strong> #94A3B8</div>
+          <div><strong>RGB:</strong> 148, 163, 184</div>
+          <div><strong>Usage:</strong> Timestamps, metadata</div>
+        </div>
+      </div>
+
+    </div>
+
+    <h3 style="color: #f1f5f9;">Accent Colors (Dark Mode)</h3>
+    <div class="color-grid">
+      
+      <div class="color-card">
+        <div class="color-swatch" style="background: #4c6fff;" data-label="ACCENT"></div>
+        <div class="color-name">Royal Blue (Bright)</div>
+        <div class="color-codes">
+          <div><strong>Hex:</strong> #4C6FFF</div>
+          <div><strong>Usage:</strong> Links, buttons, interactive elements</div>
+          <div><strong>Contrast:</strong> 8.5:1 on dark background</div>
+        </div>
+      </div>
+
+      <div class="color-card">
+        <div class="color-swatch" style="background: #00c2a8;" data-label="ACCENT-2"></div>
+        <div class="color-name">Teal (Bright)</div>
+        <div class="color-codes">
+          <div><strong>Hex:</strong> #00C2A8</div>
+          <div><strong>Usage:</strong> Hover states, secondary accents</div>
+          <div><strong>Contrast:</strong> 7.2:1 on dark background</div>
+        </div>
+      </div>
+
+      <div class="color-card">
+        <div class="color-swatch" style="background: #f59e0b;" data-label="ACCENT-WARM"></div>
+        <div class="color-name">Amber (Bright)</div>
+        <div class="color-codes">
+          <div><strong>Hex:</strong> #F59E0B</div>
+          <div><strong>Usage:</strong> Landing page hero (dark mode)</div>
+          <div><strong>Contrast:</strong> 5.8:1 on dark background</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="height: 120px; background: linear-gradient(180deg, #020617 0%, #475569 50%, #f8fafc 100%); margin: 0 -40px 0; position: relative;">
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255,255,255,0.95); padding: 12px 24px; border-radius: 30px; font-weight: 700; font-size: 1.1rem; color: #1e293b; box-shadow: 0 4px 12px rgba(0,0,0,0.3); border: 2px solid #cbd5e1;">
+      🌙 → ☀️ Mode Transition
+    </div>
+  </div>
+
+  <div class="section" id="light-mode">
+    <h2>☀️ Light Mode Color System</h2>
+    <p><strong>Application:</strong> Print materials, light-themed displays, accessibility alternatives</p>
+    
+    <h3>Background Colors</h3>
+    <div class="color-grid">
+      
+      <div class="color-card">
+        <div class="color-swatch" style="background: #ffffff; border-color: #cbd5e1;" data-label="BG"></div>
+        <div class="color-name">Primary Background</div>
+        <div class="color-codes">
+          <div><strong>Hex:</strong> #FFFFFF</div>
+          <div><strong>RGB:</strong> 255, 255, 255</div>
+          <div><strong>Usage:</strong> Main page background, paper</div>
+        </div>
+      </div>
+
+      <div class="color-card">
+        <div class="color-swatch" style="background: #f8fafc; border-color: #cbd5e1;" data-label="BG-SOFT"></div>
+        <div class="color-name">Soft Background</div>
+        <div class="color-codes">
+          <div><strong>Hex:</strong> #F8FAFC</div>
+          <div><strong>RGB:</strong> 248, 250, 252</div>
+          <div><strong>Usage:</strong> Cards, sections, alternate rows</div>
+        </div>
+      </div>
+
+      <div class="color-card">
+        <div class="color-swatch" style="background: #f1f5f9; border-color: #cbd5e1;" data-label="BG-MUTED"></div>
+        <div class="color-name">Muted Background</div>
+        <div class="color-codes">
+          <div><strong>Hex:</strong> #F1F5F9</div>
+          <div><strong>RGB:</strong> 241, 245, 249</div>
+          <div><strong>Usage:</strong> Disabled states, subtle emphasis</div>
+        </div>
+      </div>
+
+    </div>
+
+    <h3>Text Colors (Light Mode)</h3>
+    <div class="color-grid">
+      
+      <div class="color-card">
+        <div class="color-swatch" style="background: #0f172a;" data-label="TEXT"></div>
+        <div class="color-name">Primary Text</div>
+        <div class="color-codes">
+          <div><strong>Hex:</strong> #0F172A</div>
+          <div><strong>RGB:</strong> 15, 23, 42</div>
+          <div><strong>Usage:</strong> Main body text, headings</div>
+          <div><strong>Contrast:</strong> 15.8:1 on white (AAA)</div>
+        </div>
+      </div>
+
+      <div class="color-card">
+        <div class="color-swatch" style="background: #475569;" data-label="TEXT-MUTED"></div>
+        <div class="color-name">Muted Text</div>
+        <div class="color-codes">
+          <div><strong>Hex:</strong> #475569</div>
+          <div><strong>RGB:</strong> 71, 85, 105</div>
+          <div><strong>Usage:</strong> Descriptions, secondary text</div>
+          <div><strong>Contrast:</strong> 8.3:1 on white (AAA)</div>
+        </div>
+      </div>
+
+      <div class="color-card">
+        <div class="color-swatch" style="background: #64748b;" data-label="TEXT-SUBTLE"></div>
+        <div class="color-name">Subtle Text</div>
+        <div class="color-codes">
+          <div><strong>Hex:</strong> #64748B</div>
+          <div><strong>RGB:</strong> 100, 116, 139</div>
+          <div><strong>Usage:</strong> Timestamps, metadata, captions</div>
+          <div><strong>Contrast:</strong> 5.7:1 on white (AA)</div>
+        </div>
+      </div>
+
+    </div>
+
+    <h3>Accent Colors (Light Mode)</h3>
+    <div class="color-grid">
+      
+      <div class="color-card">
+        <div class="color-swatch" style="background: #2563eb;" data-label="ACCENT"></div>
+        <div class="color-name">Royal Blue (Dark)</div>
+        <div class="color-codes">
+          <div><strong>Hex:</strong> #2563EB</div>
+          <div><strong>RGB:</strong> 37, 99, 235</div>
+          <div><strong>Usage:</strong> Links, buttons (light mode)</div>
+          <div><strong>Contrast:</strong> 7.1:1 on white (AAA)</div>
+        </div>
+      </div>
+
+      <div class="color-card">
+        <div class="color-swatch" style="background: #0d9488;" data-label="ACCENT-2"></div>
+        <div class="color-name">Teal (Dark)</div>
+        <div class="color-codes">
+          <div><strong>Hex:</strong> #0D9488</div>
+          <div><strong>RGB:</strong> 13, 148, 136</div>
+          <div><strong>Usage:</strong> Hover states, secondary (light mode)</div>
+          <div><strong>Contrast:</strong> 5.8:1 on white (AA)</div>
+        </div>
+      </div>
+
+      <div class="color-card">
+        <div class="color-swatch" style="background: #d97706;" data-label="ACCENT-WARM"></div>
+        <div class="color-name">Amber (Dark)</div>
+        <div class="color-codes">
+          <div><strong>Hex:</strong> #D97706</div>
+          <div><strong>RGB:</strong> 217, 119, 6</div>
+          <div><strong>Usage:</strong> Warm accent for light backgrounds</div>
+          <div><strong>Contrast:</strong> 6.2:1 on white (AA)</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="warning-box">
+      <h4>⚠️ Important Note on Light Mode</h4>
+      <p>Light mode colors are provided for print materials, presentations, and accessibility needs. The primary digital experience should remain dark mode, as the brand's atmospheric gradients and premium aesthetic are designed for dark backgrounds.</p>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
+
+  <div class="section" id="logo-usage">
+    <h2>🏷️ Logo & Wordmark Usage</h2>
+    
+    <h3>Primary Wordmark: "Empower.U"</h3>
+    <div class="logo-examples">
+      
+      <div class="logo-example" style="background: #020617;">
+        <div class="logo-text" style="background: linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.85) 50%, #4c6fff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Empower.U</div>
+      </div>
+      
+      <div class="logo-example" style="background: #ffffff;">
+        <div class="logo-text" style="background: linear-gradient(135deg, #4c6fff 0%, #00c2a8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Empower.U</div>
+      </div>
+      
+      <div class="logo-example" style="background: #4c6fff;">
+        <div class="logo-text" style="color: #ffffff;">Empower.U</div>
+      </div>
+      
+      <div class="logo-example" style="background: #020617;">
+        <div class="logo-text" style="background: linear-gradient(135deg, #f59e0b 0%, #4c6fff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Empower.U</div>
+      </div>
+
+    </div>
+
+    <h3>Logo Gradient Options</h3>
+    <div class="gradient-card">
+      <div class="gradient-swatch" style="background: linear-gradient(135deg, #f59e0b 0%, #4c6fff 100%);"></div>
+      <div class="gradient-name">Amber → Royal Blue (Dark Backgrounds)</div>
+      <div class="gradient-usage">Alternative warm-to-cool gradient for logo text on dark backgrounds</div>
+      <div class="gradient-code">linear-gradient(135deg, #f59e0b 0%, #4c6fff 100%)
+
+Start: Amber (#F59E0B) at 0%
+End: Royal Blue (#4C6FFF) at 100%
+Direction: 135deg
+
+Properties:
+-webkit-background-clip: text
+-webkit-text-fill-color: transparent
+background-clip: text</div>
+    </div>
+
+    <div class="gradient-card">
+      <div class="gradient-swatch" style="background: linear-gradient(135deg, #4c6fff 0%, #00c2a8 100%);"></div>
+      <div class="gradient-name">Royal Blue → Teal (Light Backgrounds)</div>
+      <div class="gradient-usage">Uses the bright brand colors - works on light/white backgrounds</div>
+      <div class="gradient-code">linear-gradient(135deg, #4c6fff 0%, #00c2a8 100%)
+
+Start: Royal Blue (#4C6FFF) at 0%
+End: Teal (#00C2A8) at 100%
+Direction: 135deg
+
+Properties:
+-webkit-background-clip: text
+-webkit-text-fill-color: transparent
+background-clip: text</div>
+    </div>
+
+    <h3>Logo Specifications</h3>
+    <table class="specs-table">
+      <thead>
+        <tr>
+          <th>Property</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Font Weight</strong></td>
+          <td>950 (Extra Black)</td>
+        </tr>
+        <tr>
+          <td><strong>Letter Spacing</strong></td>
+          <td>0.12em</td>
+        </tr>
+        <tr>
+          <td><strong>Capitalization</strong></td>
+          <td>Empower.U (capital E, capital U after dot)</td>
+        </tr>
+        <tr>
+          <td><strong>Dark Backgrounds - Option 1</strong></td>
+          <td>White → Blue gradient</td>
+        </tr>
+        <tr>
+          <td><strong>Dark Backgrounds - Option 2</strong></td>
+          <td>Amber → Blue gradient (NEW)</td>
+        </tr>
+        <tr>
+          <td><strong>Light Backgrounds</strong></td>
+          <td>Blue → Teal gradient</td>
+        </tr>
+        <tr>
+          <td><strong>Solid Color Fallback</strong></td>
+          <td>Royal Blue (#4C6FFF or #2563EB)</td>
+        </tr>
+        <tr>
+          <td><strong>Minimum Size</strong></td>
+          <td>0.9rem (14px) for legibility</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="do-dont-grid" style="margin-top: 30px;">
+      <div class="do-box">
+        <h4>✓ Correct Logo Usage</h4>
+        <ul>
+          <li>Always use "Empower.U" with period</li>
+          <li>Maintain letter spacing (0.12em)</li>
+          <li>Use appropriate gradient for background</li>
+          <li>Amber→Blue gradient adds warmth and variety</li>
+          <li>Keep adequate clear space around logo</li>
+        </ul>
+      </div>
+      <div class="dont-box">
+        <h4>✗ Never Do This</h4>
+        <ul>
+          <li>Don't write "EmpowerU" or "Empower U" (no space, needs period)</li>
+          <li>Don't use all lowercase "empower.u"</li>
+          <li>Don't stretch or distort the wordmark</li>
+          <li>Don't use decorative fonts</li>
+          <li>Don't use colors outside brand palette</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="examples">
+    <h2>💡 Usage Examples</h2>
+    
+    <h3>Dark Mode vs Light Mode Comparison</h3>
+    <div class="comparison-grid">
+      
+      <div class="theme-example">
+        <div class="theme-example-header dark-theme-header">Dark Mode (Primary)</div>
+        <div class="theme-example-body dark-theme-body">
+          <h3 style="color: #f1f5f9; margin-bottom: 15px;">Main Heading</h3>
+          <p style="color: #cbd5e1; margin-bottom: 15px;">This is body text in dark mode. Notice the soft off-white color that's easy on the eyes during extended reading sessions.</p>
+          <button class="theme-button" style="background: linear-gradient(135deg, #4c6fff, #00c2a8); color: white; border: none;">Primary Button</button>
+          <button class="theme-button" style="background: rgba(255,255,255,0.12); border: 2px solid rgba(255,255,255,0.35); color: #f1f5f9;">Secondary Button</button>
+          <p style="color: #94a3b8; font-size: 0.85rem; margin-top: 15px;">✓ Improved secondary button visibility (12% opacity, 35% border)</p>
+        </div>
+      </div>
+
+      <div class="theme-example">
+        <div class="theme-example-header light-theme-header">Light Mode (Print/Alt)</div>
+        <div class="theme-example-body light-theme-body">
+          <h3 style="color: #0f172a; margin-bottom: 15px;">Main Heading</h3>
+          <p style="color: #475569; margin-bottom: 15px;">This is body text in light mode. Used for print materials, presentations, and accessibility alternatives.</p>
+          <button class="theme-button" style="background: linear-gradient(135deg, #2563eb, #0d9488); color: white;">Primary Button</button>
+          <button class="theme-button" style="background: white; border: 2px solid #e2e8f0; color: #0f172a;">Secondary Button</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section" id="dos-donts">
+    <h2>✅ Do's & Don'ts</h2>
+
+    <h3>Color Usage</h3>
+    <div class="do-dont-grid">
+      <div class="do-box">
+        <h4>✓ DO</h4>
+        <ul>
+          <li>Use Royal Blue (#4C6FFF) on dark backgrounds</li>
+          <li>Use darker blue (#2563EB) on light backgrounds</li>
+          <li>Pair Royal Blue + Teal in gradients</li>
+          <li>Use Amber sparingly for accent gradients</li>
+          <li>Use improved secondary button (12% bg, 35% border)</li>
+          <li>Maintain contrast ratios above 4.5:1</li>
+        </ul>
+      </div>
+      <div class="dont-box">
+        <h4>✗ DON'T</h4>
+        <ul>
+          <li>Use bright Royal Blue on white (fails contrast)</li>
+          <li>Mix warm and cool gradients randomly</li>
+          <li>Use old dark secondary button (8% bg, 25% border)</li>
+          <li>Create new gradients without approval</li>
+          <li>Use neon or fluorescent variations</li>
+          <li>Ignore WCAG accessibility guidelines</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Logo & Wordmark</h3>
+    <div class="do-dont-grid">
+      <div class="do-box">
+        <h4>✓ DO</h4>
+        <ul>
+          <li>Always write "Empower.U" with period</li>
+          <li>Maintain 0.12em letter spacing</li>
+          <li>Use weight 950 (Extra Black)</li>
+          <li>Choose gradient based on background</li>
+          <li>Use Amber→Blue gradient for variety</li>
+          <li>Provide adequate clear space</li>
+        </ul>
+      </div>
+      <div class="dont-box">
+        <h4>✗ DON'T</h4>
+        <ul>
+          <li>Write "EmpowerU" without period</li>
+          <li>Use lowercase "empower.u"</li>
+          <li>Stretch, rotate, or distort wordmark</li>
+          <li>Use decorative or script fonts</li>
+          <li>Place logo on busy backgrounds</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>📝 Version History</h2>
+    <table class="specs-table">
+      <thead>
+        <tr>
+          <th>Version</th>
+          <th>Date</th>
+          <th>Changes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1.1</strong></td>
+          <td>January 18, 2026</td>
+          <td>
+            • Improved dark mode secondary button (12% opacity, 35% border)<br>
+            • Added Amber→Blue gradient option for logo<br>
+            • Enhanced visibility and brand flexibility
+          </td>
+        </tr>
+        <tr>
+          <td><strong>1.0</strong></td>
+          <td>January 2026</td>
+          <td>Initial brand guide release</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div style="margin-top: 80px; padding-top: 40px; border-top: 3px solid #e2e8f0; text-align: center;">
+    <div style="font-size: 2rem; font-weight: 950; letter-spacing: 0.12em; background: linear-gradient(135deg, #4c6fff 0%, #00c2a8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 15px;">Empower.U</div>
+    <p style="color: #64748b; font-size: 0.95rem;">Complete Brand Identity System • Version 1.1 • January 2026</p>
+    <p style="color: #94a3b8; font-size: 0.85rem; margin-top: 10px;">This document contains proprietary brand guidelines for Empower.U</p>
+  </div>
+
+</div>
+
+</body>
+</html>
+
+
