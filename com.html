@@ -1733,6 +1733,7 @@
 
     var AUTOSAVE_KEY             = "empoweru_utf2_com_v1_3_0";
     var AUTOSAVE_KEY_BAK         = "empoweru_utf2_com_v1_3_0__bak";
+    var TIE_RESULT_KEY           = "empoweru_utf2_com_v1_3_0_tie";
     var AUTOSAVE_SCHEMA          = "empoweru_utf2_com_schema_v5";
     var DERIVED_RESULT_KEY       = "empoweru_utf2_last_com_result";
 
@@ -2043,6 +2044,7 @@
     function clearSavedAnswers(){
       try{ localStorage.removeItem(AUTOSAVE_KEY); } catch(e){}
       try{ localStorage.removeItem(AUTOSAVE_KEY_BAK); } catch(e){}
+      try{ localStorage.removeItem(TIE_RESULT_KEY); } catch(e){}
     }
 
     function syncResumeControls(){
@@ -2661,15 +2663,8 @@ const TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
         answers: answers
       };
 
-      try{
-        var _asForTie = _readSavedRaw(AUTOSAVE_KEY);
-        if (_asForTie){
-          _asForTie.tieBreaker = { pair: [s.primary, s.alt], chosen: chosen };
-          var _ts = JSON.stringify(_asForTie);
-          localStorage.setItem(AUTOSAVE_KEY, _ts);
-          try{ localStorage.setItem(AUTOSAVE_KEY_BAK, _ts); } catch(e2){}
-        }
-      } catch(e){}
+      // Save tie result to its own key — independent of autosave lifecycle
+      try{ localStorage.setItem(TIE_RESULT_KEY, JSON.stringify({ pair: [s.primary, s.alt], chosen: chosen })); } catch(e){}
       closeTieModal();
       finalizeAndRender(s.pending, chosen, tieData);
       window.__tieState = null;
@@ -2890,16 +2885,17 @@ const TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
       var pending = { answers:answers, avgDims:avgDims, picked:picked, undertones:undertones };
 
       if (alt && delta <= TIE_TRIGGER){
-        var _savedAs = _readSavedRaw(AUTOSAVE_KEY);
-        var _savedTie = _savedAs && _savedAs.tieBreaker;
-        if (_savedTie && _savedTie.chosen && _savedTie.pair &&
-            ((_savedTie.pair[0] === primary && _savedTie.pair[1] === alt.type) ||
-             (_savedTie.pair[0] === alt.type && _savedTie.pair[1] === primary))){
-          finalizeAndRender(pending, _savedTie.chosen, {
-            used: true, triggered: true, restored: true, pair: _savedTie.pair
-          });
-          return;
-        }
+        try{
+          var _savedTie = JSON.parse(localStorage.getItem(TIE_RESULT_KEY) || 'null');
+          if (_savedTie && _savedTie.chosen && _savedTie.pair &&
+              ((_savedTie.pair[0] === primary && _savedTie.pair[1] === alt.type) ||
+               (_savedTie.pair[0] === alt.type && _savedTie.pair[1] === primary))){
+            finalizeAndRender(pending, _savedTie.chosen, {
+              used: true, triggered: true, restored: true, pair: _savedTie.pair
+            });
+            return;
+          }
+        } catch(e){}
         var opened = openTieBreakerFlow(primary, alt.type, delta, pending);
         if (opened) return;
       }
