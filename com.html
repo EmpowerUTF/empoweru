@@ -1030,16 +1030,15 @@
     <div class="top">
       <h1>COM Assessment</h1>
       <div class="brand">Unified Typing Framework</div>
-      <div class="subtitle">How you naturally think, make decisions, and show up in the world.</div>
-      <div class="meta">About <strong>15 minutes</strong>. Longer than most because the depth is what makes it accurate.</div>
+      <div class="subtitle">Your stable cognitive identity. How you think, decide, and show up consistently.</div>
+      <div class="meta">About <strong>15 minutes</strong>. Answers save automatically if you need to pause.</div>
       <div class="resume-row">
         <button class="pill-btn" id="resumeBtn" type="button" disabled>Resume saved answers</button>
         <button class="pill-btn" id="clearBtn" type="button" disabled>Clear saved answers</button>
       </div>
       <div class="atlas-intro">
         <strong>Step 1 of your UTF profile.</strong>
-        COM maps the stable layer underneath your behavior: how you naturally think, make decisions, and show up, regardless of what is going on around you.
-        Answer honestly and for how you actually are, not how you think you should be. The accuracy of everything that follows depends on it.
+        This maps the layer that doesn't shift with your mood or circumstances. Take the SOM after and you'll have a complete picture of how you think and what you need right now.
       </div>
     </div>
 
@@ -1733,6 +1732,7 @@
 
     var AUTOSAVE_KEY             = "empoweru_utf2_com_v1_3_0";
     var AUTOSAVE_KEY_BAK         = "empoweru_utf2_com_v1_3_0__bak";
+    var TIE_RESULT_KEY           = "empoweru_utf2_com_v1_3_0_tie";
     var AUTOSAVE_SCHEMA          = "empoweru_utf2_com_schema_v5";
     var DERIVED_RESULT_KEY       = "empoweru_utf2_last_com_result";
 
@@ -2009,6 +2009,9 @@
           answers: arr,
           updatedAt: new Date().toISOString()
         };
+        // Preserve saved tie-breaker result so re-calculating doesn't re-trigger the modal
+        var _existing = _readSavedRaw(AUTOSAVE_KEY);
+        if (_existing && _existing.tieBreaker) payload.tieBreaker = _existing.tieBreaker;
         var s = JSON.stringify(payload);
         localStorage.setItem(AUTOSAVE_KEY, s);
         try{ localStorage.setItem(AUTOSAVE_KEY_BAK, s); } catch(e2){}
@@ -2040,6 +2043,7 @@
     function clearSavedAnswers(){
       try{ localStorage.removeItem(AUTOSAVE_KEY); } catch(e){}
       try{ localStorage.removeItem(AUTOSAVE_KEY_BAK); } catch(e){}
+      try{ localStorage.removeItem(TIE_RESULT_KEY); } catch(e){}
     }
 
     function syncResumeControls(){
@@ -2658,6 +2662,8 @@ const TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
         answers: answers
       };
 
+      // Save tie result to its own key — independent of autosave lifecycle
+      try{ localStorage.setItem(TIE_RESULT_KEY, JSON.stringify({ pair: [s.primary, s.alt], chosen: chosen })); } catch(e){}
       closeTieModal();
       finalizeAndRender(s.pending, chosen, tieData);
       window.__tieState = null;
@@ -2878,6 +2884,21 @@ const TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
       var pending = { answers:answers, avgDims:avgDims, picked:picked, undertones:undertones };
 
       if (alt && delta <= TIE_TRIGGER){
+        try{
+          var _savedTie = JSON.parse(localStorage.getItem(TIE_RESULT_KEY) || 'null');
+          if (!_savedTie){
+            var _as = _readSavedRaw(AUTOSAVE_KEY) || _readSavedRaw(AUTOSAVE_KEY_BAK);
+            if (_as && _as.tieBreaker && _as.tieBreaker.chosen) _savedTie = _as.tieBreaker;
+          }
+          if (_savedTie && _savedTie.chosen && _savedTie.pair &&
+              ((_savedTie.pair[0] === primary && _savedTie.pair[1] === alt.type) ||
+               (_savedTie.pair[0] === alt.type && _savedTie.pair[1] === primary))){
+            finalizeAndRender(pending, _savedTie.chosen, {
+              used: true, triggered: true, restored: true, pair: _savedTie.pair
+            });
+            return;
+          }
+        } catch(e){}
         var opened = openTieBreakerFlow(primary, alt.type, delta, pending);
         if (opened) return;
       }
@@ -3136,6 +3157,15 @@ const TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
         resumeBtn.addEventListener("click", function(){
           var ok = restoreAnswersLocal();
           if (ok){
+            // Migrate any old tie result from autosave into the dedicated key
+            try{
+              if (!localStorage.getItem(TIE_RESULT_KEY)){
+                var _as = _readSavedRaw(AUTOSAVE_KEY) || _readSavedRaw(AUTOSAVE_KEY_BAK);
+                if (_as && _as.tieBreaker && _as.tieBreaker.chosen){
+                  localStorage.setItem(TIE_RESULT_KEY, JSON.stringify(_as.tieBreaker));
+                }
+              }
+            } catch(e){}
             updateProgress();
             showToast("Saved answers restored.");
             scrollToLastAnswered();
