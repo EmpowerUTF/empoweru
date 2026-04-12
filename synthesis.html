@@ -1266,6 +1266,7 @@ function copyAtlas(){
       var prev = JSON.parse(localStorage.getItem("eu_ratings")||"[]");
       prev.push(payload); localStorage.setItem("eu_ratings",JSON.stringify(prev));
     }catch(e){}
+    try{ localStorage.setItem(RATING_SAVE_KEY, JSON.stringify({rating:_rating, com:_comType, som:_somMode})); }catch(e){}
     var ty = document.getElementById("ratingTy");
     if(ty) ty.classList.add("show");
   }
@@ -1333,6 +1334,7 @@ var _rating = 0;
 var _ratingDone = false;
 var _comType = "";
 var _somMode = "";
+var RATING_SAVE_KEY = "empoweru_utf2_syn_rating";
 
 function setRating(v){
   _rating = v;
@@ -1349,6 +1351,31 @@ function setAtlasCopyEnabled(){
   if(!btn) return;
   var agreed = !!(chk && chk.checked);
   if(gate) gate.style.display = agreed ? "" : "none";
+  // Restore saved rating so user doesn't have to re-rate
+  if(agreed && !_ratingDone){
+    try{
+      var _saved = JSON.parse(localStorage.getItem(RATING_SAVE_KEY)||'null');
+      if(_saved && _saved.rating > 0){
+        _rating = _saved.rating;
+        _ratingDone = true;
+        document.querySelectorAll(".rating-num").forEach(function(b){
+          b.classList.toggle("sel", parseInt(b.getAttribute("data-v"),10) === _rating);
+          b.disabled = true;
+          b.style.cursor = "default";
+          b.style.pointerEvents = "none";
+        });
+        var _rc = document.getElementById("ratingComment");
+        if(_rc){ _rc.style.display = "none"; }
+        var _lbl = gate ? gate.querySelector(".rating-gate-label") : null;
+        if(_lbl && !_lbl.dataset.locked){
+          _lbl.dataset.locked = "1";
+          _lbl.innerHTML = 'How accurately does this profile describe you? <span style="color:rgba(94,234,212,0.70);">(already rated ' + _rating + '/10)</span>';
+        }
+        var _ty = document.getElementById("ratingTy");
+        if(_ty) _ty.classList.add("show");
+      }
+    } catch(e){}
+  }
   btn.disabled = !(agreed && _rating > 0);
 }
 
