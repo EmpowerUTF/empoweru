@@ -1044,6 +1044,7 @@
 
     var AUTOSAVE_KEY = "empoweru_utf2_som_v3_1_0_autosave";
     var RESULT_KEY   = "empoweru_utf2_som_latest";
+    var TIE_RESULT_KEY = "empoweru_utf2_som_v3_1_0_tie";
 
     var TIE_TRIGGER_POINTS = 1;
 
@@ -1656,6 +1657,7 @@
 
     function clearSavedAnswers(){
       try{ localStorage.removeItem(AUTOSAVE_KEY); } catch(e){}
+      try{ localStorage.removeItem(TIE_RESULT_KEY); } catch(e){}
     }
 
     function syncResumeControls(){
@@ -2123,18 +2125,23 @@
       var shouldTie = !!(provisional.top1 && provisional.top2 && (provisional.gapPoints <= TIE_TRIGGER_POINTS) && borderlineEnergy);
 
       if (shouldTie){
-        // Check for a saved tie result for this same pair — skip modal if found
-        var _savedAs = readAutosave();
-        var _savedTie = _savedAs && _savedAs.tieBreaker;
-        if (_savedTie && _savedTie.chosen && _savedTie.pair &&
-            ((_savedTie.pair[0] === provisional.top1.code && _savedTie.pair[1] === provisional.top2.code) ||
-             (_savedTie.pair[0] === provisional.top2.code && _savedTie.pair[1] === provisional.top1.code))){
-          finalizeAndRender(_savedTie.chosen, provisional, {
-            considered: true, used: true, restored: true,
-            topA: provisional.top1.code, topB: provisional.top2.code
-          });
-          return;
-        }
+        // Check for a saved tie result — dedicated key with autosave fallback
+        try{
+          var _savedTie = JSON.parse(localStorage.getItem(TIE_RESULT_KEY) || 'null');
+          if (!_savedTie){
+            var _as = readAutosave();
+            if (_as && _as.tieBreaker && _as.tieBreaker.chosen) _savedTie = _as.tieBreaker;
+          }
+          if (_savedTie && _savedTie.chosen && _savedTie.pair &&
+              ((_savedTie.pair[0] === provisional.top1.code && _savedTie.pair[1] === provisional.top2.code) ||
+               (_savedTie.pair[0] === provisional.top2.code && _savedTie.pair[1] === provisional.top1.code))){
+            finalizeAndRender(_savedTie.chosen, provisional, {
+              considered: true, used: true, restored: true,
+              topA: provisional.top1.code, topB: provisional.top2.code
+            });
+            return;
+          }
+        } catch(e){}
         __pending = {
           provisional: provisional,
           basePrimary: basePrimary,
@@ -2210,14 +2217,8 @@
         note: tie.note
       };
 
-            // Save tie result so resume won't re-trigger the modal
-      try{
-        var _asForTie = readAutosave();
-        if (_asForTie){
-          _asForTie.tieBreaker = { pair: [__pending.topA, __pending.topB], chosen: chosen };
-          localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(_asForTie));
-        }
-      } catch(e){}
+            // Save tie result to its own key — independent of autosave lifecycle
+      try{ localStorage.setItem(TIE_RESULT_KEY, JSON.stringify({ pair: [__pending.topA, __pending.topB], chosen: chosen })); } catch(e){}
       closeTieModal();
       finalizeAndRender(chosen, __pending.provisional, tieMeta);
       __pending = null;
@@ -2316,6 +2317,17 @@
       resumeBtn && resumeBtn.addEventListener("click", function(){
         clearAllSelections();
         var ok = restoreAnswersLocal();
+        if (ok){
+          // Migrate any old tie result from autosave into the dedicated key
+          try{
+            if (!localStorage.getItem(TIE_RESULT_KEY)){
+              var _as = readAutosave();
+              if (_as && _as.tieBreaker && _as.tieBreaker.chosen){
+                localStorage.setItem(TIE_RESULT_KEY, JSON.stringify(_as.tieBreaker));
+              }
+            }
+          } catch(e){}
+        }
         updateProgress();
         syncResumeControls();
         if (ok){

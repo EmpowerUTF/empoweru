@@ -17,15 +17,14 @@
     }
     *{margin:0;padding:0;box-sizing:border-box}
     html{scroll-behavior:smooth}
-
     body{
       font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
       min-height:100vh;
       color:var(--text);
       background:
-        radial-gradient(1400px 900px at 10% 0%,  rgba(59,130,246,0.18),  transparent 55%),
-        radial-gradient(1200px 800px at 90% 10%,  rgba(20,184,166,0.15),  transparent 55%),
-        radial-gradient(900px 700px at 50% 100%,  rgba(99,102,241,0.10),  transparent 60%),
+        radial-gradient(1400px 900px at 10% 0%,rgba(59,130,246,0.18),transparent 55%),
+        radial-gradient(1200px 800px at 90% 10%,rgba(20,184,166,0.15),transparent 55%),
+        radial-gradient(900px 700px at 50% 100%,rgba(99,102,241,0.10),transparent 60%),
         linear-gradient(180deg,#07090f 0%,#050710 100%);
       background-attachment:fixed;
       padding-top:64px;
@@ -55,14 +54,12 @@
       text-decoration:none;
     }
     .menu-btn{
-      display:inline-flex;
-      width:46px;height:42px;border-radius:14px;
+      display:inline-flex;width:46px;height:42px;border-radius:14px;
       border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);
       color:rgba(230,237,247,.92);cursor:pointer;
       align-items:center;justify-content:center;
-      touch-action:manipulation;user-select:none;
-      -webkit-tap-highlight-color:transparent;
-      transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease;
+      touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent;
+      transition:transform .15s ease,border-color .15s ease;
     }
     .menu-btn:hover{transform:translateY(-1px);border-color:rgba(20,184,166,.45);}
 
@@ -72,30 +69,26 @@
     /* ── HERO ── */
     .hero{
       text-align:center;
-      padding:72px 16px 56px;
-      position:relative;
+      padding:64px 16px 48px;
     }
     .hero-eyebrow{
       display:inline-flex;align-items:center;gap:8px;
       padding:5px 14px;border-radius:999px;
-      background:rgba(59,130,246,.10);border:1px solid rgba(59,130,246,.25);
+      background:rgba(245,158,11,.10);border:1px solid rgba(245,158,11,.30);
       font-size:.75rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
-      color:rgba(94,234,212,.88);
-      margin-bottom:24px;
+      color:rgba(251,191,36,.92);
+      margin-bottom:22px;
+      text-shadow:0 0 18px rgba(245,158,11,.22);
     }
     .hero-eyebrow span{
       width:6px;height:6px;border-radius:50%;
-      background:rgba(94,234,212,.9);
-      display:inline-block;
-      box-shadow:0 0 6px rgba(94,234,212,.5);
+      background:rgba(251,191,36,.9);
+      display:inline-block;box-shadow:0 0 7px rgba(245,158,11,.55);
     }
     .hero h1{
       font-size:clamp(2.2rem,6vw,3.6rem);
-      font-weight:900;
-      letter-spacing:-.03em;
-      line-height:1.08;
-      margin-bottom:20px;
-      color:#fff;
+      font-weight:900;letter-spacing:-.03em;line-height:1.08;
+      margin-bottom:20px;color:#fff;
     }
     .hero h1 em{
       font-style:normal;
@@ -105,32 +98,51 @@
       animation:shimmer 4s ease infinite;
     }
     @keyframes shimmer{0%{background-position:0%}100%{background-position:200%}}
+
     .hero-sub{
       font-size:1.05rem;color:var(--muted);line-height:1.7;
-      max-width:560px;margin:0 auto 36px;
+      max-width:540px;margin:0 auto 28px;
+    }
+
+    /* ── TIME / SAVE CALLOUT ── */
+    .time-callout{
+      display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;
+      padding:10px 18px;border-radius:12px;
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.10);
+      font-size:.82rem;color:rgba(230,237,247,.50);
+      font-weight:700;
+      margin-top:16px;
+      margin-bottom:0;
+      line-height:1.4;
+      max-width:540px;
+      margin-left:auto;margin-right:auto;
+    }
+    .time-callout svg{color:rgba(94,234,212,.55);flex-shrink:0;}
+    .time-divider{
+      width:1px;height:14px;
+      background:rgba(255,255,255,.15);
+      display:inline-block;
     }
 
     /* Trust badges */
     .trust-row{
-      display:flex;flex-wrap:wrap;justify-content:center;gap:10px;
-      margin-bottom:36px;
+      display:flex;flex-wrap:wrap;justify-content:center;gap:8px;
+      margin-bottom:28px;
     }
     .trust-badge{
       display:inline-flex;align-items:center;gap:6px;
       padding:5px 12px;border-radius:8px;
-      background:rgba(255,255,255,.04);
-      border:1px solid rgba(255,255,255,.09);
-      font-size:.78rem;font-weight:700;color:rgba(230,237,247,.65);
+      background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);
+      font-size:.78rem;font-weight:700;color:rgba(230,237,247,.60);
     }
     .trust-badge svg{color:rgba(94,234,212,.75);flex-shrink:0;}
 
     /* Hero CTA */
     .hero-cta{
       display:inline-flex;align-items:center;gap:10px;
-      padding:16px 36px;
-      border-radius:16px;
-      font-size:1.08rem;font-weight:800;
-      color:#fff;letter-spacing:.01em;
+      padding:16px 36px;border-radius:16px;
+      font-size:1.08rem;font-weight:800;color:#fff;letter-spacing:.01em;
       background:linear-gradient(135deg,rgba(59,130,246,.9),rgba(20,184,166,.88));
       border:1px solid rgba(255,255,255,.16);
       box-shadow:
@@ -151,36 +163,29 @@
         0 20px 40px rgba(0,0,0,.40);
     }
     .hero-cta svg{flex-shrink:0;}
-    .cta-note{
-      margin-top:14px;font-size:.8rem;color:var(--muted2);
-    }
 
-    /* ── WHAT YOU GET ── */
+    /* ── SECTION LABELS ── */
     .section-label{
       font-size:.7rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
-      color:rgba(94,234,212,.65);margin-bottom:16px;
+      color:rgba(94,234,212,.65);margin-bottom:10px;
     }
     .section-title{
-      font-size:1.5rem;font-weight:900;letter-spacing:-.02em;
-      color:var(--text);margin-bottom:8px;
+      font-size:1.4rem;font-weight:900;letter-spacing:-.02em;
+      color:var(--text);margin-bottom:6px;
     }
-    .section-sub{font-size:.93rem;color:var(--muted);line-height:1.6;margin-bottom:28px;}
+    .section-sub{font-size:.9rem;color:var(--muted);line-height:1.6;margin-bottom:22px;}
 
+    /* ── STEP CARDS ── */
+    .steps-wrap{margin-bottom:28px;}
+    .steps-intro{text-align:center;margin-bottom:18px;}
     .steps-grid{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:12px;
-      margin-bottom:36px;
+      display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
     }
     @media(max-width:640px){.steps-grid{grid-template-columns:1fr;}}
-
     .step-card{
-      position:relative;
-      padding:22px 20px;border-radius:18px;
+      position:relative;padding:22px 20px;border-radius:18px;
       background:linear-gradient(160deg,rgba(255,255,255,.055),rgba(255,255,255,.025));
-      border:1px solid rgba(255,255,255,.10);
-      overflow:hidden;
-      text-align:center;
+      border:1px solid rgba(255,255,255,.10);overflow:hidden;text-align:center;
     }
     .step-card::before{
       content:"";position:absolute;top:0;left:0;right:0;height:1px;
@@ -202,72 +207,64 @@
 
     /* ── WHY DIFFERENT ── */
     .why-section{
-      padding:32px 28px;border-radius:20px;
+      padding:28px 24px;border-radius:20px;
       background:linear-gradient(160deg,rgba(99,102,241,.07),rgba(59,130,246,.04));
       border:1px solid rgba(99,102,241,.18);
-      margin-bottom:24px;
+      margin-bottom:20px;
     }
-    .why-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px;}
+    .why-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px;}
     @media(max-width:560px){.why-grid{grid-template-columns:1fr;gap:14px;}}
-    .why-item{display:flex;flex-direction:column;gap:10px;align-items:center;text-align:center;}
+    .why-item{display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center;}
     .why-icon{
       width:36px;height:36px;border-radius:10px;flex-shrink:0;
       display:flex;align-items:center;justify-content:center;
       background:rgba(94,234,212,.10);border:1px solid rgba(94,234,212,.18);
       color:rgba(94,234,212,.85);
     }
-    .why-text strong{display:block;font-size:.9rem;font-weight:800;color:var(--text);margin-bottom:4px;}
-    .why-text span{font-size:.82rem;color:var(--muted);line-height:1.55;}
+    .why-text strong{display:block;font-size:.88rem;font-weight:800;color:var(--text);margin-bottom:3px;}
+    .why-text span{font-size:.81rem;color:var(--muted);line-height:1.55;}
 
-    /* ── PRIVACY BLOCK ── */
+    /* ── PRIVACY ── */
     .privacy-block{
-      padding:24px 26px;border-radius:18px;
+      padding:22px 24px;border-radius:18px;
       background:linear-gradient(135deg,rgba(20,184,166,.06),rgba(59,130,246,.04));
       border:1px solid rgba(20,184,166,.20);
-      margin-bottom:24px;
+      margin-bottom:20px;
       display:flex;gap:16px;align-items:flex-start;
     }
     .privacy-icon{
       width:40px;height:40px;border-radius:12px;flex-shrink:0;
       display:flex;align-items:center;justify-content:center;
       background:rgba(20,184,166,.12);border:1px solid rgba(20,184,166,.25);
-      color:rgba(94,234,212,.9);font-size:1.1rem;
+      color:rgba(94,234,212,.9);
     }
     .privacy-content strong{
-      display:block;font-size:.94rem;font-weight:800;
-      color:rgba(94,234,212,.92);margin-bottom:6px;
+      display:block;font-size:.92rem;font-weight:800;
+      color:rgba(94,234,212,.92);margin-bottom:5px;
     }
-    .privacy-content p{font-size:.84rem;color:var(--muted);line-height:1.65;}
+    .privacy-content p{font-size:.83rem;color:var(--muted);line-height:1.65;}
 
     /* ── ATLAS TEASER ── */
     .atlas-teaser{
-      padding:28px 26px;border-radius:20px;
+      padding:26px 24px;border-radius:20px;
       background:linear-gradient(135deg,rgba(245,158,11,.07),rgba(251,146,60,.05));
       border:1px solid rgba(245,158,11,.22);
-      margin-bottom:24px;text-align:center;
+      margin-bottom:20px;text-align:center;
     }
     .atlas-tag{
-      display:inline-block;
-      font-size:.68rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;
-      color:rgba(251,191,36,.85);margin-bottom:10px;
+      display:inline-block;font-size:.68rem;font-weight:800;letter-spacing:.14em;
+      text-transform:uppercase;color:rgba(251,191,36,.85);margin-bottom:8px;
     }
-    .atlas-teaser h3{
-      font-size:1.15rem;font-weight:900;
-      color:var(--text);margin-bottom:8px;
-    }
-    .atlas-teaser p{
-      font-size:.88rem;color:var(--muted);line-height:1.65;
-      max-width:520px;margin:0 auto;
-    }
+    .atlas-teaser h3{font-size:1.1rem;font-weight:900;color:var(--text);margin-bottom:7px;}
+    .atlas-teaser p{font-size:.86rem;color:var(--muted);line-height:1.65;max-width:500px;margin:0 auto;}
 
-    /* ── RETURNING USERS ── */
+    /* ── RETURNING ── */
     .returning{
-      padding:20px 24px;border-radius:16px;
+      padding:18px 22px;border-radius:16px;
       background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);
-      display:flex;align-items:center;justify-content:space-between;gap:16px;
-      flex-wrap:wrap;
+      display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
     }
-    .returning p{font-size:.88rem;color:var(--muted);}
+    .returning p{font-size:.87rem;color:var(--muted);}
     .returning p strong{color:var(--text);font-weight:800;}
     .returning-btn{
       display:inline-flex;align-items:center;gap:7px;
@@ -280,21 +277,15 @@
 
     /* ── LEGAL ── */
     .legal{
-      margin-top:40px;padding-top:24px;
-      border-top:1px solid rgba(255,255,255,.07);
-      text-align:center;
+      margin-top:36px;padding-top:22px;
+      border-top:1px solid rgba(255,255,255,.07);text-align:center;
     }
     .legal-links{
-      display:flex;justify-content:center;gap:20px;flex-wrap:wrap;
-      margin-bottom:12px;
+      display:flex;justify-content:center;gap:20px;flex-wrap:wrap;margin-bottom:10px;
     }
-    .legal-links a{
-      font-size:.8rem;color:rgba(230,237,247,.45);text-decoration:none;
-      transition:color .15s;
-    }
+    .legal-links a{font-size:.8rem;color:rgba(230,237,247,.40);text-decoration:none;transition:color .15s;}
     .legal-links a:hover{color:rgba(96,165,250,.8);}
-    .legal-text{font-size:.76rem;color:rgba(230,237,247,.28);line-height:1.6;}
-    .legal-text + .legal-text{margin-top:5px;}
+    .legal-text{font-size:.76rem;color:rgba(230,237,247,.26);line-height:1.6;}
 
     /* ── MODAL ── */
     .modal-backdrop{
@@ -327,8 +318,7 @@
       display:flex;align-items:center;justify-content:space-between;gap:10px;
       padding:13px 14px;border-radius:14px;
       border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.03);
-      color:rgba(230,237,247,.90);font-weight:800;text-decoration:none;
-      transition:all .15s;
+      color:rgba(230,237,247,.90);font-weight:800;text-decoration:none;transition:all .15s;
     }
     .menu-link:hover{border-color:rgba(20,184,166,.4);transform:translateY(-1px);}
     .menu-link span:last-child{color:rgba(230,237,247,.45);font-size:.84rem;font-weight:700;}
@@ -336,14 +326,14 @@
     /* Animations */
     @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
     .hero{animation:fadeUp .6s ease both;}
-    .steps-grid{animation:fadeUp .6s ease .15s both;}
-    .why-section{animation:fadeUp .6s ease .2s both;}
-    .privacy-block{animation:fadeUp .6s ease .25s both;}
+    .steps-wrap{animation:fadeUp .6s ease .12s both;}
+    .why-section{animation:fadeUp .6s ease .18s both;}
+    .privacy-block{animation:fadeUp .6s ease .22s both;}
+    .atlas-teaser{animation:fadeUp .6s ease .26s both;}
   </style>
 </head>
 <body>
 
-  <!-- TOPBAR -->
   <header class="topbar" role="banner">
     <div class="topbar-inner">
       <a class="brand" href="index.html">Empower.U</a>
@@ -367,8 +357,8 @@
       <h1>Know how you think.<br><em>Know what you need right now.</em></h1>
 
       <p class="hero-sub">
-        Two assessments. One portable profile. A clearer picture of how your mind works
-        and what your current season actually calls for.
+        <strong style="color:rgba(230,237,247,.55);font-weight:800;">Two comprehensive assessments</strong> that map your cognitive wiring and your current season.
+        Together they produce a profile that tells you, and any AI you use, exactly how you operate.
       </p>
 
       <div class="trust-row">
@@ -394,31 +384,40 @@
         Start the assessment
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
       </a>
-      <div class="cta-note">Takes about 15 minutes. COM is longer than most tests - that depth is what makes the results accurate.</div>
+
+      <div class="time-callout">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        About 20 minutes total. The length is what makes the results accurate.
+        <span class="time-divider"></span>
+        Answers save automatically if you get distracted.
+      </div>
     </section>
 
     <!-- HOW IT WORKS -->
-    <div style="margin-bottom:16px;text-align:center;">
-      <div class="section-label">How it works</div>
-      <div class="section-title">Two layers. One profile.</div>
-      <div class="section-sub" style="max-width:520px;margin-left:auto;margin-right:auto;">Most assessments tell you what type you are. UTF maps how you actually operate and what you need right now.</div>
-    </div>
-
-    <div class="steps-grid">
-      <div class="step-card">
-        <div class="step-num">Step 1 &bull; 10 min</div>
-        <div class="step-name com">COM</div>
-        <p class="step-desc">Cognitive Operating Mode. Your stable wiring. How you think, decide, process, and show up consistently regardless of circumstances.</p>
+    <div class="steps-wrap">
+      <div class="steps-intro">
+        <div class="section-label">How it works</div>
+        <div class="section-title">Two assessments. One profile.</div>
+        <div class="section-sub" style="max-width:480px;margin-left:auto;margin-right:auto;">
+          COM captures your stable cognitive wiring. SOM captures your current season. Together they become your UTF profile.
+        </div>
       </div>
-      <div class="step-card">
-        <div class="step-num">Step 2 &bull; 5 min</div>
-        <div class="step-name som">SOM</div>
-        <p class="step-desc">Seasonal Operating Mode. Your current state. Where your energy and focus actually are right now, not where they usually are.</p>
-      </div>
-      <div class="step-card">
-        <div class="step-num">Step 3</div>
-        <div class="step-name synth">UTF Profile</div>
-        <p class="step-desc">COM + SOM combined. A private, portable profile that shows how your wiring and current season are interacting right now.</p>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-num">Step 1 &bull; ~15 min</div>
+          <div class="step-name com">COM</div>
+          <p class="step-desc">Cognitive Operating Mode. Your stable wiring: how you think, decide, and show up consistently regardless of circumstances.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">Step 2 &bull; ~5 min</div>
+          <div class="step-name som">SOM</div>
+          <p class="step-desc">Seasonal Operating Mode. Your current state: where your energy and focus actually are right now, not where they usually are.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-num">Step 3</div>
+          <div class="step-name synth">UTF Profile</div>
+          <p class="step-desc">COM and SOM combined. A portable profile that shows how your wiring and current season are interacting right now.</p>
+        </div>
       </div>
     </div>
 
@@ -442,7 +441,7 @@
           </div>
           <div class="why-text">
             <strong>No labels that box you in</strong>
-            <span>No binary types, no archetypes mapped to celebrities. Just a precise, multi-dimensional picture of how your system actually works.</span>
+            <span>No binary types, no archetypes mapped to celebrities. A precise, multi-dimensional picture of how your system actually works.</span>
           </div>
         </div>
         <div class="why-item">
@@ -451,7 +450,7 @@
           </div>
           <div class="why-text">
             <strong>Portable and AI-ready</strong>
-            <span>Your UTF profile generates an Atlas payload you can paste into any AI chat. The AI reads how you think and adapts to you, not the other way around.</span>
+            <span>Your profile generates an Atlas payload you can paste into any AI chat so it understands how you think before you even start.</span>
           </div>
         </div>
         <div class="why-item">
@@ -460,7 +459,7 @@
           </div>
           <div class="why-text">
             <strong>Designed to feel accurate</strong>
-            <span>Every dimension, description, and interaction text is written to reflect function, not personality judgment. You should feel understood, not categorized.</span>
+            <span>Every description is written to reflect function, not personality judgment. You should feel understood, not categorized.</span>
           </div>
         </div>
       </div>
@@ -473,7 +472,7 @@
       </div>
       <div class="privacy-content">
         <strong>Your data is yours. Completely.</strong>
-        <p>We collect no emails, no accounts, no identifying information. Your results are stored locally on your device and go nowhere unless you actively copy your profile and paste it somewhere. Anonymous, aggregated response patterns may be used to improve the assessment over time. Nothing is tied to you individually, and nothing is ever sold.</p>
+        <p>No emails, no accounts, no identifying information collected. Your results are stored locally on your device and go nowhere unless you actively copy your profile. Anonymous, aggregated patterns may be used to improve the assessment over time. Nothing is tied to you individually, and nothing is ever sold.</p>
       </div>
     </div>
 
@@ -502,10 +501,10 @@
         <a href="som.html">Take SOM</a>
       </div>
       <div class="legal-text">For self-reflection and personal insight only. Not therapy, not medical advice, not a clinical diagnostic tool.</div>
-      <div class="legal-text" style="margin-top:6px;">&copy; <span id="yearNow"></span> Empower.U. Unified Typing Framework, COM, and SOM are proprietary to Empower.U.</div>
+      <div class="legal-text" style="margin-top:5px;">&copy; <span id="yearNow"></span> Empower.U. Unified Typing Framework, COM, and SOM are proprietary to Empower.U.</div>
     </div>
 
-  </div><!-- /container -->
+  </div>
 
   <!-- MENU MODAL -->
   <div class="modal-backdrop" id="menuModal" aria-hidden="true">
@@ -531,9 +530,9 @@
     var yearEl = document.getElementById("yearNow");
     if(yearEl) yearEl.textContent = new Date().getFullYear();
 
-    var menuModal  = document.getElementById("menuModal");
-    var btnMenu    = document.getElementById("btnMenu");
-    var btnClose   = document.getElementById("btnCloseMenu");
+    var menuModal = document.getElementById("menuModal");
+    var btnMenu   = document.getElementById("btnMenu");
+    var btnClose  = document.getElementById("btnCloseMenu");
 
     function openMenu(){
       if(!menuModal) return;
@@ -547,7 +546,7 @@
       menuModal.setAttribute("aria-hidden","true");
       document.body.style.overflow="";
     }
-    if(btnMenu)  btnMenu.addEventListener("click",  openMenu);
+    if(btnMenu)  btnMenu.addEventListener("click", openMenu);
     if(btnClose) btnClose.addEventListener("click", closeMenu);
     if(menuModal) menuModal.addEventListener("click", function(e){ if(e.target===this) closeMenu(); });
     document.addEventListener("keydown", function(e){ if(e.key==="Escape") closeMenu(); });
@@ -555,4 +554,3 @@
 
 </body>
 </html>
-
