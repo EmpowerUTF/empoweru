@@ -2009,6 +2009,9 @@
           answers: arr,
           updatedAt: new Date().toISOString()
         };
+        // Preserve saved tie-breaker result so re-calculating doesn't re-trigger the modal
+        var _existing = _readSavedRaw(AUTOSAVE_KEY);
+        if (_existing && _existing.tieBreaker) payload.tieBreaker = _existing.tieBreaker;
         var s = JSON.stringify(payload);
         localStorage.setItem(AUTOSAVE_KEY, s);
         try{ localStorage.setItem(AUTOSAVE_KEY_BAK, s); } catch(e2){}

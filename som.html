@@ -1569,6 +1569,8 @@
           answers: getAnswersArrayFromUI(),
           updatedAt: new Date().toISOString()
         };
+        // Preserve saved tie-breaker result so re-calculating doesn't re-trigger the modal
+        try{ var _ex = JSON.parse(localStorage.getItem(AUTOSAVE_KEY)||'null'); if(_ex&&_ex.tieBreaker) payload.tieBreaker=_ex.tieBreaker; }catch(e2){}
         localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(payload));
       } catch(e){}
     }
