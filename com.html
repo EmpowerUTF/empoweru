@@ -900,16 +900,14 @@
       text-align: center;
       max-width: 280px;
     }
-    @media (min-width: 900px){
-      .trait-spectrum{display:flex;flex-direction:column;gap:18px;padding:4px 0;}
-      .spectrum-row{display:grid;grid-template-columns:130px 1fr;grid-template-rows:auto auto;gap:4px 12px;align-items:center;}
-      @media(max-width:520px){.spectrum-row{grid-template-columns:100px 1fr;}}
-      .spectrum-label{font-size:.78rem;font-weight:700;color:rgba(230,237,247,0.75);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-      .spectrum-track{height:7px;border-radius:999px;background:rgba(255,255,255,0.07);overflow:hidden;}
-      .spectrum-fill{height:100%;border-radius:999px;transition:width .6s cubic-bezier(.4,0,.2,1);min-width:3px;}
-      .spectrum-desc{grid-column:1/-1;font-size:.82rem;color:rgba(230,237,247,0.58);line-height:1.55;padding-top:2px;}
-      .spectrum-divider{height:1px;background:rgba(255,255,255,0.08);margin:4px 0;}
-    }
+    .trait-spectrum{display:flex;flex-direction:column;gap:18px;padding:4px 0;}
+    .spectrum-row{display:grid;grid-template-columns:130px 1fr;grid-template-rows:auto auto;gap:4px 12px;align-items:center;}
+    @media(max-width:520px){.spectrum-row{grid-template-columns:100px 1fr;}}
+    .spectrum-label{font-size:.78rem;font-weight:700;color:rgba(230,237,247,0.75);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .spectrum-track{height:7px;border-radius:999px;background:rgba(255,255,255,0.07);overflow:hidden;}
+    .spectrum-fill{height:100%;border-radius:999px;transition:width .6s cubic-bezier(.4,0,.2,1);min-width:3px;}
+    .spectrum-desc{grid-column:1/-1;font-size:.82rem;color:rgba(230,237,247,0.58);line-height:1.55;padding-top:2px;}
+    .spectrum-divider{height:1px;background:rgba(255,255,255,0.08);margin:4px 0;}
 
       .tier-pill{
       display:inline-flex;
@@ -2506,7 +2504,7 @@ const TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
         : eVal <= E_IN
           ? "You tend to think best privately first, and quiet time is generally what restores your clarity."
           : "You can switch between social and solo depending on the situation, and your best results come from balance.";
-      var eCol = eVal >= E_OUT ? "linear-gradient(90deg,#f59e0b,#f97316)" : eVal <= E_IN ? "linear-gradient(90deg,#6366f1,#4c6fff)" : "rgba(148,163,184,0.45)";
+      var eCol = eVal >= E_OUT ? "linear-gradient(90deg,#f59e0b,#f97316)" : eVal <= E_IN ? "linear-gradient(90deg,#6366f1,#4c6fff)" : "linear-gradient(90deg,#6366f1,#8b5cf6)";
       var ePct = barPct(eVal);
 
       var eDivider = document.createElement("div");
