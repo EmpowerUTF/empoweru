@@ -102,8 +102,8 @@
       width:46px;
       height:42px;
       border-radius:14px;
-      border:1px solid rgba(255,255,255,0.18);
-      background:rgba(255,255,255,0.07);
+      border:1px solid rgba(229,231,235,0.14);
+      background:rgba(229,231,235,0.03);
       color:rgba(230,237,247,0.92);
       cursor:pointer;
       transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
@@ -900,16 +900,14 @@
       text-align: center;
       max-width: 280px;
     }
-    @media (min-width: 900px){
-      .trait-spectrum{display:flex;flex-direction:column;gap:18px;padding:4px 0;}
-      .spectrum-row{display:grid;grid-template-columns:130px 1fr;grid-template-rows:auto auto;gap:4px 12px;align-items:center;}
-      @media(max-width:520px){.spectrum-row{grid-template-columns:100px 1fr;}}
-      .spectrum-label{font-size:.78rem;font-weight:700;color:rgba(230,237,247,0.75);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-      .spectrum-track{height:7px;border-radius:999px;background:rgba(255,255,255,0.07);overflow:hidden;}
-      .spectrum-fill{height:100%;border-radius:999px;transition:width .6s cubic-bezier(.4,0,.2,1);min-width:3px;}
-      .spectrum-desc{grid-column:1/-1;font-size:.82rem;color:rgba(230,237,247,0.58);line-height:1.55;padding-top:2px;}
-      .spectrum-divider{height:1px;background:rgba(255,255,255,0.08);margin:4px 0;}
-    }
+    .trait-spectrum{display:flex;flex-direction:column;gap:18px;padding:4px 0;}
+    .spectrum-row{display:grid;grid-template-columns:130px 1fr;grid-template-rows:auto auto;gap:4px 12px;align-items:center;}
+    @media(max-width:520px){.spectrum-row{grid-template-columns:100px 1fr;}}
+    .spectrum-label{font-size:.78rem;font-weight:700;color:rgba(230,237,247,0.75);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .spectrum-track{height:7px;border-radius:999px;background:rgba(255,255,255,0.07);overflow:hidden;}
+    .spectrum-fill{height:100%;border-radius:999px;transition:width .6s cubic-bezier(.4,0,.2,1);min-width:3px;}
+    .spectrum-desc{grid-column:1/-1;font-size:.82rem;color:rgba(230,237,247,0.58);line-height:1.55;padding-top:2px;}
+    .spectrum-divider{height:1px;background:rgba(255,255,255,0.08);margin:4px 0;}
 
       .tier-pill{
       display:inline-flex;
@@ -1728,7 +1726,7 @@
     var EMPOWERU_EXPLAIN_URL     = "./explain.html";
     var EMPOWERU_ABOUT_URL       = "./about.html";
 
-    var EMPOWERU_SCORE_ENDPOINT  = "https://nnexuss-empoweru-backend.hf.space/api/score";
+    var EMPOWERU_SCORE_ENDPOINT  = "YOUR_SCORE_ENDPOINT_HERE";
     var EMPOWERU_AUTOSAVE_LOCAL  = true;
 
     var AUTOSAVE_KEY             = "empoweru_utf2_com_v1_3_0";

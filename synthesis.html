@@ -44,7 +44,7 @@
     .topbar{position:fixed;top:0;left:0;right:0;z-index:2500;padding:10px 12px;background:rgba(10,12,20,0.70);backdrop-filter:blur(12px);box-shadow:0 18px 54px rgba(0,0,0,.45);}
     .topbar::before{content:"";position:absolute;inset:-1px;background:radial-gradient(520px 140px at 50% 50%,rgba(59,130,246,.26),rgba(20,184,166,.22),transparent 68%);pointer-events:none;opacity:.95;z-index:0;}
     .topbar-inner{max-width:980px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;position:relative;z-index:1;}
-    .home-btn,.menu-btn{position:relative;display:inline-flex;align-items:center;justify-content:center;width:46px;height:42px;border-radius:14px;border:1px solid rgba(229,231,235,0.14);background:rgba(229,231,235,0.03);color:rgba(230,237,247,0.92);cursor:pointer;transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease;text-decoration:none;flex:0 0 auto;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent;}
+    .home-btn,.menu-btn{position:relative;display:inline-flex;align-items:center;justify-content:center;width:46px;height:42px;border-radius:14px;border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.07);color:rgba(230,237,247,0.92);cursor:pointer;transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease;text-decoration:none;flex:0 0 auto;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent;}
     .home-btn{width:42px;}
     .home-btn:hover,.menu-btn:hover{transform:translateY(-1px);border-color:rgba(20,184,166,0.45);box-shadow:0 14px 34px rgba(0,0,0,.35);}
     .topbar-center{flex:1 1 auto;display:flex;align-items:center;justify-content:center;min-width:0;}
@@ -249,90 +249,79 @@
     .utf-cta-btn svg{opacity:.6;transition:opacity .2s;}
     .utf-cta-btn:hover svg{opacity:1;}
 
-    /* ── ACCURACY RATING WIDGET ── */
+    /* ── ACCURACY RATING ── */
     .rating-gate{
-      padding:18px 22px 20px;
+      padding:16px 22px 14px;
       background:rgba(255,255,255,0.025);
-      border-left:1px solid rgba(94,234,212,0.18);
-      border-right:1px solid rgba(94,234,212,0.18);
+      border-left:1px solid rgba(94,234,212,0.20);
+      border-right:1px solid rgba(94,234,212,0.20);
     }
     .rating-gate-label{
-      font-size:.82rem;font-weight:800;color:rgba(230,237,247,0.80);
-      margin-bottom:12px;letter-spacing:.01em;
+      font-size:.80rem;font-weight:700;color:rgba(230,237,247,0.72);
+      margin-bottom:10px;
     }
-    .rating-stars{
-      display:flex;gap:6px;margin-bottom:12px;
+    .rating-nums{
+      display:flex;gap:5px;margin-bottom:10px;
     }
-    .rating-star{
-      width:36px;height:36px;border-radius:10px;border:1px solid rgba(255,255,255,0.12);
-      background:rgba(255,255,255,0.03);color:rgba(230,237,247,0.50);
-      font-size:.82rem;font-weight:900;cursor:pointer;
+    .rating-num{
+      flex:1;height:34px;border-radius:8px;
+      border:1px solid rgba(255,255,255,0.10);
+      background:rgba(255,255,255,0.03);
+      color:rgba(230,237,247,0.50);
+      font-size:.80rem;font-weight:800;cursor:pointer;
       display:flex;align-items:center;justify-content:center;
-      transition:all .15s;touch-action:manipulation;
+      transition:all .12s;touch-action:manipulation;
       -webkit-tap-highlight-color:transparent;
-      flex:1;max-width:44px;
     }
-    .rating-star:hover,.rating-star.selected{
+    .rating-num:hover,.rating-num.sel{
       background:rgba(94,234,212,0.12);
       border-color:rgba(94,234,212,0.45);
       color:rgba(94,234,212,0.95);
     }
     .rating-comment{
       width:100%;background:rgba(255,255,255,0.03);
-      border:1px solid rgba(255,255,255,0.10);border-radius:10px;
-      color:var(--text);font-size:.84rem;padding:10px 12px;
+      border:1px solid rgba(255,255,255,0.09);border-radius:8px;
+      color:var(--text);font-size:.82rem;padding:9px 11px;
       resize:none;font-family:inherit;line-height:1.5;
-      outline:none;transition:border-color .15s;
-      box-sizing:border-box;
+      outline:none;transition:border-color .15s;box-sizing:border-box;
     }
-    .rating-comment:focus{border-color:rgba(94,234,212,0.35);}
-    .rating-comment::placeholder{color:rgba(230,237,247,0.30);}
-
-    /* ── THANK YOU + EMAIL OPT-IN ── */
-    .rating-thankyou{
-      display:none;
-      padding:16px 22px;
-      background:rgba(94,234,212,0.06);
+    .rating-comment:focus{border-color:rgba(94,234,212,0.30);}
+    .rating-comment::placeholder{color:rgba(230,237,247,0.25);}
+    /* ── THANK YOU / EMAIL ── */
+    .rating-ty{
+      display:none;padding:14px 22px 16px;
+      background:rgba(94,234,212,0.05);
       border-left:1px solid rgba(94,234,212,0.18);
       border-right:1px solid rgba(94,234,212,0.18);
     }
-    .rating-thankyou.show{display:block;}
-    .rating-ty-msg{
-      font-size:.85rem;color:rgba(94,234,212,0.88);
-      font-weight:800;margin-bottom:10px;
-    }
-    .rating-email-row{
-      display:flex;gap:8px;flex-wrap:wrap;align-items:center;
-    }
-    .rating-email-input{
-      flex:1;min-width:0;
-      background:rgba(255,255,255,0.04);
-      border:1px solid rgba(255,255,255,0.12);border-radius:10px;
-      color:var(--text);font-size:.83rem;padding:9px 12px;
+    .rating-ty.show{display:block;}
+    .rating-ty-msg{font-size:.84rem;color:rgba(94,234,212,0.85);font-weight:800;margin-bottom:8px;}
+    .rating-ty-sub{font-size:.78rem;color:rgba(230,237,247,0.45);margin-bottom:10px;line-height:1.55;}
+    .rating-email-row{display:flex;gap:7px;flex-wrap:wrap;}
+    .rating-email-in{
+      flex:1;min-width:0;background:rgba(255,255,255,0.04);
+      border:1px solid rgba(255,255,255,0.10);border-radius:8px;
+      color:var(--text);font-size:.82rem;padding:8px 11px;
       outline:none;font-family:inherit;transition:border-color .15s;
       box-sizing:border-box;
     }
-    .rating-email-input:focus{border-color:rgba(94,234,212,0.35);}
-    .rating-email-input::placeholder{color:rgba(230,237,247,0.28);}
+    .rating-email-in:focus{border-color:rgba(94,234,212,0.30);}
+    .rating-email-in::placeholder{color:rgba(230,237,247,0.25);}
     .rating-email-btn{
-      padding:9px 16px;border-radius:10px;font-size:.82rem;font-weight:800;
-      border:1px solid rgba(94,234,212,0.35);
-      background:rgba(94,234,212,0.10);color:rgba(94,234,212,0.90);
-      cursor:pointer;white-space:nowrap;transition:all .15s;
+      padding:8px 14px;border-radius:8px;font-size:.80rem;font-weight:800;
+      border:1px solid rgba(94,234,212,0.30);
+      background:rgba(94,234,212,0.09);color:rgba(94,234,212,0.85);
+      cursor:pointer;white-space:nowrap;transition:all .12s;
       touch-action:manipulation;
     }
-    .rating-email-btn:hover{background:rgba(94,234,212,0.18);}
-    .rating-email-btn.submitted{
-      border-color:rgba(255,255,255,0.10);
-      background:rgba(255,255,255,0.03);
-      color:rgba(230,237,247,0.40);cursor:default;
-    }
+    .rating-email-btn:hover:not(:disabled){background:rgba(94,234,212,0.16);}
+    .rating-email-btn:disabled{opacity:.4;cursor:default;}
     .rating-skip{
-      font-size:.76rem;color:rgba(230,237,247,0.30);
+      display:block;font-size:.73rem;color:rgba(230,237,247,0.28);
       margin-top:6px;cursor:pointer;text-align:right;
-      display:block;transition:color .15s;
+      transition:color .12s;
     }
-    .rating-skip:hover{color:rgba(230,237,247,0.55);}
+    .rating-skip:hover{color:rgba(230,237,247,0.50);}
   </style>
 </head>
 <body>
@@ -442,6 +431,60 @@
         </div>
       </div>
 
+      <!-- ATLAS: unified block -->
+      <div class="atlas-wrap">
+        <div class="atlas-copy-row">
+          <div class="atlas-copy-left">
+            <div class="atlas-copy-title">Atlas</div>
+            <div class="atlas-copy-desc">Copy your profile payload and paste it into any AI chat. The AI reads your cognitive identity, current season, and how you think, and adapts every response to match.</div>
+          </div>
+        </div>
+        <div class="atlas-agreement">
+          <label>
+            <input type="checkbox" id="atlasAgreeChk" onchange="setAtlasCopyEnabled()" />
+            <div>I understand that Atlas is a self-reflection tool, not professional advice. I take full responsibility for how I interpret and act on anything an AI tells me using this payload. I agree to the <a href="#" id="openAtlasAgreement" onclick="event.preventDefault();event.stopPropagation();openAtlasAgreementModal();">Atlas User Agreement</a>.</div>
+          </label>
+        </div>
+
+        <!-- Accuracy rating gate (required before copy unlocks) -->
+        <div class="rating-gate" id="ratingGate" style="display:none;">
+          <div class="rating-gate-label">How accurately does this profile describe you? <span style="color:rgba(94,234,212,0.70);">(required to copy)</span></div>
+          <div class="rating-nums" id="ratingNums">
+            <button class="rating-num" type="button" data-v="1" onclick="setRating(1)">1</button>
+            <button class="rating-num" type="button" data-v="2" onclick="setRating(2)">2</button>
+            <button class="rating-num" type="button" data-v="3" onclick="setRating(3)">3</button>
+            <button class="rating-num" type="button" data-v="4" onclick="setRating(4)">4</button>
+            <button class="rating-num" type="button" data-v="5" onclick="setRating(5)">5</button>
+            <button class="rating-num" type="button" data-v="6" onclick="setRating(6)">6</button>
+            <button class="rating-num" type="button" data-v="7" onclick="setRating(7)">7</button>
+            <button class="rating-num" type="button" data-v="8" onclick="setRating(8)">8</button>
+            <button class="rating-num" type="button" data-v="9" onclick="setRating(9)">9</button>
+            <button class="rating-num" type="button" data-v="10" onclick="setRating(10)">10</button>
+          </div>
+          <textarea class="rating-comment" id="ratingComment" rows="2" maxlength="400"
+            placeholder="Anything feel off or especially accurate? (optional)"></textarea>
+        </div>
+
+        <!-- Thank you + early adopter email opt-in (shown after first copy) -->
+        <div class="rating-ty" id="ratingTy">
+          <div class="rating-ty-msg">Thank you for the rating.</div>
+          <div class="rating-ty-sub">Want to know when new modules, features, and tools launch? Early adopters get first access.</div>
+          <div class="rating-email-row">
+            <input class="rating-email-in" id="ratingEmailIn" type="email"
+              placeholder="your@email.com (optional)" maxlength="200" autocomplete="email" />
+            <button class="rating-email-btn" id="ratingEmailBtn" type="button" onclick="submitRatingEmail()">Notify me</button>
+          </div>
+          <span class="rating-skip" onclick="dismissRatingEmail()">No thanks</span>
+        </div>
+
+        <button class="copy-btn" id="copyBtn" type="button" onclick="copyAtlas()" disabled>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copy Atlas payload
+        </button>
+      </div>
+      <div id="copiedNote" style="display:none;text-align:center;margin-top:10px;font-size:.88rem;color:rgba(52,211,153,.9);font-weight:800;">Copied. Paste into any AI chat to get started.</div>
+      <textarea id="atlasBox" style="position:fixed;opacity:0;pointer-events:none;width:1px;height:1px;top:-100px;" aria-hidden="true" tabindex="-1"></textarea>
+
       <!-- RIGHT NOW -->
       <div class="acc-section" style="margin-top:18px;">
         <button class="acc-btn acc-btn-featured open" type="button" onclick="toggleAcc('nowPanel',this)">
@@ -467,6 +510,36 @@
         </div>
       </div>
 
+      <!-- EXPLORE CTA: above trait bars -->
+      <div class="explore-cta">
+        <div class="explore-cta-title">There&rsquo;s more to explore</div>
+        <div class="explore-cta-sub">Your profile has more layers. Open any section below or scroll back up to revisit your results.</div>
+        <div class="explore-chips">
+          <span class="explore-chip" onclick="openAndScroll('nowPanel',null)">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Right now
+          </span>
+          <span class="explore-chip" onclick="openAndScroll('commPanel',null)">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Communication style
+          </span>
+          <span class="explore-chip" onclick="openAndScroll('dimsPanel',null)">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            Dimension snapshot
+          </span>
+        </div>
+        <div class="retake-row">
+          <a class="retake-link" href="com.html">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.72"/></svg>
+            Retake COM
+          </a>
+          <a class="retake-link" href="som.html">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.72"/></svg>
+            Retake SOM
+          </a>
+        </div>
+      </div>
+
       <!-- DIMENSION SNAPSHOT -->
       <div class="acc-section">
         <button class="acc-btn" type="button" onclick="toggleAcc('dimsPanel',this)">
@@ -476,73 +549,6 @@
         <div class="acc-panel" id="dimsPanel">
           <div class="acc-inner" id="dimsContent"></div>
         </div>
-      </div>
-
-      <!-- ATLAS: unified block -->
-      <div class="atlas-wrap">
-        <div class="atlas-copy-row">
-          <div class="atlas-copy-left">
-            <div class="atlas-copy-title">Atlas</div>
-            <div class="atlas-copy-desc">Copy your profile payload and paste it into any AI chat. The AI reads your cognitive identity, current season, and how you think, and adapts every response to match.</div>
-          </div>
-        </div>
-        <div class="atlas-agreement">
-          <label>
-            <input type="checkbox" id="atlasAgreeChk" onchange="setAtlasCopyEnabled()" />
-            <div>I understand that Atlas is a self-reflection tool, not professional advice. I take full responsibility for how I interpret and act on anything an AI tells me using this payload. I agree to the <a href="#" id="openAtlasAgreement" onclick="event.preventDefault();event.stopPropagation();openAtlasAgreementModal();">Atlas User Agreement</a>.</div>
-          </label>
-        </div>
-        <!-- Accuracy rating gate -->
-        <div class="rating-gate" id="ratingGate" style="display:none;">
-          <div class="rating-gate-label">How accurately does this profile describe you? (Required to copy)</div>
-          <div class="rating-stars" id="ratingStars">
-            <button class="rating-star" type="button" data-val="1" onclick="setRating(1)" aria-label="1">1</button>
-            <button class="rating-star" type="button" data-val="2" onclick="setRating(2)" aria-label="2">2</button>
-            <button class="rating-star" type="button" data-val="3" onclick="setRating(3)" aria-label="3">3</button>
-            <button class="rating-star" type="button" data-val="4" onclick="setRating(4)" aria-label="4">4</button>
-            <button class="rating-star" type="button" data-val="5" onclick="setRating(5)" aria-label="5">5</button>
-            <button class="rating-star" type="button" data-val="6" onclick="setRating(6)" aria-label="6">6</button>
-            <button class="rating-star" type="button" data-val="7" onclick="setRating(7)" aria-label="7">7</button>
-            <button class="rating-star" type="button" data-val="8" onclick="setRating(8)" aria-label="8">8</button>
-            <button class="rating-star" type="button" data-val="9" onclick="setRating(9)" aria-label="9">9</button>
-            <button class="rating-star" type="button" data-val="10" onclick="setRating(10)" aria-label="10">10</button>
-          </div>
-          <textarea class="rating-comment" id="ratingComment" rows="2" maxlength="400"
-            placeholder="Anything feel off or especially accurate? (optional)"></textarea>
-        </div>
-
-        <!-- Thank you + email opt-in (shown after first copy) -->
-        <div class="rating-thankyou" id="ratingThankyou">
-          <div class="rating-ty-msg">Thank you for the rating.</div>
-          <div style="font-size:.8rem;color:rgba(230,237,247,0.50);margin-bottom:10px;">
-            Want to hear when new features, modules, and tools launch? Early adopters get access first.
-          </div>
-          <div class="rating-email-row">
-            <input class="rating-email-input" id="ratingEmail" type="email"
-              placeholder="your@email.com (optional)" maxlength="200" autocomplete="email" />
-            <button class="rating-email-btn" id="ratingEmailBtn" type="button" onclick="submitEmail()">Notify me</button>
-          </div>
-          <span class="rating-skip" onclick="dismissEmailPrompt()">No thanks</span>
-        </div>
-
-        <button class="copy-btn" id="copyBtn" type="button" onclick="copyAtlas()" disabled>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy Atlas payload
-        </button>
-      </div>
-      <div id="copiedNote" style="display:none;text-align:center;margin-top:10px;font-size:.88rem;color:rgba(52,211,153,.9);font-weight:800;">Copied. Paste into any AI chat to get started.</div>
-      <textarea id="atlasBox" style="position:fixed;opacity:0;pointer-events:none;width:1px;height:1px;top:-100px;" aria-hidden="true" tabindex="-1"></textarea>
-
-      <!-- RETAKE LINKS -->
-      <div style="display:flex;gap:10px;justify-content:center;margin:20px 0 4px;">
-        <a href="com.html" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);color:rgba(230,237,247,0.35);font-size:.75rem;font-weight:700;text-decoration:none;transition:all .15s;touch-action:manipulation;" onmouseover="this.style.color='rgba(94,234,212,0.70)';this.style.borderColor='rgba(94,234,212,0.25)'" onmouseout="this.style.color='rgba(230,237,247,0.35)';this.style.borderColor='rgba(255,255,255,0.08)'" aria-label="Retake COM">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.72"/></svg>
-          COM
-        </a>
-        <a href="som.html" style="display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);background:rgba(255,255,255,0.03);color:rgba(230,237,247,0.35);font-size:.75rem;font-weight:700;text-decoration:none;transition:all .15s;touch-action:manipulation;" onmouseover="this.style.color='rgba(94,234,212,0.70)';this.style.borderColor='rgba(94,234,212,0.25)'" onmouseout="this.style.color='rgba(230,237,247,0.35)';this.style.borderColor='rgba(255,255,255,0.08)'" aria-label="Retake SOM">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.72"/></svg>
-          SOM
-        </a>
       </div>
 
       <!-- WHAT IS UTF: standalone bottom CTA -->
@@ -610,15 +616,15 @@ var COM_HOW_TEXTS = {
 };
 
 var SOM_FULL_DESCS = {
-  DRV:"High energy plus output focus. This is an execution season where you want results and visible progress. You do best with clear targets and short feedback loops. Keep recovery intentional so output stays clean instead of frantic.",
-  HRB:"High energy plus people focus. This is a connection season where relationships, tone, and trust feel unusually important. You may be drawn to check-ins, shared time, and strengthening bonds. Keep boundaries so connection stays nourishing.",
-  TBZ:"High energy plus change focus. This is an exploration season where novelty and movement feel energizing. You learn fast through experience and iteration. Run experiments with limits, then keep the winners.",
-  BLD:"Steady energy plus output focus. This is a deep work season built on consistency and tangible building. You do best when distractions are reduced and priorities are clear. Quiet momentum beats bursts.",
-  EQZ:"Steady energy plus people focus. This is a balance season socially and emotionally, where connection matters but you are not trying to max out. You do best with simple routines and steady relationships. Keep the pace sustainable.",
-  ENH:"Steady energy plus change focus. This is a growth season through small upgrades and smart adjustments. You are expanding capacity without trying to reinvent everything at once. Small improvements compound when you keep them realistic.",
-  BST:"Protected capacity plus output focus. This is a protection season where you simplify and guard your stability while still wanting progress. Your best move is fewer priorities and strong boundaries. Make progress through smaller, reliable steps.",
-  HVN:"Protected capacity plus people focus. This is a recovery season where comfort, trust, and restoration matter most. You do best with safe connection and reduced load. Give yourself permission to rebuild before pushing hard again.",
-  REF:"Protected capacity plus change focus. This is a transition season where you are recalibrating and updating direction. Progress can look uneven, but it is still progress. Keep changes small enough that your system can absorb them."
+  DRV:"Full capacity, output focused. This is an execution season. You have real momentum and the fuel to sustain it. Point it at something worth building and keep recovery intentional so output stays clean.",
+  HRB:"Full capacity, people focused. Relationships, tone, and trust feel unusually important right now. You have the lift to stay genuinely present with people. Keep boundaries so connection stays nourishing, not draining.",
+  TBZ:"Full capacity, change focused. Novelty and movement feel genuinely energizing this season. You are learning fast through experience and iteration. Run experiments with limits, then keep the winners.",
+  BLD:"Steady capacity, output focused. This is a deep work season. Quiet momentum beats bursts right now. Reduce distractions, stay with what matters, and let the consistency compound.",
+  EQZ:"Steady capacity, people focused. Connection is present and sustainable, not intense. You do best with simple routines and steady relationships. Keep the pace warm and manageable.",
+  ENH:"Steady capacity, change focused. You are expanding through smart adjustments, not overhauls. Small improvements compound when you keep them realistic. Trust the process over the pace.",
+  BST:"Protected capacity, output focused. Fewer priorities and strong boundaries are your best move right now. Make progress through smaller, reliable steps. Protecting your stability is not retreat.",
+  HVN:"Protected capacity, people focused. Comfort, trust, and restoration are what this season is asking for. Lean into safe connection and reduced load. Give yourself permission to rebuild before pushing again.",
+  REF:"Protected capacity, change focused. You are recalibrating and updating direction. Progress can look uneven from the inside, but it is still progress. Keep changes small enough that your system can absorb them."
 };
 
 // ── PER-TYPE GRADIENT MAPS ──────────────────────────────────────────────
@@ -876,8 +882,8 @@ function dimLabel(v){
 function dimColor(v){
   if(v >= TH.H)  return "rgba(94,234,212,0.85)";
   if(v >= TH.M)  return "rgba(165,180,252,0.85)";
-  if(v >= TH.L)  return "rgba(203,213,225,0.65)";
-  return "rgba(148,163,184,0.55)";
+  if(v >= TH.L)  return "rgba(148,163,184,0.60)";
+  return "rgba(100,116,139,0.52)";
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -1150,8 +1156,8 @@ function render(comResult, somResult){
   function barColor(v){
     if(v >= TH.H)  return "linear-gradient(90deg,#3b82f6,#14b8a6)";
     if(v >= TH.M)  return "linear-gradient(90deg,#6366f1,#8b5cf6)";
-    if(v > TH.VL)  return "linear-gradient(90deg,#3b4fd4,#5b7cf7)";
-    return "linear-gradient(90deg,#2d3f9e,#4460d4)";
+    if(v >= TH.L)  return "rgba(148,163,184,0.45)";
+    return "rgba(100,116,139,0.35)";
   }
 
   var eVal = avgDims.E || 0;
@@ -1173,7 +1179,7 @@ function render(comResult, somResult){
   });
   // E axis
   var ePct = barPct(eVal);
-  var eCol = eVal >= TH.H ? "linear-gradient(90deg,#f59e0b,#f97316)" : eVal <= TH.L ? "linear-gradient(90deg,#6366f1,#4c6fff)" : "linear-gradient(90deg,#3b4fd4,#5b7cf7)";
+  var eCol = eVal >= TH.H ? "linear-gradient(90deg,#f59e0b,#f97316)" : eVal <= TH.L ? "linear-gradient(90deg,#6366f1,#4c6fff)" : "rgba(148,163,184,0.45)";
   var eText = eVal >= TH.H ? "Outward" : eVal <= TH.L ? "Inward" : "Mixed";
   var eSentence = eVal >= TH.H
     ? "You tend to think clearer through interaction, and people-time is generally more energizing than draining."
@@ -1240,66 +1246,27 @@ function render(comResult, somResult){
 // ─────────────────────────────────────────────────────────────────
 // COPY ATLAS
 // ─────────────────────────────────────────────────────────────────
-function submitEmail(){
-  var input = document.getElementById("ratingEmail");
-  var emailBtn = document.getElementById("ratingEmailBtn");
-  if(!input || !emailBtn) return;
-  var email = (input.value || "").trim();
-  if(email){
-    // Store locally; backend picks this up from the score endpoint or a separate /api/email route
-    try{
-      var existing = JSON.parse(localStorage.getItem("empoweru_email_optins") || "[]");
-      existing.push({email:email, ts:new Date().toISOString(), com_type:_lastComType||"", som_mode:_lastSomMode||""});
-      localStorage.setItem("empoweru_email_optins", JSON.stringify(existing));
-    }catch(e){}
-  }
-  emailBtn.textContent = "Done";
-  emailBtn.classList.add("submitted");
-  emailBtn.disabled = true;
-  if(input) input.disabled = true;
-}
-
-function dismissEmailPrompt(){
-  var ty = document.getElementById("ratingThankyou");
-  if(ty) ty.style.display = "none";
-}
-
-var _ratingSubmitted = false;
-var _lastComType = "";
-var _lastSomMode = "";
-
 function copyAtlas(){
   var box = document.getElementById("atlasBox");
   var btn = document.getElementById("copyBtn");
   var note = document.getElementById("copiedNote");
   var text = box.value || "";
   if(!text) return;
-  // Submit rating on first copy
-  if(!_ratingSubmitted && _ratingVal > 0){
-    _ratingSubmitted = true;
-    var comment = (document.getElementById("ratingComment")||{}).value || "";
-    // Post to backend (fire and forget)
+  // Submit rating on first copy only
+  if(!_ratingDone && _rating > 0){
+    _ratingDone = true;
+    var comment = (document.getElementById("ratingComment")||{}).value||"";
+    var payload = {rating:_rating, comment:comment.trim().slice(0,400),
+                   com_type:_comType, som_mode:_somMode, ts:new Date().toISOString()};
     try{
-      fetch("/api/rating", {
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({
-          rating: _ratingVal,
-          comment: comment.trim().slice(0,400),
-          com_type: _lastComType,
-          som_mode: _lastSomMode,
-          ts: new Date().toISOString()
-        })
-      }).catch(function(){});
+      fetch("https://nnexuss-empoweru-backend.hf.space/api/rating",{method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify(payload)}).catch(function(){});
     }catch(e){}
-    // Store locally as fallback
     try{
-      var prev = JSON.parse(localStorage.getItem("empoweru_ratings")||"[]");
-      prev.push({rating:_ratingVal,comment:comment.trim().slice(0,400),ts:new Date().toISOString()});
-      localStorage.setItem("empoweru_ratings", JSON.stringify(prev));
+      var prev = JSON.parse(localStorage.getItem("eu_ratings")||"[]");
+      prev.push(payload); localStorage.setItem("eu_ratings",JSON.stringify(prev));
     }catch(e){}
-    // Show thank you
-    var ty = document.getElementById("ratingThankyou");
+    var ty = document.getElementById("ratingTy");
     if(ty) ty.classList.add("show");
   }
   function onCopied(){
@@ -1362,26 +1329,54 @@ function showToast(msg){
 // MENU
 // ─────────────────────────────────────────────────────────────────
 // ── ATLAS AGREEMENT ─────────────────────────────────────────────────────────
-var _ratingVal = 0;
+var _rating = 0;
+var _ratingDone = false;
+var _comType = "";
+var _somMode = "";
 
-function setAtlasCopyEnabled(){
-  var chk = document.getElementById("atlasAgreeChk");
-  var btn = document.getElementById("copyBtn");
-  var gate = document.getElementById("ratingGate");
-  if(!btn) return;
-  var checked = !!(chk && chk.checked);
-  if(gate) gate.style.display = checked ? "" : "none";
-  // copy btn enabled only when agreed AND rating selected
-  btn.disabled = !(checked && _ratingVal > 0);
-}
-
-function setRating(val){
-  _ratingVal = val;
-  var stars = document.querySelectorAll(".rating-star");
-  stars.forEach(function(s){
-    s.classList.toggle("selected", parseInt(s.getAttribute("data-val"),10) === val);
+function setRating(v){
+  _rating = v;
+  document.querySelectorAll(".rating-num").forEach(function(b){
+    b.classList.toggle("sel", parseInt(b.getAttribute("data-v"),10) === v);
   });
   setAtlasCopyEnabled();
+}
+
+function setAtlasCopyEnabled(){
+  var chk  = document.getElementById("atlasAgreeChk");
+  var btn  = document.getElementById("copyBtn");
+  var gate = document.getElementById("ratingGate");
+  if(!btn) return;
+  var agreed = !!(chk && chk.checked);
+  if(gate) gate.style.display = agreed ? "" : "none";
+  btn.disabled = !(agreed && _rating > 0);
+}
+
+function submitRatingEmail(){
+  var inp = document.getElementById("ratingEmailIn");
+  var ebtn = document.getElementById("ratingEmailBtn");
+  var email = inp ? inp.value.trim() : "";
+  if(email){
+    try{
+      var list = JSON.parse(localStorage.getItem("eu_early_adopters") || "[]");
+      list.push({email:email, com:_comType, som:_somMode, ts:new Date().toISOString()});
+      localStorage.setItem("eu_early_adopters", JSON.stringify(list));
+    }catch(e){}
+    try{
+      fetch("https://nnexuss-empoweru-backend.hf.space/api/early-adopter", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({email:email, com_type:_comType, som_mode:_somMode, ts:new Date().toISOString()})
+      }).catch(function(){});
+    }catch(e){}
+  }
+  if(ebtn){ ebtn.textContent = "Done"; ebtn.disabled = true; }
+  if(inp) inp.disabled = true;
+}
+
+function dismissRatingEmail(){
+  var ty = document.getElementById("ratingTy");
+  if(ty) ty.classList.remove("show");
 }
 
 function openAtlasAgreementModal(){
@@ -1431,8 +1426,8 @@ document.addEventListener("keydown", function(e){ if(e.key==="Escape"){ var m=do
 
   var hasCOM = !!(comRaw && comRaw.primaryType);
   var hasSOM = !!(somRaw && somRaw.primaryType);
-  if(hasCOM) _lastComType = comRaw.primaryType || "";
-  if(hasSOM) _lastSomMode = somRaw.primaryType || "";
+  if(hasCOM) _comType = comRaw.primaryType || "";
+  if(hasSOM) _somMode = somRaw.primaryType || "";
 
   if(hasCOM && hasSOM){
     render(comRaw, somRaw);
@@ -1483,4 +1478,3 @@ document.addEventListener("keydown", function(e){ if(e.key==="Escape"){ var m=do
   </div>
 </body>
 </html>
-
