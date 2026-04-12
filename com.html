@@ -102,8 +102,8 @@
       width:46px;
       height:42px;
       border-radius:14px;
-      border:1px solid rgba(229,231,235,0.14);
-      background:rgba(229,231,235,0.03);
+      border:1px solid rgba(255,255,255,0.18);
+      background:rgba(255,255,255,0.07);
       color:rgba(230,237,247,0.92);
       cursor:pointer;
       transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
@@ -909,6 +909,7 @@
       .spectrum-fill{height:100%;border-radius:999px;transition:width .6s cubic-bezier(.4,0,.2,1);min-width:3px;}
       .spectrum-desc{grid-column:1/-1;font-size:.82rem;color:rgba(230,237,247,0.58);line-height:1.55;padding-top:2px;}
       .spectrum-divider{height:1px;background:rgba(255,255,255,0.08);margin:4px 0;}
+    }
 
       .tier-pill{
       display:inline-flex;
@@ -952,7 +953,6 @@
         margin: 0 auto;
       }
     }
-    } /* end @media (min-width: 900px) */
 
     /* Tie-breaker modal: uses existing modal styles; no theme changes */
     .tb-hint{
@@ -1016,8 +1016,8 @@
       <div class="modal-body">
         <div class="menu-links">
           <a class="menu-link" id="mHome" data-route="home" href="index.html"><span>Home</span><span>Empower.U</span></a>
-          <a class="menu-link" id="mCom"  data-route="com"  href="com.html"><span>COM Calculator</span><span>Cognitive</span></a>
-          <a class="menu-link" id="mSom"  data-route="som"  href="som.html"><span>SOM Calculator</span><span>Seasonal</span></a>
+          <a class="menu-link" id="mCom"  data-route="com"  href="com.html"><span>COM Assessment</span><span>Cognitive</span></a>
+          <a class="menu-link" id="mSom"  data-route="som"  href="som.html"><span>SOM Assessment</span><span>Seasonal</span></a>
           <a class="menu-link" id="mSyn"  data-route="syn"  href="synthesis.html"><span>UTF Profile</span><span>Synthesis</span></a>
           <a class="menu-link" id="mExp"  data-route="exp"  href="explain.html"><span>What is UTF?</span><span>Guide</span></a>
           <a class="menu-link" id="mAbout" data-route="about" href="about.html"><span>About / Contact</span><span>Info</span></a>
@@ -1029,25 +1029,25 @@
   <div class="container">
     <div class="top">
       <h1>COM Assessment</h1>
-      <div class="brand">Powered by Empower.U</div>
-      <div class="subtitle">Cognitive Operating Mode: your current default pattern for thinking and decision-making</div>
-      <div class="meta">Estimated time: <strong>15–20 minutes</strong>.</div>
+      <div class="brand">Unified Typing Framework</div>
+      <div class="subtitle">How you naturally think, make decisions, and show up in the world.</div>
+      <div class="meta">About <strong>15 minutes</strong>. Longer than most because the depth is what makes it accurate.</div>
       <div class="resume-row">
         <button class="pill-btn" id="resumeBtn" type="button" disabled>Resume saved answers</button>
         <button class="pill-btn" id="clearBtn" type="button" disabled>Clear saved answers</button>
       </div>
       <div class="atlas-intro">
-        <strong>Step 1 of the Empower.U ecosystem:</strong>
-        This assessment establishes your current <strong>Cognitive Operating Mode (COM)</strong>, the way you naturally think, decide, and orient to situations right now.
-        It keeps everything that comes next aligned with how you actually operate (not how you “should” operate).
+        <strong>Step 1 of your UTF profile.</strong>
+        COM maps the stable layer underneath your behavior: how you naturally think, make decisions, and show up, regardless of what is going on around you.
+        Answer honestly and for how you actually are, not how you think you should be. The accuracy of everything that follows depends on it.
       </div>
     </div>
 
     <div class="instructions">
       <h3>How to Answer</h3>
       <div style="color: rgba(230,237,247,0.80); font-size: 0.94rem; line-height: 1.55;">
-        Rate how true each statement feels <strong>in general</strong>, across most situations, not just lately.
-        <span style="color: rgba(230,237,247,0.72); font-weight:700;">There are no “good” scores. It reflects your general operating style, not a temporary state.</span>
+        Rate how true each statement feels <strong>across most situations in your life</strong>, not just recently.
+        <span style="color: rgba(230,237,247,0.72); font-weight:700;">There are no right or wrong answers. Answer as you actually are, not as you would like to be.</span>
       </div>
       <div class="scale-row">
         <div class="scale-side">
@@ -1073,13 +1073,13 @@
       </label>
     </div>
 
-    <button type="button" class="submit-btn" id="submitBtn" disabled>Calculate COM</button>
+    <button type="button" class="submit-btn" id="submitBtn" disabled>Show My Results</button>
 
     <div class="results" id="results">
-      <div class="result-title">Primary Cognitive Operating Mode</div>
+      <div class="result-title">Your Cognitive Mode</div>
       <div class="primary-type" id="primaryType"></div>
       <div class="type-alias" id="typeAlias" aria-hidden="true"></div>
-      <div class="mode-label">(Primary COM)</div>
+      <div class="mode-label">Your primary COM type</div>
 
       <div class="mode-block">
         <div class="mode-section-title">Overview</div>
@@ -1101,9 +1101,9 @@
         <div class="next-highlight">
           <div class="mode-section-title" style="margin-bottom:6px;">What comes next</div>
           <div class="mode-copy" style="color: rgba(230,237,247,0.74);">
-            Next is the <strong>Seasonal Operating Mode (SOM)</strong> assessment, which captures how your energy, focus, and priorities shift with life context.
+            Next is the <strong>SOM assessment</strong>, which captures where you are right now: your energy, your focus, and what you actually need in this season.
             <br><br>
-            COM + SOM becomes your <strong>UTF profile</strong>, and it will load into the <strong>UTF Synthesis</strong> step to generate a clean, usable picture of how you operate.
+            COM + SOM combined become your <strong>UTF profile</strong>, a complete picture of how you think and what you need right now. Takes about 5 minutes.
           </div>
         </div>
 
@@ -1112,7 +1112,7 @@
         </div>
 
         <div style="margin-top:16px;padding:16px 18px;background:rgba(255,255,255,0.03);border:1px solid rgba(148,163,184,0.22);border-radius:12px;color:rgba(230,237,247,0.72);font-size:0.92rem;line-height:1.6;">
-          SOM captures your current season, how context affects your energy, focus, and priorities. It prevents skewed answers caused by temporary life conditions and makes your final profile far more accurate.
+          The SOM takes about 5 minutes. It captures where you are right now so your final profile reflects both who you are and what you actually need in this season, not just one or the other.
         </div>
         </div>
 
@@ -1728,12 +1728,11 @@
     var EMPOWERU_EXPLAIN_URL     = "./explain.html";
     var EMPOWERU_ABOUT_URL       = "./about.html";
 
-    var EMPOWERU_SCORE_ENDPOINT  = "https://nnexuss-empoweru-backend.hf.space/api/score";
+    var EMPOWERU_SCORE_ENDPOINT  = "YOUR_SCORE_ENDPOINT_HERE";
     var EMPOWERU_AUTOSAVE_LOCAL  = true;
 
     var AUTOSAVE_KEY             = "empoweru_utf2_com_v1_3_0";
     var AUTOSAVE_KEY_BAK         = "empoweru_utf2_com_v1_3_0__bak";
-    var TIE_RESULT_KEY           = "empoweru_utf2_com_v1_3_0_tie";
     var AUTOSAVE_SCHEMA          = "empoweru_utf2_com_schema_v5";
     var DERIVED_RESULT_KEY       = "empoweru_utf2_last_com_result";
 
@@ -1867,7 +1866,7 @@
     // Upload / analytics
     // =========================
     function storePayload(payload){
-      if (!EMPOWERU_SCORE_ENDPOINT || EMPOWERU_SCORE_ENDPOINT === "https://nnexuss-empoweru-backend.hf.space/api/score") return;
+      if (!EMPOWERU_SCORE_ENDPOINT || EMPOWERU_SCORE_ENDPOINT === "YOUR_SCORE_ENDPOINT_HERE") return;
       try{
         fetch(EMPOWERU_SCORE_ENDPOINT, {
           method: "POST",
@@ -2010,9 +2009,6 @@
           answers: arr,
           updatedAt: new Date().toISOString()
         };
-        // Preserve saved tie-breaker result so re-calculating doesn't re-trigger the modal
-        var _existing = _readSavedRaw(AUTOSAVE_KEY);
-        if (_existing && _existing.tieBreaker) payload.tieBreaker = _existing.tieBreaker;
         var s = JSON.stringify(payload);
         localStorage.setItem(AUTOSAVE_KEY, s);
         try{ localStorage.setItem(AUTOSAVE_KEY_BAK, s); } catch(e2){}
@@ -2044,7 +2040,6 @@
     function clearSavedAnswers(){
       try{ localStorage.removeItem(AUTOSAVE_KEY); } catch(e){}
       try{ localStorage.removeItem(AUTOSAVE_KEY_BAK); } catch(e){}
-      try{ localStorage.removeItem(TIE_RESULT_KEY); } catch(e){}
     }
 
     function syncResumeControls(){
@@ -2392,7 +2387,7 @@ const TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
         background:   "You naturally check in and think things through with others before acting. Collaboration is genuinely part of how you do your best work."
       },
       D9: {
-        steady:       "You stay functionally stable through emotional turbulence. Things move through you without disrupting your ability to operate.",
+        steady:       "You stay functionally stable through emotional turbulence. Things move through you without disrupting your ability to function.",
         intermittent: "You're generally steady, and your emotional landscape shows up more fully in certain contexts or relationships that really matter to you.",
         background:   "You feel things deeply and those feelings are present in how you navigate your days. Your emotional life is rich and close to the surface."
       },
@@ -2663,8 +2658,6 @@ const TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
         answers: answers
       };
 
-      // Save tie result to its own key — independent of autosave lifecycle
-      try{ localStorage.setItem(TIE_RESULT_KEY, JSON.stringify({ pair: [s.primary, s.alt], chosen: chosen })); } catch(e){}
       closeTieModal();
       finalizeAndRender(s.pending, chosen, tieData);
       window.__tieState = null;
@@ -2885,22 +2878,6 @@ const TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
       var pending = { answers:answers, avgDims:avgDims, picked:picked, undertones:undertones };
 
       if (alt && delta <= TIE_TRIGGER){
-        try{
-          var _savedTie = JSON.parse(localStorage.getItem(TIE_RESULT_KEY) || 'null');
-          // Fallback: check old autosave.tieBreaker location
-          if (!_savedTie){
-            var _as = _readSavedRaw(AUTOSAVE_KEY) || _readSavedRaw(AUTOSAVE_KEY_BAK);
-            if (_as && _as.tieBreaker && _as.tieBreaker.chosen) _savedTie = _as.tieBreaker;
-          }
-          if (_savedTie && _savedTie.chosen && _savedTie.pair &&
-              ((_savedTie.pair[0] === primary && _savedTie.pair[1] === alt.type) ||
-               (_savedTie.pair[0] === alt.type && _savedTie.pair[1] === primary))){
-            finalizeAndRender(pending, _savedTie.chosen, {
-              used: true, triggered: true, restored: true, pair: _savedTie.pair
-            });
-            return;
-          }
-        } catch(e){}
         var opened = openTieBreakerFlow(primary, alt.type, delta, pending);
         if (opened) return;
       }
@@ -3159,15 +3136,6 @@ const TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
         resumeBtn.addEventListener("click", function(){
           var ok = restoreAnswersLocal();
           if (ok){
-            // Migrate any old tie result from autosave into the dedicated key
-            try{
-              if (!localStorage.getItem(TIE_RESULT_KEY)){
-                var _as = _readSavedRaw(AUTOSAVE_KEY) || _readSavedRaw(AUTOSAVE_KEY_BAK);
-                if (_as && _as.tieBreaker && _as.tieBreaker.chosen){
-                  localStorage.setItem(TIE_RESULT_KEY, JSON.stringify(_as.tieBreaker));
-                }
-              }
-            } catch(e){}
             updateProgress();
             showToast("Saved answers restored.");
             scrollToLastAnswered();

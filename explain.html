@@ -32,47 +32,94 @@ padding-top: 88px;
 line-height:1.6;
 }
 
+.topbar-wrap{
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+z-index: 1050;
+}
 .topbar{
-  position:fixed;top:0;left:0;right:0;z-index:2500;
-  padding:10px 12px;
-  background:rgba(10,12,20,0.82);
-  backdrop-filter:blur(14px);
-  border-bottom:1px solid rgba(255,255,255,0.09);
-  box-shadow:0 2px 24px rgba(0,0,0,0.35);
+padding:10px 12px;
+background:
+  linear-gradient(180deg,
+    rgba(10,18,32,0.92) 0%,
+    rgba(10,18,32,0.78) 55%,
+    rgba(10,18,32,0.25) 100%);
+backdrop-filter: blur(12px);
+border-bottom: 1px solid rgba(255,255,255,0.08);
+position: relative;
+}
+.topbar::before{
+content:"";
+position:absolute;
+inset:0;
+background:
+  radial-gradient(520px 140px at 50% 50%,
+    rgba(76,111,255,.26),
+    rgba(0,194,168,.22),
+    transparent 68%);
+pointer-events:none;
+opacity: 0.95;
 }
 .topbar-inner{
-  max-width:980px;margin:0 auto;
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
+position: relative;
+z-index: 1;
+max-width: 980px;
+margin: 0 auto;
+display: grid;
+grid-template-columns: 44px 1fr 44px;
+align-items: center;
+gap: 10px;
+min-height: 54px;
 }
-.home-btn,
 .home-btn,
 .menu-btn{
-  position:relative;
-  display:inline-flex;align-items:center;justify-content:center;
-  width:46px;height:42px;border-radius:14px;
-  border:1px solid rgba(255,255,255,0.20);
-  background:rgba(255,255,255,0.08);
-  color:rgba(230,237,247,0.95);
-  cursor:pointer;
-  transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease;
-  text-decoration:none;flex:0 0 auto;
-  touch-action:manipulation;user-select:none;
-  -webkit-tap-highlight-color:transparent;
+position: relative;
+z-index: 1;
+display:inline-flex;
+align-items:center;
+justify-content:center;
+width:46px;
+height:42px;
+border-radius:14px;
+border:1px solid rgba(255,255,255,0.18);
+background:rgba(255,255,255,0.07);
+color:rgba(230,237,247,0.92);
+cursor:pointer;
+transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+text-decoration:none;
+flex:0 0 auto;
+touch-action:manipulation;
+user-select:none;
+-webkit-tap-highlight-color:transparent;
 }
-.home-btn{ width:42px; }
-.home-btn:hover,.menu-btn:hover{
-  transform:translateY(-1px);
-  border-color:rgba(20,184,166,0.50);
-  box-shadow:0 8px 24px rgba(0,0,0,0.40);
+.home-btn:hover,
+.menu-btn:hover{
+transform: translateY(-1px);
+border-color: rgba(0,194,168,0.45);
+box-shadow: 0 14px 34px rgba(0,0,0,.35);
 }
 .topbar-center{
-  flex:1 1 auto;display:flex;align-items:center;justify-content:center;min-width:0;
+position: relative;
+z-index: 1;
+flex: 1 1 auto;
+display:flex;
+align-items:center;
+justify-content:center;
+min-width:0;
 }
 .eu-gradient-text{
-  background:linear-gradient(135deg,#fff 0%,rgba(255,255,255,0.85) 50%,#4c6fff 100%);
-  -webkit-background-clip:text;background-clip:text;color:transparent;
-  font-weight:950;letter-spacing:.12em;font-size:1.5rem;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+background: linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.85) 50%, #4c6fff 100%);
+-webkit-background-clip: text;
+background-clip: text;
+color: transparent;
+font-weight: 950;
+letter-spacing: .12em;
+font-size: 1.5rem;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
 }
 
 .container{
@@ -853,30 +900,32 @@ color:var(--accent);
 </head>
 <body>
 
-<header class="topbar" role="banner">
-  <div class="topbar-inner">
-    <a class="home-btn" href="index.html" aria-label="Home" title="Home">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M3 10.5L12 3l9 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M5.5 10.5V21h13V10.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </a>
-    <div class="topbar-center" aria-label="Page title">
-      <div class="eu-gradient-text">Empower.U</div>
-    </div>
-    <button class="menu-btn" id="btnMenu" type="button" aria-label="Menu" title="Menu">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M4 7h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        <path d="M4 12h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        <path d="M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-      </svg>
-    </button>
-  </div>
-</header>
+<div class="topbar-wrap">
+<div class="topbar">
+<div class="topbar-inner">
+<a class="home-btn" href="index.html" aria-label="Home">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+<path d="M3 10.5L12 3l9 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M5.5 10.5V21h13V10.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+</a>
+<div class="topbar-center">
+<div class="eu-gradient-text">Empower.U</div>
+</div>
+<button class="menu-btn" id="btnMenu" type="button" aria-label="Menu">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+<path d="M4 7h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+<path d="M4 12h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+<path d="M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+</svg>
+</button>
+</div>
+</div>
+</div>
 
 <!-- Menu modal -->
 <div class="menu-backdrop" id="menuModal" aria-hidden="true">
-<div class="menu-modal" role="dialog" aria-modal="true" aria-label="Menu">
+<div class="menu-panel" role="dialog" aria-modal="true" aria-label="Menu">
 <div class="menu-head">
 <div class="menu-title">MENU</div>
 <button class="menu-close" id="menuClose" type="button">Close</button>
@@ -898,12 +947,12 @@ color:var(--accent);
 
 <div class="hero">
 <h1>Unified Typing<br>Framework</h1>
-<p>UTF shows you two things other systems miss: how your mind is wired, and what your current season actually needs. Not who you should be. Who you are, and where you are right now.</p>
+<p>UTF shows you two things other systems miss: how your mind is wired, and what your current season actually needs. Not who you should be. Just who you are, and where you are right now.</p>
 </div>
 
 <!-- THE FRAMEWORK -->
 <div class="section">
-<h2 class="section-title" style="background:linear-gradient(135deg, #ffffff 0%, #4c6fff 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">The Architecture</h2>
+<h2 class="section-title" style="background:linear-gradient(135deg, #ffffff 0%, #4c6fff 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">The Architecture</h2>
 
 <div class="feature-grid">
 <div class="feature-card">
@@ -971,7 +1020,7 @@ Explore all 21 types and 9 modes
 </div>
 <div class="feature-card">
 <h4>AI That Actually Knows You</h4>
-<p>Your UTF profile becomes a payload any AI can use to personalize its advice to how you actually think and operate.</p>
+<p>Your UTF profile generates an Atlas you can paste into any AI conversation. It reads how you think and what you need right now, and shapes every response around that.</p>
 </div>
 </div>
 </div>
@@ -988,7 +1037,7 @@ Explore all 21 types and 9 modes
 </div>
 <div class="dropdown-content" id="system-content">
 <div class="dropdown-inner">
-<p>Take the COM assessment (about 12 minutes) to map your stable cognitive identity. Take the SOM assessment (about 5 minutes) to map your current season. The synthesis page combines them into your UTF profile and generates an Atlas payload, a compact data package you can paste into any AI chat for personalized guidance.</p>
+<p>Take the COM assessment (about 15 minutes) to map your stable cognitive identity. Take the SOM assessment (about 5 minutes) to map your current season. The synthesis page combines them into your UTF profile and generates your Atlas, a portable profile you can paste into any AI chat for personalized guidance.</p>
 <p>Everything stays on your device unless you choose to share it. Your results, your conversations, your growth. You own it.</p>
 </div>
 </div>
@@ -1025,7 +1074,7 @@ Explore all 21 types and 9 modes
 <button class="show-types-btn" onclick="showSelectedTypes()">Show</button>
 
 <div id="explore-results" style="margin-top:32px;display:none;">
-<p class="explore-disclaimer">General read only. Your real profile depends on your full assessment results and how COM and SOM interact together.</p>
+<p class="explore-disclaimer">Standalone descriptions only. Your real results depend on your full assessment and how both layers interact.</p>
 <div class="dropdowns-container">
 <div class="dropdown-col" id="com-reveal-col" style="display:none;">
 <h3 class="type-section-heading">COM</h3>
@@ -1053,7 +1102,7 @@ Explore all 21 types and 9 modes
 <h4>Dimensional Measurement</h4>
 <p>COM measures 9 cognitive dimensions: pattern thinking, decision speed, systems thinking, structure preference, social reading, quality focus, people priority, independence, and emotional stability. These shape your type. The E axis (social energy) runs alongside them as a separate inward/outward orientation that colors how your type expresses. Your type emerges from the combination of all 9, not from answering a handful of binary questions.</p>
 <h4>21 Types, Not Buckets</h4>
-<p>Each COM type represents a distinct operational profile, a real pattern that shows up when you measure cognition across multiple dimensions simultaneously. These aren't arbitrary labels. Each type has specific dimension signatures, gate rules, and distance targets that are mathematically validated.</p>
+<p>Each COM type represents a distinct cognitive profile, a real pattern that shows up when you measure cognition across multiple dimensions simultaneously. These aren't arbitrary labels. Each type has specific dimension signatures, gate rules, and distance targets that are mathematically validated.</p>
 <h4>Forced-Choice Seasonal Measurement</h4>
 <p>SOM uses 27 forced-choice questions where each option maps to one of 5 seasonal dimensions: energy, recovery need, output focus, people focus, and change focus. The format eliminates acquiescence bias and measures what you're actually doing, not what sounds good.</p>
 <h4>Two-Layer Architecture</h4>
@@ -1072,9 +1121,9 @@ Explore all 21 types and 9 modes
 </div>
 <div class="dropdown-content" id="atlas-content">
 <div class="dropdown-inner">
-<p>Atlas is what happens when your UTF profile meets any AI. When you activate Atlas on the synthesis page, it generates a compact payload you paste into any AI chat: ChatGPT, Claude, Gemini, whatever you use. The AI then knows how you think, what your season needs, and how to talk to you.</p>
-<p>It's not a separate app. It's a payload that makes any AI smarter about you. The AI adapts its tone, advice, examples, and priorities to match your actual wiring and current state. No generic advice. No one-size-fits-all.</p>
-<p>Everything stays private. You paste the payload yourself. Nothing is sent anywhere automatically. You control what any AI knows about you.</p>
+<p>Atlas is what happens when your UTF profile meets any AI. When you activate Atlas on the synthesis page, it generates an Atlas you paste into any AI chat: ChatGPT, Claude, Gemini, whatever you use. The AI then knows how you think, what your season needs, and how to talk to you.</p>
+<p>It's not a separate app. It's a portable profile that makes any AI smarter about you. The AI adapts its tone, advice, examples, and priorities to match your actual wiring and current state. No generic advice. No one-size-fits-all.</p>
+<p>Everything stays private. You paste it yourself. Nothing is sent anywhere automatically. You control what any AI knows about you.</p>
 </div>
 </div>
 </div>
@@ -1246,4 +1295,3 @@ populateDropdowns();
 
 </body>
 </html>
-

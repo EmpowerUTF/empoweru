@@ -410,20 +410,20 @@
     <div id="resultBlock" style="animation:fadeInUp .5s ease both;">
 
       <div class="page-title">Your UTF Profile</div>
-      <div class="page-sub">COM + SOM combined. How you&rsquo;re wired, and where you are right now.</div>
-      <div class="disclaimer-note">General interpretation. Context and time shape how these layers interact.</div>
+      <div class="page-sub">Your wiring and your current season, combined into one picture.</div>
+      <div class="disclaimer-note">For self-reflection. Your context always adds nuance this profile cannot.</div>
 
       <!-- PROFILE CARDS -->
       <div class="profile-grid">
         <div class="profile-card" id="comCard">
-          <div class="card-meta-label">COM &mdash; Cognitive Operating Mode</div>
+          <div class="card-meta-label">COM &mdash; Cognitive Mode</div>
           <div class="card-meta-sub">Stable identity. Doesn&rsquo;t shift with mood or circumstance.</div>
           <span class="card-type-name" id="comTypeName"></span>
           <div class="card-type-headline" id="comTypeHeadline"></div>
           <div class="card-type-body" id="comTypeBody"></div>
         </div>
         <div class="profile-card" id="somCard">
-          <div class="card-meta-label">SOM &mdash; Seasonal Operating Mode</div>
+          <div class="card-meta-label">SOM &mdash; Seasonal Mode</div>
           <div class="card-meta-sub">Current season. Shifts as your life context changes.</div>
           <span class="card-type-name" id="somTypeName"></span>
           <div class="card-type-headline" id="somTypeHeadline"></div>
@@ -436,13 +436,13 @@
         <div class="atlas-copy-row">
           <div class="atlas-copy-left">
             <div class="atlas-copy-title">Atlas</div>
-            <div class="atlas-copy-desc">Copy your profile payload and paste it into any AI chat. The AI reads your cognitive identity, current season, and how you think, and adapts every response to match.</div>
+            <div class="atlas-copy-desc">Copy your profile and paste it into any AI chat. The AI reads how you think, your current season, and what you need, and adapts every response before you ask your first question.</div>
           </div>
         </div>
         <div class="atlas-agreement">
           <label>
             <input type="checkbox" id="atlasAgreeChk" onchange="setAtlasCopyEnabled()" />
-            <div>I understand that Atlas is a self-reflection tool, not professional advice. I take full responsibility for how I interpret and act on anything an AI tells me using this payload. I agree to the <a href="#" id="openAtlasAgreement" onclick="event.preventDefault();event.stopPropagation();openAtlasAgreementModal();">Atlas User Agreement</a>.</div>
+            <div>I understand that Atlas is a self-reflection tool, not professional advice. I take full responsibility for how I interpret and act on anything an AI tells me using this profile. I agree to the <a href="#" id="openAtlasAgreement" onclick="event.preventDefault();event.stopPropagation();openAtlasAgreementModal();">Atlas User Agreement</a>.</div>
           </label>
         </div>
 
@@ -479,7 +479,7 @@
 
         <button class="copy-btn" id="copyBtn" type="button" onclick="copyAtlas()" disabled>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy Atlas payload
+          Copy your Atlas
         </button>
       </div>
       <div id="copiedNote" style="display:none;text-align:center;margin-top:10px;font-size:.88rem;color:rgba(52,211,153,.9);font-weight:800;">Copied. Paste into any AI chat to get started.</div>
@@ -502,7 +502,7 @@
       <!-- COMMUNICATION STYLE -->
       <div class="acc-section">
         <button class="acc-btn" type="button" onclick="toggleAcc('commPanel',this)">
-          <span>How you communicate and process</span>
+          <span>How you communicate and connect</span>
           <span class="acc-chevron">&#9660;</span>
         </button>
         <div class="acc-panel" id="commPanel">
@@ -543,7 +543,7 @@
       <!-- DIMENSION SNAPSHOT -->
       <div class="acc-section">
         <button class="acc-btn" type="button" onclick="toggleAcc('dimsPanel',this)">
-          <span>Dimension snapshot</span>
+          <span>Your trait breakdown</span>
           <span class="acc-chevron">&#9660;</span>
         </button>
         <div class="acc-panel" id="dimsPanel">
@@ -733,11 +733,11 @@ var INTERACTION = {
     ENH:"Your integrative mind is well-matched to a refinement season. You can find the structural improvements that aren't obvious to others and apply them without disrupting what's already working.",
     BST:"With protected capacity and output orientation, your pattern-mapping narrows naturally to highest-leverage inputs. You're not scanning broadly right now, and that's appropriate - depth over range.",
     HVN:"Protected capacity plus people orientation means your integrative function is resting alongside your energy. This is a season for absorbing, not synthesizing. Let input accumulate without forcing output.",
-    REF:"A recalibration season for a framework-level thinker means the structures themselves are under review, not just the tactics. That's where your function operates most fundamentally."
+    REF:"A recalibration season for a framework-level thinker means the structures themselves are under review, not just the tactics. That's where your function works most fundamentally."
   },
   EXECUTION:{
     DRV:"Full capacity aligned with output orientation. Your execution function has both the energy and the directional clarity it needs. This is the season to move on what you've already decided.",
-    HRB:"Your execution drive is running alongside a people-oriented season. The output right now is relational - the relationships built in a high-energy people season carry forward as real operational leverage.",
+    HRB:"Your execution drive is running alongside a people-oriented season. The output right now is relational - the relationships built in a high-energy people season carry forward as real strategic leverage.",
     TBZ:"Execution drive with a change orientation means your energy is going toward exploration rather than delivery. The experiments you run now clarify the targets you'll execute against later.",
     BLD:"Steady capacity and output orientation is a high-reliability pairing for an execution-wired person. Consistent effort on a defined target is exactly what this season supports.",
     EQZ:"Steady capacity, balanced orientation. Your execution function is running at a sustainable rate. The relational bandwidth available right now means your work and your relationships aren't competing.",
@@ -751,7 +751,7 @@ var INTERACTION = {
     HRB:"Full capacity plus people orientation is a direct match for your COM wiring. Your relational capacity and your available energy are aligned. The primary risk is output with no recovery built in.",
     TBZ:"Full capacity with change orientation means your social function is expanding its range. New people, new relational dynamics - your instinct to connect is meeting new contexts to practice in.",
     BLD:"Steady capacity and output orientation creates conditions for your relational depth to compound. Trust-building happens through consistency, and this season provides the stability that consistency requires.",
-    EQZ:"Steady capacity with people orientation matches your COM function directly. Connection is present and not overloaded. This is the sustainable operating mode your relational wiring is built for.",
+    EQZ:"Steady capacity with people orientation matches your COM function directly. Connection is present and not overloaded. This is the sustainable rhythm your relational wiring is built for.",
     ENH:"Steady capacity with change orientation applied to a relational COM means you're refining how your social function works. Small adjustments to how you show up in connection will compound outward.",
     BST:"Protected capacity with people orientation. Your relational function is still active, but total available energy is limited. The distinction right now is between connections that restore and connections that draw down.",
     HVN:"Protected capacity with people orientation is recovery routed through relationship for a social-wired person. Safe connection is a legitimate recovery mechanism - not a delay of rest.",
@@ -761,9 +761,9 @@ var INTERACTION = {
     DRV:"Full capacity with output orientation gives your quality function the fuel to produce at its standard, not just refine. Your internal bar and the energy to meet it are running together right now.",
     HRB:"Full capacity with people orientation is pulling your craft function toward collaboration. A craft-wired person in a people season may find that external input surfaces something the internal process wouldn't reach alone.",
     TBZ:"Full capacity with change orientation is asking your quality-focused function to experiment before refining. The discomfort of trying approaches before they're polished is the mechanism the season uses.",
-    BLD:"Steady capacity and output orientation is the natural operating environment for a craft-wired person. Depth of focus on a single target, with consistent energy, is where your quality standard produces best.",
+    BLD:"Steady capacity and output orientation is the natural environment for a craft-wired person. Depth of focus on a single target, with consistent energy, is where your quality standard produces best.",
     EQZ:"Steady capacity with balanced orientation. Your craft is running consistently and the social load is manageable. A stable season for output that meets your standard without interference.",
-    ENH:"A refinement season with steady capacity is your most native combination. Your quality function operates best when it can improve what exists - and this season gives you the stability to do that cleanly.",
+    ENH:"A refinement season with steady capacity is your most native combination. Your quality function works best when it can improve what exists - and this season gives you the stability to do that cleanly.",
     BST:"Protected capacity with output orientation. Your quality standard is still active; the available energy is what's limited. Fewer targets at full standard is a more accurate description than reduced quality.",
     HVN:"Protected capacity with people orientation. Your craft function is in a low-output state. Recovery for a quality-focused person can involve light creative engagement - that's still rest if the pressure is off.",
     REF:"Protected capacity with change orientation. Your standards and methods are being questioned alongside your energy. That's appropriate - refinement of the craft framework itself is meaningful work."
@@ -773,7 +773,7 @@ var INTERACTION = {
     HRB:"Full capacity with people orientation means your adaptive function is tracking relational dynamics rather than environmental ones. Your stability provides a reliable reference point for the people around you.",
     TBZ:"Full capacity with change orientation is a direct match for an adaptive COM. Your navigation instincts are engaged and well-fueled. This is a season for active exploration rather than consolidation.",
     BLD:"Steady capacity with output orientation is asking your adaptive function to hold a consistent course rather than explore. The season is rewarding persistence on a defined path.",
-    EQZ:"Steady capacity with balanced orientation. Your adaptive function has enough context from the people around you and enough stability to operate without pressure. Bandwidth is available.",
+    EQZ:"Steady capacity with balanced orientation. Your adaptive function has enough context from the people around you and enough stability to function without pressure. Bandwidth is available.",
     ENH:"Steady capacity with change orientation matches your adaptive instincts. Small course corrections applied consistently is exactly how your navigation function works best.",
     BST:"Protected capacity with output orientation. Your situational reading is fully active - what's reduced is the fuel for broad response. Read clearly, act selectively. That's the appropriate mode.",
     HVN:"Protected capacity with people orientation. Your adaptive function is using trusted relationships as the primary signal source during a period of low energy. That's a sound navigation strategy.",
@@ -882,8 +882,8 @@ function dimLabel(v){
 function dimColor(v){
   if(v >= TH.H)  return "rgba(94,234,212,0.85)";
   if(v >= TH.M)  return "rgba(165,180,252,0.85)";
-  if(v >= TH.L)  return "rgba(129,140,248,0.72)";
-  return "rgba(99,102,241,0.60)";
+  if(v >= TH.L)  return "rgba(203,213,225,0.65)";
+  return "rgba(148,163,184,0.55)";
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -1061,11 +1061,11 @@ var SYNTH_TIER_DESCS = {
   },
   D8: {
     high:   "You trust your own judgment and act on it. You don't need external validation to feel confident in your direction.",
-    mid:    "You're comfortable operating independently and know when getting input makes sense. You adapt to what the situation calls for.",
+    mid:    "You're comfortable working independently and know when getting input makes sense. You adapt to what the situation calls for.",
     low:    "You naturally think things through with others before acting. Collaboration is genuinely part of how you do your best work."
   },
   D9: {
-    high:   "You stay functionally stable through emotional turbulence. Things move through you without disrupting your ability to operate.",
+    high:   "You stay functionally stable through emotional turbulence. Things move through you without disrupting your ability to function.",
     mid:    "You're generally steady, and your emotional landscape shows up more fully in contexts or relationships that really matter to you.",
     low:    "You feel things deeply and those feelings are present in how you navigate. Your emotional life is rich and close to the surface."
   }
@@ -1156,8 +1156,8 @@ function render(comResult, somResult){
   function barColor(v){
     if(v >= TH.H)  return "linear-gradient(90deg,#3b82f6,#14b8a6)";
     if(v >= TH.M)  return "linear-gradient(90deg,#6366f1,#8b5cf6)";
-    if(v >= TH.L)  return "linear-gradient(90deg,#818cf8,#6366f1)";
-    return "linear-gradient(90deg,#6366f1,#4f46e5)";
+    if(v >= TH.L)  return "rgba(148,163,184,0.45)";
+    return "rgba(100,116,139,0.35)";
   }
 
   var eVal = avgDims.E || 0;
@@ -1259,14 +1259,13 @@ function copyAtlas(){
     var payload = {rating:_rating, comment:comment.trim().slice(0,400),
                    com_type:_comType, som_mode:_somMode, ts:new Date().toISOString()};
     try{
-      fetch("https://nnexuss-empoweru-backend.hf.space/api/rating",{method:"POST",headers:{"Content-Type":"application/json"},
+      fetch("/api/rating",{method:"POST",headers:{"Content-Type":"application/json"},
         body:JSON.stringify(payload)}).catch(function(){});
     }catch(e){}
     try{
       var prev = JSON.parse(localStorage.getItem("eu_ratings")||"[]");
       prev.push(payload); localStorage.setItem("eu_ratings",JSON.stringify(prev));
     }catch(e){}
-    try{ localStorage.setItem(RATING_SAVE_KEY, JSON.stringify({rating:_rating, com:_comType, som:_somMode})); }catch(e){}
     var ty = document.getElementById("ratingTy");
     if(ty) ty.classList.add("show");
   }
@@ -1276,7 +1275,7 @@ function copyAtlas(){
     if(note) note.style.display = "";
     setTimeout(function(){
       btn.classList.remove("copied");
-      btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy Atlas payload';
+      btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy your Atlas';
       if(note) note.style.display = "none";
     }, 3000);
   }
@@ -1334,7 +1333,6 @@ var _rating = 0;
 var _ratingDone = false;
 var _comType = "";
 var _somMode = "";
-var RATING_SAVE_KEY = "empoweru_utf2_syn_rating";
 
 function setRating(v){
   _rating = v;
@@ -1351,31 +1349,6 @@ function setAtlasCopyEnabled(){
   if(!btn) return;
   var agreed = !!(chk && chk.checked);
   if(gate) gate.style.display = agreed ? "" : "none";
-  // Restore saved rating so user doesn't have to re-rate
-  if(agreed && !_ratingDone){
-    try{
-      var _saved = JSON.parse(localStorage.getItem(RATING_SAVE_KEY)||'null');
-      if(_saved && _saved.rating > 0){
-        _rating = _saved.rating;
-        _ratingDone = true;
-        document.querySelectorAll(".rating-num").forEach(function(b){
-          b.classList.toggle("sel", parseInt(b.getAttribute("data-v"),10) === _rating);
-          b.disabled = true;
-          b.style.cursor = "default";
-          b.style.pointerEvents = "none";
-        });
-        var _rc = document.getElementById("ratingComment");
-        if(_rc){ _rc.style.display = "none"; }
-        var _lbl = gate ? gate.querySelector(".rating-gate-label") : null;
-        if(_lbl && !_lbl.dataset.locked){
-          _lbl.dataset.locked = "1";
-          _lbl.innerHTML = 'How accurately does this profile describe you? <span style="color:rgba(94,234,212,0.70);">(already rated ' + _rating + '/10)</span>';
-        }
-        var _ty = document.getElementById("ratingTy");
-        if(_ty) _ty.classList.add("show");
-      }
-    } catch(e){}
-  }
   btn.disabled = !(agreed && _rating > 0);
 }
 
@@ -1390,7 +1363,7 @@ function submitRatingEmail(){
       localStorage.setItem("eu_early_adopters", JSON.stringify(list));
     }catch(e){}
     try{
-      fetch("https://nnexuss-empoweru-backend.hf.space/api/early-adopter", {
+      fetch("/api/early-adopter", {
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({email:email, com_type:_comType, som_mode:_somMode, ts:new Date().toISOString()})
@@ -1477,23 +1450,23 @@ document.addEventListener("keydown", function(e){ if(e.key==="Escape"){ var m=do
       </div>
       <div class="atlas-modal-body">
         <h4>1) What Atlas is</h4>
-        <p>Atlas is a cognitive profile payload you generate from your UTF assessment results. When pasted into an AI chat, it helps the AI calibrate its responses to how you actually think and what your current season needs. It is a self-reflection and decision-support tool, nothing more.</p>
+        <p>Atlas is a portable cognitive profile you generate from your UTF assessment results. When pasted into an AI chat, it helps the AI calibrate its responses to how you actually think and what your current season needs. It is a self-reflection and decision-support tool, nothing more.</p>
 
         <h4>2) What Atlas is not</h4>
         <p>Atlas is <strong>not therapy</strong>, not medical or mental health treatment, and not a clinical diagnostic tool. It does not provide professional advice of any kind. The AI responses it enables are not a substitute for professional judgment, whether psychological, medical, legal, financial, or otherwise.</p>
 
         <h4>3) Your responsibility</h4>
-        <p>By copying and using this payload, you acknowledge and agree that:</p>
+        <p>By copying and using your Atlas, you acknowledge and agree that:</p>
         <ul>
-          <li>You are solely responsible for how you interpret, apply, or act on any response an AI provides using this payload.</li>
+          <li>You are solely responsible for how you interpret, apply, or act on any response an AI provides using this profile.</li>
           <li>Empower.U does not control what any third-party AI says, how it interprets your profile, or what advice it gives.</li>
           <li>You will use your own judgment before acting on anything an AI tells you.</li>
           <li>Empower.U accepts no responsibility for decisions, actions, or outcomes resulting from your use of Atlas with any AI system.</li>
         </ul>
 
         <h4>4) Data and privacy</h4>
-        <p>The Atlas payload contains a structured summary of your assessment results. It does not include your name, raw answers, or any personally identifying information. You control this payload entirely. Empower.U does not send it anywhere. You decide what any AI receives.</p>
-        <p>Be aware that when you paste this payload into a third-party AI system (ChatGPT, Claude, Gemini, etc.), it is governed by that platform's privacy policy, not Empower.U's. Only share it in contexts you trust.</p>
+        <p>Your Atlas contains a structured summary of your assessment results. It does not include your name, raw answers, or any personally identifying information. You control it entirely. Empower.U does not send it anywhere. You decide what any AI receives.</p>
+        <p>Be aware that when you paste your Atlas into a third-party AI system (ChatGPT, Claude, Gemini, etc.), it is governed by that platform's privacy policy, not Empower.U's. Only share it in contexts you trust.</p>
 
         <h4>5) Appropriate use</h4>
         <p>Use Atlas for personal insight, self-reflection, and exploring how you think. Do not use it to make high-stakes decisions without human professional input. Do not share another person's profile without their knowledge and consent.</p>

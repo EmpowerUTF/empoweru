@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Empower.U • SOM Assessment (Seasonal Operating Mode) v3.0.3</title>
+  <title>Empower.U - SOM Assessment</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <style>
@@ -93,8 +93,8 @@
       width:46px;
       height:42px;
       border-radius:14px;
-      border:1px solid rgba(229,231,235,0.14);
-      background:rgba(229,231,235,0.03);
+      border:1px solid rgba(255,255,255,0.18);
+      background:rgba(255,255,255,0.07);
       color:rgba(230,237,247,0.92);
       cursor:pointer;
       transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
@@ -864,10 +864,10 @@
 
   <div class="container">
     <h1>SOM Assessment</h1>
-    <div class="brand-tag">Powered by Empower.U</div>
-    <p class="subtitle">Seasonal Operating Mode - Current Life Phase</p>
+    <div class="brand-tag">Unified Typing Framework</div>
+    <p class="subtitle">Where your energy, focus, and priorities actually are right now.</p>
 
-    <p class="meta">Estimated time: <strong>4 to 6 minutes</strong>.</p>
+    <p class="meta">About <strong>5 minutes</strong>. The fastest part of your UTF profile.</p>
 
     <div class="resume-row">
       <button class="pill-btn" id="resumeBtn" type="button" disabled>Resume saved answers</button>
@@ -876,10 +876,10 @@
 
     <div class="instructions">
       <h3>How to answer</h3>
-      <p>Each question shows <strong>three statements</strong>. Pick the one that fits you best <strong>lately</strong> (last few months).</p>
+      <p>Each question has <strong>three statements</strong>. Pick the one that fits you best in the <strong>last few months</strong>, not how things usually are or how you want them to be.</p>
       <ul>
         <li>Choose the <strong>best fit</strong>, even if the other two feel partly true.</li>
-        <li>Answer based on what you have been <strong>actually doing, defaulting to, or feeling in real life</strong>, not what sounds ideal.</li>
+        <li>Answer based on what you have <strong>actually been doing or feeling in real life</strong>, not what sounds ideal or what you aspire to.</li>
         <li>If you are unsure, pick the one that has shown up <strong>most often</strong>.</li>
       </ul>
       <p class="honesty-note">Forced choice is intentional. It reduces overthinking and makes the signal cleaner.</p>
@@ -895,14 +895,14 @@
       </label>
     </div>
 
-    <button type="button" class="submit-btn" id="submitBtn" disabled>Calculate My Mode</button>
+    <button type="button" class="submit-btn" id="submitBtn" disabled>Show My Results</button>
 
     <div id="results" class="results">
-      <h2 class="result-title">Your Seasonal Operating Mode</h2>
+      <h2 class="result-title">Your Current Season</h2>
       <div id="primaryType" class="primary-type"></div>
 
       <p class="result-subtitle">
-        This reflects the pattern your recent answers point to most strongly. It runs alongside your core Cognitive Operating Mode.
+        This reflects the pattern your recent answers point to most strongly. It combines with your COM type to complete your full UTF profile.
       </p>
 
       <div class="blurb" id="somBlurb"></div>
@@ -916,15 +916,15 @@
         <div class="acc-panel" id="scorePanel">
           <div id="scoreGrid" class="score-grid"></div>
           <div class="cred-note">
-            <strong>Note:</strong> Each card shows how strongly that trait showed up across your answers in this version.
+            <strong>Note:</strong> Each card shows how strongly that trait showed up across your answers.
           </div>
         </div>
       </div>
 
-      <p class="results-footer">Next step: combine your COM and SOM on the synthesis page.</p>
+      <p class="results-footer">Your SOM is saved. Head to synthesis to see the complete picture.</p>
 
       <div class="bottom-actions" id="bottomActions">
-        <a class="synth-link" id="synthLinkBottom" href="#" rel="noopener">Get UTF Profile</a>
+        <a class="synth-link" id="synthLinkBottom" href="#" rel="noopener">See My Full Profile</a>
       </div>
     </div>
   </div>
@@ -939,7 +939,7 @@
       <div class="menu-body">
         <div class="menu-links">
           <a class="menu-link" href="index.html"><span>Home</span><span>Empower.U</span></a>
-          <a class="menu-link" href="com.html"><span>COM Calculator</span><span>Cognitive</span></a>
+          <a class="menu-link" href="com.html"><span>COM Assessment</span><span>Cognitive</span></a>
           <a class="menu-link" href="som.html"><span>SOM Assessment</span><span>Seasonal</span></a>
           <a class="menu-link" href="synthesis.html"><span>UTF Profile</span><span>Synthesis</span></a>
           <a class="menu-link" href="explain.html"><span>What is UTF?</span><span>Guide</span></a>
@@ -958,7 +958,7 @@
       </div>
       <div class="modal-body">
         <h4>1) Purpose</h4>
-        <p>The SOM assessment is an educational self-reflection tool designed to help you notice patterns in how you are operating in your current season of life.</p>
+        <p>The SOM assessment is an educational self-reflection tool designed to help you notice patterns in how you are showing up in your current season of life.</p>
 
         <h4>2) Not therapy or diagnosis</h4>
         <p>This assessment is not medical or mental-health treatment, not therapy, and not a diagnostic tool. It does not provide clinical advice.</p>
@@ -1044,7 +1044,6 @@
 
     var AUTOSAVE_KEY = "empoweru_utf2_som_v3_1_0_autosave";
     var RESULT_KEY   = "empoweru_utf2_som_latest";
-    var TIE_RESULT_KEY = "empoweru_utf2_som_v3_1_0_tie";
 
     var TIE_TRIGGER_POINTS = 1;
 
@@ -1570,8 +1569,6 @@
           answers: getAnswersArrayFromUI(),
           updatedAt: new Date().toISOString()
         };
-        // Preserve saved tie-breaker result so re-calculating doesn't re-trigger the modal
-        try{ var _ex = JSON.parse(localStorage.getItem(AUTOSAVE_KEY)||'null'); if(_ex&&_ex.tieBreaker) payload.tieBreaker=_ex.tieBreaker; }catch(e2){}
         localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(payload));
       } catch(e){}
     }
@@ -1657,7 +1654,6 @@
 
     function clearSavedAnswers(){
       try{ localStorage.removeItem(AUTOSAVE_KEY); } catch(e){}
-      try{ localStorage.removeItem(TIE_RESULT_KEY); } catch(e){}
     }
 
     function syncResumeControls(){
@@ -1673,7 +1669,7 @@
       if (!el) return;
 
       var mode = SOM_MODES.filter(function(m){ return m.code === modeCode; })[0] || {name:modeCode};
-      var desc = SOM_MODE_DESC[modeCode] || "This reflects your current operating emphasis.";
+      var desc = SOM_MODE_DESC[modeCode] || "This reflects your current seasonal emphasis.";
 
       el.innerHTML =
         "<strong>" + escapeHtml(mode.name) + "</strong>. " +
@@ -2125,23 +2121,6 @@
       var shouldTie = !!(provisional.top1 && provisional.top2 && (provisional.gapPoints <= TIE_TRIGGER_POINTS) && borderlineEnergy);
 
       if (shouldTie){
-        // Check for a saved tie result — dedicated key with autosave fallback
-        try{
-          var _savedTie = JSON.parse(localStorage.getItem(TIE_RESULT_KEY) || 'null');
-          if (!_savedTie){
-            var _as = readAutosave();
-            if (_as && _as.tieBreaker && _as.tieBreaker.chosen) _savedTie = _as.tieBreaker;
-          }
-          if (_savedTie && _savedTie.chosen && _savedTie.pair &&
-              ((_savedTie.pair[0] === provisional.top1.code && _savedTie.pair[1] === provisional.top2.code) ||
-               (_savedTie.pair[0] === provisional.top2.code && _savedTie.pair[1] === provisional.top1.code))){
-            finalizeAndRender(_savedTie.chosen, provisional, {
-              considered: true, used: true, restored: true,
-              topA: provisional.top1.code, topB: provisional.top2.code
-            });
-            return;
-          }
-        } catch(e){}
         __pending = {
           provisional: provisional,
           basePrimary: basePrimary,
@@ -2217,8 +2196,6 @@
         note: tie.note
       };
 
-            // Save tie result to its own key — independent of autosave lifecycle
-      try{ localStorage.setItem(TIE_RESULT_KEY, JSON.stringify({ pair: [__pending.topA, __pending.topB], chosen: chosen })); } catch(e){}
       closeTieModal();
       finalizeAndRender(chosen, __pending.provisional, tieMeta);
       __pending = null;
@@ -2317,17 +2294,6 @@
       resumeBtn && resumeBtn.addEventListener("click", function(){
         clearAllSelections();
         var ok = restoreAnswersLocal();
-        if (ok){
-          // Migrate any old tie result from autosave into the dedicated key
-          try{
-            if (!localStorage.getItem(TIE_RESULT_KEY)){
-              var _as = readAutosave();
-              if (_as && _as.tieBreaker && _as.tieBreaker.chosen){
-                localStorage.setItem(TIE_RESULT_KEY, JSON.stringify(_as.tieBreaker));
-              }
-            }
-          } catch(e){}
-        }
         updateProgress();
         syncResumeControls();
         if (ok){
