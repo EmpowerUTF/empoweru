@@ -1044,7 +1044,6 @@
 
     var AUTOSAVE_KEY = "empoweru_utf2_som_v3_1_0_autosave";
     var RESULT_KEY   = "empoweru_utf2_som_latest";
-    var TIE_RESULT_KEY = "empoweru_utf2_som_v3_1_0_tie";
 
     var TIE_TRIGGER_POINTS = 1;
 
@@ -1655,7 +1654,6 @@
 
     function clearSavedAnswers(){
       try{ localStorage.removeItem(AUTOSAVE_KEY); } catch(e){}
-      try{ localStorage.removeItem(TIE_RESULT_KEY); } catch(e){}
     }
 
     function syncResumeControls(){
@@ -2123,16 +2121,14 @@
       var shouldTie = !!(provisional.top1 && provisional.top2 && (provisional.gapPoints <= TIE_TRIGGER_POINTS) && borderlineEnergy);
 
       if (shouldTie){
-        // Check for a saved tie result
+        // Check if we already have a stored result for this tie
         try{
-          var _savedTie = JSON.parse(localStorage.getItem(TIE_RESULT_KEY) || 'null');
-          if (_savedTie && _savedTie.chosen && _savedTie.pair &&
-              ((_savedTie.pair[0] === provisional.top1.code && _savedTie.pair[1] === provisional.top2.code) ||
-               (_savedTie.pair[0] === provisional.top2.code && _savedTie.pair[1] === provisional.top1.code))){
-            finalizeAndRender(_savedTie.chosen, provisional, {
-              considered: true, used: true, restored: true,
-              topA: provisional.top1.code, topB: provisional.top2.code
-            });
+          var _stored = JSON.parse(localStorage.getItem(RESULT_KEY) || 'null');
+          if (_stored && _stored.primaryType && _stored.tieBreaker &&
+              _stored.tieBreaker.considered &&
+              _stored.tieBreaker.topA === provisional.top1.code &&
+              _stored.tieBreaker.topB === provisional.top2.code){
+            finalizeAndRender(_stored.primaryType, provisional, _stored.tieBreaker);
             return;
           }
         } catch(e){}
@@ -2211,7 +2207,6 @@
         note: tie.note
       };
 
-      try{ localStorage.setItem(TIE_RESULT_KEY, JSON.stringify({ pair: [__pending.topA, __pending.topB], chosen: chosen })); } catch(e){}
       closeTieModal();
       finalizeAndRender(chosen, __pending.provisional, tieMeta);
       __pending = null;
