@@ -618,13 +618,15 @@
     .eu-footer-brand{
       font-weight: 950;
       letter-spacing: .14em;
-      text-transform: uppercase;
       font-size: .9rem;
       background: linear-gradient(90deg, #4c6fff, #00c2a8);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
       color: transparent;
+      text-shadow:
+        0 0 18px rgba(76,111,255,.18),
+        0 0 18px rgba(0,194,168,.12);
     }
     .eu-footer-links{
       display: flex;
@@ -1016,7 +1018,7 @@
 
   <footer class="eu-footer" aria-label="Footer">
     <div class="eu-footer-inner">
-      <div class="eu-footer-brand">EMPOWER.U</div>
+      <div class="eu-footer-brand">Empower.U</div>
       <div class="eu-footer-links">
         <a href="index.html">Home</a>
         <a href="explain.html">What is UTF?</a>
@@ -2119,6 +2121,18 @@
       var shouldTie = !!(provisional.top1 && provisional.top2 && (provisional.gapPoints <= TIE_TRIGGER_POINTS) && borderlineEnergy);
 
       if (shouldTie){
+        // Check for a saved tie result for this same pair — skip modal if found
+        var _savedAs = readAutosave();
+        var _savedTie = _savedAs && _savedAs.tieBreaker;
+        if (_savedTie && _savedTie.chosen && _savedTie.pair &&
+            ((_savedTie.pair[0] === provisional.top1.code && _savedTie.pair[1] === provisional.top2.code) ||
+             (_savedTie.pair[0] === provisional.top2.code && _savedTie.pair[1] === provisional.top1.code))){
+          finalizeAndRender(_savedTie.chosen, provisional, {
+            considered: true, used: true, restored: true,
+            topA: provisional.top1.code, topB: provisional.top2.code
+          });
+          return;
+        }
         __pending = {
           provisional: provisional,
           basePrimary: basePrimary,
@@ -2194,6 +2208,14 @@
         note: tie.note
       };
 
+            // Save tie result so resume won't re-trigger the modal
+      try{
+        var _asForTie = readAutosave();
+        if (_asForTie){
+          _asForTie.tieBreaker = { pair: [__pending.topA, __pending.topB], chosen: chosen };
+          localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(_asForTie));
+        }
+      } catch(e){}
       closeTieModal();
       finalizeAndRender(chosen, __pending.provisional, tieMeta);
       __pending = null;

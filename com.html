@@ -900,14 +900,15 @@
       text-align: center;
       max-width: 280px;
     }
-    .trait-spectrum{display:flex;flex-direction:column;gap:18px;padding:4px 0;}
-    .spectrum-row{display:grid;grid-template-columns:130px 1fr;grid-template-rows:auto auto;gap:4px 12px;align-items:center;}
-    @media(max-width:520px){.spectrum-row{grid-template-columns:100px 1fr;}}
-    .spectrum-label{font-size:.78rem;font-weight:700;color:rgba(230,237,247,0.75);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-    .spectrum-track{height:7px;border-radius:999px;background:rgba(255,255,255,0.07);overflow:hidden;}
-    .spectrum-fill{height:100%;border-radius:999px;transition:width .6s cubic-bezier(.4,0,.2,1);min-width:3px;}
-    .spectrum-desc{grid-column:1/-1;font-size:.82rem;color:rgba(230,237,247,0.58);line-height:1.55;padding-top:2px;}
-    .spectrum-divider{height:1px;background:rgba(255,255,255,0.08);margin:4px 0;}
+    @media (min-width: 900px){
+      .trait-spectrum{display:flex;flex-direction:column;gap:18px;padding:4px 0;}
+      .spectrum-row{display:grid;grid-template-columns:130px 1fr;grid-template-rows:auto auto;gap:4px 12px;align-items:center;}
+      @media(max-width:520px){.spectrum-row{grid-template-columns:100px 1fr;}}
+      .spectrum-label{font-size:.78rem;font-weight:700;color:rgba(230,237,247,0.75);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+      .spectrum-track{height:7px;border-radius:999px;background:rgba(255,255,255,0.07);overflow:hidden;}
+      .spectrum-fill{height:100%;border-radius:999px;transition:width .6s cubic-bezier(.4,0,.2,1);min-width:3px;}
+      .spectrum-desc{grid-column:1/-1;font-size:.82rem;color:rgba(230,237,247,0.58);line-height:1.55;padding-top:2px;}
+      .spectrum-divider{height:1px;background:rgba(255,255,255,0.08);margin:4px 0;}
 
       .tier-pill{
       display:inline-flex;
@@ -951,6 +952,7 @@
         margin: 0 auto;
       }
     }
+    } /* end @media (min-width: 900px) */
 
     /* Tie-breaker modal: uses existing modal styles; no theme changes */
     .tb-hint{
@@ -1726,7 +1728,7 @@
     var EMPOWERU_EXPLAIN_URL     = "./explain.html";
     var EMPOWERU_ABOUT_URL       = "./about.html";
 
-    var EMPOWERU_SCORE_ENDPOINT  = "YOUR_SCORE_ENDPOINT_HERE";
+    var EMPOWERU_SCORE_ENDPOINT  = "https://nnexuss-empoweru-backend.hf.space/api/score";
     var EMPOWERU_AUTOSAVE_LOCAL  = true;
 
     var AUTOSAVE_KEY             = "empoweru_utf2_com_v1_3_0";
@@ -1864,7 +1866,7 @@
     // Upload / analytics
     // =========================
     function storePayload(payload){
-      if (!EMPOWERU_SCORE_ENDPOINT || EMPOWERU_SCORE_ENDPOINT === "YOUR_SCORE_ENDPOINT_HERE") return;
+      if (!EMPOWERU_SCORE_ENDPOINT || EMPOWERU_SCORE_ENDPOINT === "https://nnexuss-empoweru-backend.hf.space/api/score") return;
       try{
         fetch(EMPOWERU_SCORE_ENDPOINT, {
           method: "POST",
@@ -2656,6 +2658,15 @@ const TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
         answers: answers
       };
 
+      try{
+        var _asForTie = _readSavedRaw(AUTOSAVE_KEY);
+        if (_asForTie){
+          _asForTie.tieBreaker = { pair: [s.primary, s.alt], chosen: chosen };
+          var _ts = JSON.stringify(_asForTie);
+          localStorage.setItem(AUTOSAVE_KEY, _ts);
+          try{ localStorage.setItem(AUTOSAVE_KEY_BAK, _ts); } catch(e2){}
+        }
+      } catch(e){}
       closeTieModal();
       finalizeAndRender(s.pending, chosen, tieData);
       window.__tieState = null;
@@ -2876,6 +2887,16 @@ const TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
       var pending = { answers:answers, avgDims:avgDims, picked:picked, undertones:undertones };
 
       if (alt && delta <= TIE_TRIGGER){
+        var _savedAs = _readSavedRaw(AUTOSAVE_KEY);
+        var _savedTie = _savedAs && _savedAs.tieBreaker;
+        if (_savedTie && _savedTie.chosen && _savedTie.pair &&
+            ((_savedTie.pair[0] === primary && _savedTie.pair[1] === alt.type) ||
+             (_savedTie.pair[0] === alt.type && _savedTie.pair[1] === primary))){
+          finalizeAndRender(pending, _savedTie.chosen, {
+            used: true, triggered: true, restored: true, pair: _savedTie.pair
+          });
+          return;
+        }
         var opened = openTieBreakerFlow(primary, alt.type, delta, pending);
         if (opened) return;
       }
