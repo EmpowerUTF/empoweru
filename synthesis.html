@@ -1259,7 +1259,7 @@ function copyAtlas(){
     var payload = {rating:_rating, comment:comment.trim().slice(0,400),
                    com_type:_comType, som_mode:_somMode, ts:new Date().toISOString()};
     try{
-      fetch("/api/rating",{method:"POST",headers:{"Content-Type":"application/json"},
+      fetch("https://nnexuss-empoweru-backend.hf.space/api/rating",{method:"POST",headers:{"Content-Type":"application/json"},
         body:JSON.stringify(payload)}).catch(function(){});
     }catch(e){}
     try{
@@ -1363,7 +1363,7 @@ function submitRatingEmail(){
       localStorage.setItem("eu_early_adopters", JSON.stringify(list));
     }catch(e){}
     try{
-      fetch("/api/early-adopter", {
+      fetch("https://nnexuss-empoweru-backend.hf.space/api/early-adopter", {
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({email:email, com_type:_comType, som_mode:_somMode, ts:new Date().toISOString()})
