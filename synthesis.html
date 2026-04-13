@@ -1259,8 +1259,12 @@ function copyAtlas(){
     var payload = {rating:_rating, comment:comment.trim().slice(0,400),
                    com_type:_comType, som_mode:_somMode, ts:new Date().toISOString()};
     try{
-      fetch("https://nnexuss-empoweru-backend.hf.space/api/rating",{method:"POST",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify(payload)}).catch(function(){});
+      (function attempt(r){
+        fetch("https://nnexuss-empoweru-backend.hf.space/api/rating",{method:"POST",headers:{"Content-Type":"application/json"},
+          body:JSON.stringify(payload)})
+        .then(function(res){ if(!res.ok && r>0) setTimeout(function(){attempt(r-1);},8000); })
+        .catch(function(){ if(r>0) setTimeout(function(){attempt(r-1);},8000); });
+      })(3);
     }catch(e){}
     try{
       var prev = JSON.parse(localStorage.getItem("eu_ratings")||"[]");
@@ -1363,11 +1367,15 @@ function submitRatingEmail(){
       localStorage.setItem("eu_early_adopters", JSON.stringify(list));
     }catch(e){}
     try{
-      fetch("https://nnexuss-empoweru-backend.hf.space/api/early-adopter", {
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({email:email, com_type:_comType, som_mode:_somMode, ts:new Date().toISOString()})
-      }).catch(function(){});
+      (function attempt(r){
+        fetch("https://nnexuss-empoweru-backend.hf.space/api/early-adopter", {
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({email:email, com_type:_comType, som_mode:_somMode, ts:new Date().toISOString()})
+        })
+        .then(function(res){ if(!res.ok && r>0) setTimeout(function(){attempt(r-1);},8000); })
+        .catch(function(){ if(r>0) setTimeout(function(){attempt(r-1);},8000); });
+      })(3);
     }catch(e){}
   }
   if(ebtn){ ebtn.textContent = "Done"; ebtn.disabled = true; }

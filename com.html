@@ -1864,13 +1864,22 @@
     // =========================
     function storePayload(payload){
       if (!EMPOWERU_SCORE_ENDPOINT || EMPOWERU_SCORE_ENDPOINT === "YOUR_SCORE_ENDPOINT_HERE") return;
-      try{
+      function attempt(retriesLeft){
         fetch(EMPOWERU_SCORE_ENDPOINT, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
-        }).catch(function(){});
-      } catch(e){}
+        }).then(function(r){
+          if(!r.ok && retriesLeft > 0){
+            setTimeout(function(){ attempt(retriesLeft - 1); }, 8000);
+          }
+        }).catch(function(){
+          if(retriesLeft > 0){
+            setTimeout(function(){ attempt(retriesLeft - 1); }, 8000);
+          }
+        });
+      }
+      try{ attempt(3); } catch(e){}
     }
 
     // =========================
