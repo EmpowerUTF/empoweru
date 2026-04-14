@@ -1260,7 +1260,7 @@ function copyAtlas(){
                    com_type:_comType, som_mode:_somMode, ts:new Date().toISOString()};
     try{
       (function attempt(r){
-        fetch("https://nnexuss-empoweru-backend.hf.space/api/rating",{method:"POST",headers:{"Content-Type":"application/json"},
+        fetch("https://empowerutf.up.railway.app/api/rating",{method:"POST",headers:{"Content-Type":"application/json"},
           body:JSON.stringify(payload)})
         .then(function(res){ if(!res.ok && r>0) setTimeout(function(){attempt(r-1);},8000); })
         .catch(function(){ if(r>0) setTimeout(function(){attempt(r-1);},8000); });
@@ -1368,7 +1368,7 @@ function submitRatingEmail(){
     }catch(e){}
     try{
       (function attempt(r){
-        fetch("https://nnexuss-empoweru-backend.hf.space/api/early-adopter", {
+        fetch("https://empowerutf.up.railway.app/api/early-adopter", {
           method:"POST",
           headers:{"Content-Type":"application/json"},
           body:JSON.stringify({email:email, com_type:_comType, som_mode:_somMode, ts:new Date().toISOString()})
