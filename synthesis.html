@@ -1252,6 +1252,7 @@ function copyAtlas(){
   var note = document.getElementById("copiedNote");
   var text = box.value || "";
   if(!text) return;
+  try{fetch("https://empowerutf.up.railway.app/api/atlas/event",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({com_type:_comType,som_mode:_somMode,event_type:"copy"})});}catch(e){}
   // Submit rating on first copy only
   if(!_ratingDone && _rating > 0){
     _ratingDone = true;
