@@ -1,1656 +1,1399 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Empower.U - UTF Profile</title>
-  <style>
-    :root{
-      --bg:#070a10;
-      --text:#e6edf7;
-      --muted:rgba(230,237,247,0.72);
-      --muted2:rgba(230,237,247,0.48);
-      --line:rgba(230,237,247,0.14);
-      --accent:#3b82f6;
-      --accent2:#14b8a6;
-      --amber:#f59e0b;
-      --amber-glow:rgba(245,158,11,0.22);
-      --shadow:0 22px 70px rgba(0,0,0,0.55);
-      --radius:18px;
-      --warn-bg:rgba(251,191,36,0.14);
-      --warn-line:rgba(251,191,36,0.40);
-      --warn-text:rgba(255,237,180,0.98);
-      --card:rgba(255,255,255,0.03);
-      --card2:rgba(255,255,255,0.05);
-      --sig-grad:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 100%);
-    }
-    *{margin:0;padding:0;box-sizing:border-box;}
-    body{
-      font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
-      min-height:100vh;
-      padding:84px 20px 48px;
-      color:var(--text);
-      background:
-        radial-gradient(1200px 800px at 12% 10%,rgba(59,130,246,0.22),transparent 58%),
-        radial-gradient(1100px 780px at 88% 18%,rgba(20,184,166,0.20),transparent 60%),
-        radial-gradient(1000px 720px at 50% 95%,rgba(96,165,250,0.12),transparent 60%),
-        linear-gradient(180deg,rgba(8,10,18,1) 0%,rgba(6,8,14,1) 55%,rgba(5,7,12,1) 100%);
-      background-attachment:fixed;
-    }
-    @media(max-width:560px){body{padding:78px 12px 36px;}}
-    .container{max-width:820px;margin:0 auto;}
+<meta charset="UTF-8" />
+<title>Empower.U • What is UTF?</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<style>
+:root{
+--primary:#4c6fff;
+--accent:#00c2a8;
+--sig-grad: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+--bg:#020617;
+--bg-soft:#0b1120;
+--card-bg:#020617;
+--border-subtle:rgba(148,163,184,.35);
+--text-main:#f1f5f9;
+--text-muted:#cbd5e1;
+--shadow: 0 24px 80px rgba(0,0,0,.65);
+--radius: 20px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+min-height:100vh;
+background:
+radial-gradient(circle at top, rgba(76,111,255,.18) 0, transparent 55%),
+radial-gradient(circle at 85% 15%, rgba(0,194,168,.12) 0, transparent 55%),
+linear-gradient(180deg, #020617 0%, #020617 100%);
+color:var(--text-main);
+padding:24px 12px;
+padding-top: 88px;
+line-height:1.6;
+}
 
-    /* ── TOPBAR ── */
-    .topbar{position:fixed;top:0;left:0;right:0;z-index:2500;padding:10px 12px;background:rgba(10,12,20,0.70);backdrop-filter:blur(12px);box-shadow:0 18px 54px rgba(0,0,0,.45);}
-    .topbar::before{content:"";position:absolute;inset:-1px;background:radial-gradient(520px 140px at 50% 50%,rgba(59,130,246,.26),rgba(20,184,166,.22),transparent 68%);pointer-events:none;opacity:.95;z-index:0;}
-    .topbar-inner{max-width:980px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;position:relative;z-index:1;}
-    .home-btn,.menu-btn{position:relative;display:inline-flex;align-items:center;justify-content:center;width:46px;height:42px;border-radius:14px;border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.07);color:rgba(230,237,247,0.92);cursor:pointer;transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease;text-decoration:none;flex:0 0 auto;touch-action:manipulation;user-select:none;-webkit-tap-highlight-color:transparent;}
-    .home-btn{width:42px;}
-    .home-btn:hover,.menu-btn:hover{transform:translateY(-1px);border-color:rgba(20,184,166,0.45);box-shadow:0 14px 34px rgba(0,0,0,.35);}
-    .topbar-center{flex:1 1 auto;display:flex;align-items:center;justify-content:center;min-width:0;}
-    .brand-gradient{font-weight:900;letter-spacing:.02em;font-size:1.5rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:linear-gradient(135deg,#ffffff 0%,rgba(255,255,255,0.85) 50%,#4c6fff 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;text-shadow:0 4px 16px rgba(76,111,255,0.15);}
-    .menu-btn{width:46px;}
+.topbar-wrap{
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+z-index: 1050;
+}
+.topbar{
+padding:10px 12px;
+background:
+  linear-gradient(180deg,
+    rgba(10,18,32,0.92) 0%,
+    rgba(10,18,32,0.78) 55%,
+    rgba(10,18,32,0.25) 100%);
+backdrop-filter: blur(12px);
+border-bottom: 1px solid rgba(255,255,255,0.08);
+position: relative;
+}
+.topbar::before{
+content:"";
+position:absolute;
+inset:0;
+background:
+  radial-gradient(520px 140px at 50% 50%,
+    rgba(76,111,255,.26),
+    rgba(0,194,168,.22),
+    transparent 68%);
+pointer-events:none;
+opacity: 0.95;
+}
+.topbar-inner{
+position: relative;
+z-index: 1;
+max-width: 980px;
+margin: 0 auto;
+display: grid;
+grid-template-columns: 44px 1fr 44px;
+align-items: center;
+gap: 10px;
+min-height: 54px;
+}
+.home-btn,
+.menu-btn{
+position: relative;
+z-index: 1;
+display:inline-flex;
+align-items:center;
+justify-content:center;
+width:46px;
+height:42px;
+border-radius:14px;
+border:1px solid rgba(255,255,255,0.18);
+background:rgba(255,255,255,0.07);
+color:rgba(230,237,247,0.92);
+cursor:pointer;
+transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+text-decoration:none;
+flex:0 0 auto;
+touch-action:manipulation;
+user-select:none;
+-webkit-tap-highlight-color:transparent;
+}
+.home-btn:hover,
+.menu-btn:hover{
+transform: translateY(-1px);
+border-color: rgba(0,194,168,0.45);
+box-shadow: 0 14px 34px rgba(0,0,0,.35);
+}
+.topbar-center{
+position: relative;
+z-index: 1;
+flex: 1 1 auto;
+display:flex;
+align-items:center;
+justify-content:center;
+min-width:0;
+}
+.eu-gradient-text{
+background: linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.85) 50%, #4c6fff 100%);
+-webkit-background-clip: text;
+background-clip: text;
+color: transparent;
+font-weight: 950;
+letter-spacing: .12em;
+font-size: 1.5rem;
+white-space:nowrap;
+overflow:hidden;
+text-overflow:ellipsis;
+}
 
-    /* ── MODAL / MENU ── */
-    .modal-backdrop{position:fixed;inset:0;z-index:3500;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:18px;}
-    .modal-backdrop.show{display:flex;}
-    .modal{width:min(740px,92vw);border-radius:22px;border:1px solid rgba(255,255,255,0.12);background:radial-gradient(900px 520px at 20% 10%,rgba(96,165,250,0.16),transparent 58%),radial-gradient(900px 520px at 80% 20%,rgba(20,184,166,0.14),transparent 62%),linear-gradient(180deg,rgba(9,12,22,0.98),rgba(6,9,16,0.98));box-shadow:0 28px 90px rgba(0,0,0,.72);overflow:hidden;}
-    .modal-header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px;border-bottom:1px solid rgba(255,255,255,0.10);}
-    .modal-title{font-weight:950;letter-spacing:.10em;text-transform:uppercase;font-size:.98rem;color:rgba(230,237,247,0.92);}
-    .modal-close{border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.04);color:rgba(230,237,247,0.9);border-radius:14px;padding:10px 12px;cursor:pointer;font-weight:950;touch-action:manipulation;transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease;}
-    .modal-close:hover{transform:translateY(-1px);border-color:rgba(20,184,166,0.45);box-shadow:0 14px 34px rgba(0,0,0,.35);}
-    .modal-body{padding:14px 16px 18px;}
-    .menu-links{display:grid;gap:12px;}
-    .menu-link{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px;border-radius:18px;border:1px solid rgba(255,255,255,0.10);background:rgba(255,255,255,0.03);color:rgba(230,237,247,0.90);font-weight:950;text-decoration:none;cursor:pointer;touch-action:manipulation;transition:transform .15s ease,border-color .15s ease,box-shadow .15s ease;text-align:left;min-width:0;}
-    .menu-link:hover{transform:translateY(-1px);border-color:rgba(20,184,166,0.45);box-shadow:0 14px 34px rgba(0,0,0,.35);}
-    .menu-link span:last-child{color:rgba(230,237,247,0.55);font-size:.88rem;white-space:nowrap;}
+.container{
+max-width:900px;
+margin:0 auto;
+}
+.hero{
+text-align:center;
+margin-bottom:32px;
+padding-top:32px;
+}
+.hero h1{
+font-size:3.4rem;
+font-weight:900;
+background:linear-gradient(135deg, rgba(255,255,255,0.98), rgba(255,179,102,0.92), rgba(76,111,255,0.90), rgba(20,184,166,0.88));
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+background-clip:text;
+margin-bottom:16px;
+letter-spacing:-0.025em;
+line-height:1.08;
+}
+.hero p{
+font-size:1.15rem;
+color:rgba(203,213,225,0.92);
+max-width:620px;
+margin:0 auto 24px;
+line-height:1.65;
+font-weight:400;
+}
+.hero-cta-wrapper{
+display:flex;
+gap:16px;
+justify-content:center;
+flex-wrap:wrap;
+margin-top:40px;
+}
+.hero-cta{
+position:relative;
+display:inline-flex;
+align-items:center;
+justify-content:center;
+padding:16px 32px;
+border-radius:12px;
+font-weight:700;
+font-size:1.05rem;
+text-decoration:none;
+letter-spacing:0.01em;
+transition:all .22s cubic-bezier(0.4, 0, 0.2, 1);
+overflow:hidden;
+}
+.hero-cta-primary{
+background:linear-gradient(135deg, rgba(76,111,255,0.95), rgba(59,130,246,0.92));
+color:#ffffff;
+border:1px solid rgba(255,255,255,0.18);
+box-shadow:
+inset 0 1px 0 rgba(255,255,255,0.20),
+0 1px 2px rgba(0,0,0,0.05),
+0 8px 24px rgba(76,111,255,0.28),
+0 16px 48px rgba(59,130,246,0.18);
+}
+.hero-cta-primary::before{
+content:'';
+position:absolute;
+inset:0;
+background:linear-gradient(135deg, rgba(255,255,255,0.12), transparent);
+opacity:0;
+transition:opacity .22s ease;
+}
+.hero-cta-primary:hover{
+transform:translateY(-2px);
+box-shadow:
+inset 0 1px 0 rgba(255,255,255,0.25),
+0 2px 4px rgba(0,0,0,0.05),
+0 12px 32px rgba(76,111,255,0.35),
+0 20px 60px rgba(59,130,246,0.25);
+}
+.hero-cta-primary:hover::before{
+opacity:1;
+}
+.hero-cta-secondary{
+background:linear-gradient(135deg, rgba(20,184,166,0.18), rgba(6,182,212,0.16));
+color:rgba(230,237,247,0.98);
+border:1px solid rgba(20,184,166,0.35);
+box-shadow:
+inset 0 1px 0 rgba(255,255,255,0.08),
+0 1px 2px rgba(0,0,0,0.05),
+0 4px 12px rgba(20,184,166,0.12);
+}
+.hero-cta-secondary:hover{
+transform:translateY(-2px);
+background:linear-gradient(135deg, rgba(20,184,166,0.28), rgba(6,182,212,0.24));
+border-color:rgba(20,184,166,0.60);
+box-shadow:
+inset 0 1px 0 rgba(255,255,255,0.12),
+0 2px 4px rgba(0,0,0,0.05),
+0 8px 24px rgba(20,184,166,0.25),
+0 0 32px rgba(20,184,166,0.15);
+color:#ffffff;
+}
 
-    /* ── TOAST ── */
-    .toast{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);width:min(720px,calc(100% - 24px));z-index:4000;display:none;padding:12px 14px;border-radius:14px;background:var(--warn-bg);border:1px solid var(--warn-line);color:var(--warn-text);font-size:.92rem;line-height:1.35;box-shadow:0 18px 50px rgba(0,0,0,0.45);backdrop-filter:blur(10px);overflow-wrap:anywhere;}
-    .toast.show{display:block;}
+.section{
+margin-bottom:64px;
+}
+.section-title{
+font-size:2rem;
+font-weight:700;
+margin-bottom:12px;
+background:var(--sig-grad);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+background-clip:text;
+letter-spacing:-0.02em;
+text-align:center;
+}
+.section-subtitle{
+font-size:1.1rem;
+color:var(--text-muted);
+margin-bottom:24px;
+line-height:1.7;
+text-align:center;
+max-width:720px;
+margin-left:auto;
+margin-right:auto;
+}
+.card{
+background:
+  radial-gradient(circle at bottom left, rgba(0,194,168,0.06), transparent 50%),
+  var(--card-bg);
+border:1px solid var(--border-subtle);
+border-radius:var(--radius);
+padding:32px;
+margin-bottom:24px;
+box-shadow:var(--shadow);
+transition:all 0.3s ease;
+}
+.card:hover{
+border-color:rgba(76,111,255,.5);
+box-shadow:
+  0 28px 90px rgba(0,0,0,.75),
+  0 0 50px rgba(76,111,255,.12);
+}
+.card h3{
+font-size:1.5rem;
+font-weight:700;
+margin-bottom:12px;
+background:var(--sig-grad);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+background-clip:text;
+}
+.card p{
+font-size:1.05rem;
+color:var(--text-muted);
+line-height:1.8;
+margin-bottom:12px;
+}
+.card p:last-child{
+margin-bottom:0;
+}
+.card ul{
+list-style:none;
+padding:0;
+margin:16px 0;
+}
+.card li{
+padding:10px 0;
+color:var(--text-muted);
+font-size:1.05rem;
+line-height:1.7;
+}
+.card li::before{
+content:"✓";
+color:var(--accent);
+font-weight:700;
+margin-right:12px;
+font-size:1.2rem;
+}
 
-    /* ── STATES ── */
-    .state-block{display:none;text-align:center;padding:60px 24px;}
-    .state-block.show{display:block;}
-    .state-icon{font-size:2.8rem;margin-bottom:20px;opacity:.7;}
-    .state-title{font-size:1.5rem;font-weight:800;margin-bottom:12px;color:var(--text);}
-    .state-body{font-size:1rem;color:var(--muted);line-height:1.7;margin-bottom:32px;max-width:480px;margin-left:auto;margin-right:auto;}
-    .state-cta-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
-    .cta-primary{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:12px;background:linear-gradient(135deg,rgba(76,111,255,0.92),rgba(59,130,246,0.88));color:#fff;font-weight:800;font-size:.98rem;text-decoration:none;border:1px solid rgba(255,255,255,0.16);box-shadow:inset 0 1px 1px rgba(255,255,255,0.18),0 8px 24px rgba(76,111,255,0.28);transition:all .2s ease;}
-    .cta-primary:hover{transform:translateY(-2px);box-shadow:inset 0 1px 1px rgba(255,255,255,0.22),0 12px 32px rgba(76,111,255,0.38);}
-    .cta-secondary{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:12px;background:rgba(255,255,255,0.04);color:rgba(230,237,247,0.85);font-weight:700;font-size:.98rem;text-decoration:none;border:1px solid rgba(255,255,255,0.12);transition:all .2s ease;}
-    .cta-secondary:hover{transform:translateY(-1px);border-color:rgba(20,184,166,0.4);background:rgba(20,184,166,0.06);}
+.feature-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:24px;
+margin:20px 0 32px;
+}
+.feature-card{
+background:
+  radial-gradient(circle at top right, rgba(76,111,255,0.08), transparent 60%),
+  var(--bg-soft);
+border:1px solid var(--border-subtle);
+border-radius:16px;
+padding:28px;
+transition:all 0.3s ease;
+}
+.feature-card:hover{
+border-color:rgba(76,111,255,.5);
+transform:translateY(-3px);
+box-shadow:
+  0 20px 60px rgba(0,0,0,.5),
+  0 0 40px rgba(76,111,255,.15);
+}
+.feature-card h4{
+font-size:1.3rem;
+font-weight:700;
+margin-bottom:12px;
+color:rgba(241,245,249,0.95);
+}
+.feature-card p{
+font-size:1.05rem;
+color:var(--text-muted);
+line-height:1.7;
+}
 
-    /* ── PARTIAL STATE CARDS ── */
-    .partial-done{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:10px;background:rgba(20,184,166,0.10);border:1px solid rgba(20,184,166,0.28);color:rgba(94,234,212,0.90);font-weight:700;font-size:.9rem;margin-bottom:24px;}
-    .partial-done svg{flex-shrink:0;}
+.type-dropdown{
+background:var(--bg-soft);
+border:1px solid var(--border-subtle);
+border-radius:16px;
+padding:24px 32px;
+margin:0 auto 20px;
+max-width:600px;
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:16px;
+}
+.type-dropdown label{
+font-size:1.1rem;
+color:var(--text-main);
+font-weight:700;
+text-align:center;
+}
+.type-dropdown select{
+width:100%;
+max-width:400px;
+background:var(--card-bg);
+border:1px solid var(--border-subtle);
+border-radius:12px;
+padding:14px 18px;
+color:var(--text-main);
+font-size:1.05rem;
+font-weight:600;
+cursor:pointer;
+transition:all 0.2s ease;
+}
+.type-dropdown select:hover{
+border-color:var(--primary);
+}
+.type-dropdown select:focus{
+outline:none;
+border-color:var(--primary);
+box-shadow:0 0 0 3px rgba(76,111,255,0.2);
+}
+.type-reveal{
+display:none;
+margin-top:32px;
+animation:fadeIn 0.3s ease;
+}
+.type-reveal.show{
+display:block;
+}
+@keyframes fadeIn{
+from{opacity:0;transform:translateY(-10px);}
+to{opacity:1;transform:translateY(0);}
+}
 
-    /* ── MAIN RESULT ── */
-    #resultBlock{display:none;}
-    #resultBlock.show{display:block;}
+.type-section-heading{
+font-size:1.4rem;
+font-weight:700;
+text-align:center;
+margin-bottom:24px;
+background:linear-gradient(135deg, #a855f7 0%, #06b6d4 100%);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+background-clip:text;
+}
 
-    .page-title{text-align:center;font-size:1.9rem;font-weight:900;letter-spacing:-.02em;background:linear-gradient(135deg,#fff 0%,rgba(255,255,255,.85) 40%,#4c6fff 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px;padding-top:8px;}
-    .page-sub{text-align:center;font-size:.92rem;color:var(--muted2);margin-bottom:36px;line-height:1.5;}
-    .disclaimer-note{text-align:center;font-size:.8rem;color:var(--muted2);margin-bottom:36px;font-style:italic;}
+.dropdowns-container{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:32px;
+margin-bottom:32px;
+}
 
-    /* ── PAGE HEADER ── */
-    .page-title{text-align:center;font-size:2rem;font-weight:900;letter-spacing:-.03em;background:linear-gradient(135deg,#fff 0%,rgba(255,255,255,.85) 40%,#4c6fff 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px;padding-top:4px;}
-    .page-sub{text-align:center;font-size:.92rem;color:var(--muted2);margin-bottom:8px;}
-    .disclaimer-note{text-align:center;font-size:.76rem;color:rgba(230,237,247,0.38);margin-bottom:32px;font-style:italic;}
+.dropdown-col{
+display:flex;
+flex-direction:column;
+}
 
-    /* ── PROFILE CARDS ── */
-    .profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;align-items:stretch;}
-    @media(max-width:640px){.profile-grid{grid-template-columns:1fr;gap:12px;}}
-    .profile-card{position:relative;border-radius:20px;overflow:hidden;padding:26px 24px 24px;
-      background:linear-gradient(160deg,rgba(255,255,255,0.055) 0%,rgba(255,255,255,0.025) 100%);
-      border:1px solid rgba(255,255,255,0.10);
-      box-shadow:0 2px 0 rgba(255,255,255,0.05) inset,0 20px 60px rgba(0,0,0,0.30);}
-    .profile-card::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:rgba(255,255,255,0.18);}
-    .card-meta-label{font-size:.72rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:rgba(230,237,247,0.65);margin-bottom:4px;}
-    .card-meta-sub{font-size:.78rem;color:rgba(230,237,247,0.52);margin-bottom:14px;line-height:1.45;}
-    .card-type-name{font-size:2rem;font-weight:900;letter-spacing:-.03em;margin-bottom:12px;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1.05;display:block;}
-    @media(max-width:400px){.card-type-name{font-size:1.6rem;}}
-    .card-type-headline{font-size:.93rem;color:var(--text);line-height:1.62;margin-bottom:8px;font-weight:600;}
-    .card-type-body{font-size:.85rem;color:var(--muted);line-height:1.68;}
+@media(max-width:768px){
+.dropdowns-container{
+grid-template-columns:1fr;
+gap:24px;
+}
+}
 
-    /* ── ATLAS COPY ROW ── */
-    .atlas-copy-row{display:flex;align-items:flex-start;gap:16px;padding:22px 22px 18px;
-      background:linear-gradient(135deg,rgba(20,184,166,0.07),rgba(59,130,246,0.05));
-      border:1px solid rgba(94,234,212,0.20);border-radius:16px 16px 0 0;margin-top:0;}
-    .atlas-copy-left{flex:1;min-width:0;}
-    .atlas-copy-title{font-size:.95rem;font-weight:800;color:rgba(94,234,212,0.92);margin-bottom:4px;letter-spacing:.01em;}
-    .atlas-copy-desc{font-size:.83rem;color:var(--muted2);line-height:1.5;}
-    .atlas-agreement{padding:14px 22px;background:rgba(255,255,255,0.025);border-left:1px solid rgba(94,234,212,0.20);border-right:1px solid rgba(94,234,212,0.20);color:rgba(230,237,247,0.78);font-size:.88rem;line-height:1.55;}
-    .atlas-agreement label{display:flex;gap:12px;align-items:flex-start;cursor:pointer;user-select:none;}
-    .atlas-agreement input[type="checkbox"]{margin-top:3px;width:16px;height:16px;accent-color:#14b8a6;flex:0 0 auto;}
-    .atlas-agreement a{color:rgba(165,180,252,.95);text-decoration:none;border-bottom:1px dashed rgba(165,180,252,.55);font-weight:800;}
-    .atlas-agreement a:hover{color:rgba(52,211,153,.95);border-bottom-color:rgba(52,211,153,.55);}
-    .copy-btn{
-      width:100%;padding:15px 16px;border:none;border-radius:0 0 16px 16px;cursor:pointer;
-      font-size:1.05rem;font-weight:900;letter-spacing:0.02em;color:#ffffff;
-      text-shadow:0 2px 4px rgba(0,0,0,0.30),0 0 8px rgba(255,255,255,0.20);
-      background:linear-gradient(135deg,rgba(59,130,246,0.88),rgba(20,184,166,0.92));
-      border:1px solid rgba(255,255,255,0.14);border-top:none;
-      box-shadow:inset 0 1px 1px rgba(255,255,255,0.20),0 0 24px rgba(59,130,246,0.18),0 18px 44px rgba(20,184,166,0.22),0 16px 34px rgba(59,130,246,0.18);
-      transition:transform 0.18s ease,box-shadow 0.18s ease,opacity 0.18s ease;
-      touch-action:manipulation;display:flex;align-items:center;justify-content:center;gap:9px;
-      margin-bottom:0;
-    }
-    .copy-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:inset 0 1px 1px rgba(255,255,255,0.25),0 0 32px rgba(59,130,246,0.24),0 22px 56px rgba(20,184,166,0.28),0 20px 44px rgba(59,130,246,0.22);}
-    .copy-btn:disabled{cursor:not-allowed;opacity:.40;transform:none !important;box-shadow:none;}
-    .copy-btn.copied{background:linear-gradient(135deg,rgba(16,185,129,0.85),rgba(20,184,166,0.90));}
-    .atlas-wrap{border-radius:16px;overflow:hidden;margin:20px 0 8px;}
+.type-header{
+display:flex;
+align-items:center;
+justify-content:space-between;
+margin-bottom:20px;
+flex-wrap:wrap;
+gap:12px;
+}
+.type-name{
+font-size:1.9rem;
+font-weight:900;
+text-shadow:0 2px 12px rgba(0,0,0,0.3);
+}
+.type-number{
+font-size:0.85rem;
+color:var(--text-muted);
+font-weight:600;
+background:var(--bg-soft);
+padding:6px 12px;
+border-radius:8px;
+border:1px solid var(--border-subtle);
+}
+.type-desc{
+color:var(--text-main);
+font-size:1.1rem;
+margin-bottom:20px;
+line-height:1.8;
+}
+.dimensions{
+background:var(--bg-soft);
+border-radius:12px;
+padding:20px;
+}
+.dim-title{
+font-size:0.85rem;
+text-transform:uppercase;
+letter-spacing:0.08em;
+color:var(--accent);
+font-weight:700;
+margin-bottom:12px;
+}
+.dim-item{
+font-size:1rem;
+color:#cbd5e1;
+line-height:1.7;
+}
 
-    
-    /* ── ACCORDIONS ── */
-    .acc-section{margin-bottom:10px;}
-    .acc-btn{width:100%;background:rgba(255,255,255,0.03);border:1px solid var(--line);border-radius:12px;padding:15px 20px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--text);font-size:.92rem;font-weight:700;text-align:left;transition:border-color .2s,background .2s;}
-    .acc-btn:hover{border-color:rgba(76,111,255,0.4);background:rgba(76,111,255,0.05);}
-    .acc-btn.open{border-radius:12px 12px 0 0;border-color:rgba(76,111,255,0.35);}
-    .acc-btn-featured{background:rgba(76,111,255,0.07);border-color:rgba(76,111,255,0.28);color:rgba(94,234,212,0.92);}
-    .acc-btn-featured.open{border-color:rgba(94,234,212,0.38);}
-    .acc-btn-featured:hover{border-color:rgba(94,234,212,0.45);background:rgba(20,184,166,0.09);}
-    .acc-chevron{color:var(--accent2);font-size:.85rem;transition:transform .25s;flex-shrink:0;}
-    .acc-btn.open .acc-chevron{transform:rotate(180deg);}
-    .acc-panel{max-height:0;overflow:hidden;transition:max-height .35s ease;}
-    .acc-panel.open{max-height:2000px;}
-    .acc-inner{padding:20px 20px 22px;background:rgba(255,255,255,0.02);border:1px solid rgba(76,111,255,0.20);border-top:none;border-radius:0 0 12px 12px;}
-    .acc-inner p{font-size:.92rem;color:var(--muted);line-height:1.7;margin-bottom:12px;}
-    .acc-inner p:last-child{margin-bottom:0;}
-    .acc-inner .label{font-size:.76rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--accent2);margin-bottom:6px;margin-top:14px;}
-    .acc-inner .label:first-child{margin-top:0;}
+.cta-box{
+background:linear-gradient(135deg, rgba(76,111,255,.15), rgba(0,194,168,.15));
+border:1px solid var(--border-subtle);
+border-radius:var(--radius);
+padding:40px;
+text-align:center;
+margin:48px 0;
+}
+.cta-box h3{
+font-size:1.8rem;
+font-weight:700;
+margin-bottom:16px;
+background:var(--sig-grad);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+background-clip:text;
+}
+.cta-box p{
+font-size:1.1rem;
+color:var(--text-muted);
+line-height:1.7;
+margin-bottom:24px;
+}
+.cta-btn{
+display:inline-block;
+padding:15px 36px;
+border-radius:10px;
+background:linear-gradient(135deg, rgba(59,130,246,0.92), rgba(20,184,166,0.88));
+color:#ffffff;
+font-weight:800;
+font-size:1.00rem;
+text-decoration:none;
+border: 1px solid rgba(255,255,255,0.16);
+box-shadow:
+inset 0 1px 1px rgba(255,255,255,0.22),
+0 0 24px rgba(59,130,246,0.20),
+0 12px 32px rgba(20,184,166,0.16);
+transition:all .20s ease;
+letter-spacing:0.02em;
+}
+.cta-btn:hover{
+background:linear-gradient(135deg, rgba(59,130,246,0.98), rgba(20,184,166,0.94));
+box-shadow:
+inset 0 1px 1px rgba(255,255,255,0.28),
+0 0 32px rgba(59,130,246,0.28),
+0 16px 40px rgba(20,184,166,0.22);
+transform:translateY(-2px);
+}
 
-    /* ── D9 MODIFIER ── */
-    .d9-modifier{padding:12px 14px;border-radius:10px;font-size:.875rem;line-height:1.6;border-left:3px solid;}
-    .d9-modifier.stable{background:rgba(20,184,166,0.07);border-color:rgba(20,184,166,0.40);color:rgba(94,234,212,0.85);}
-    .d9-modifier.reactive{background:rgba(245,158,11,0.07);border-color:rgba(245,158,11,0.40);color:rgba(253,230,138,0.85);}
+.dropdown-section{
+margin-bottom:24px;
+}
+.dropdown-toggle{
+background:var(--bg-soft);
+border:1px solid var(--border-subtle);
+border-radius:12px;
+padding:20px 24px;
+cursor:pointer;
+transition:all 0.3s ease;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:16px;
+}
+.dropdown-toggle:hover{
+border-color:var(--primary);
+background:rgba(76,111,255,0.05);
+}
+.dropdown-toggle h3{
+font-size:1.1rem;
+font-weight:600;
+color:rgba(241,245,249,0.92);
+margin:0;
+line-height:1.4;
+}
+.dropdown-icon{
+font-size:1rem;
+color:var(--accent);
+transition:transform 0.3s ease;
+flex-shrink:0;
+font-weight:700;
+opacity:0.8;
+}
+.dropdown-toggle.active .dropdown-icon{
+transform:rotate(180deg);
+}
 
-    /* ── EXPLORE CTA ── */
-    .explore-cta{margin:24px 0 0;padding:28px 24px 24px;border-radius:20px;
-      background:linear-gradient(160deg,rgba(255,255,255,0.04),rgba(255,255,255,0.02));
-      border:1px solid rgba(255,255,255,0.08);text-align:center;}
-    .explore-cta-title{font-size:1.05rem;font-weight:800;color:var(--text);margin-bottom:8px;}
-    .explore-cta-sub{font-size:.86rem;color:var(--muted2);line-height:1.6;margin-bottom:20px;max-width:460px;margin-left:auto;margin-right:auto;}
-    .explore-chips{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin-bottom:20px;}
-    .explore-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;
-      background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.10);
-      color:rgba(230,237,247,0.60);font-size:.8rem;font-weight:700;cursor:pointer;
-      transition:all .18s;text-decoration:none;}
-    .explore-chip:hover{border-color:rgba(94,234,212,0.35);color:rgba(94,234,212,0.9);background:rgba(20,184,166,0.07);}
+.agreement{
+display:flex;
+justify-content:center;
+margin:20px 0;
+}
+.agreement label{
+display:flex;
+gap:10px;
+align-items:flex-start;
+cursor:pointer;
+user-select:none;
+font-size:0.95rem;
+color:var(--text-main);
+}
+.agreement input[type="checkbox"]{
+margin-top:3px;
+width:18px;
+height:18px;
+accent-color:var(--accent);
+flex:0 0 auto;
+}
+.agreement a{
+white-space:nowrap;
+color:rgba(165,180,252,.95);
+text-decoration:none;
+border-bottom:1px dashed rgba(165,180,252,.55);
+font-weight:950;
+}
+.agreement a:hover{
+color:rgba(52,211,153,.95);
+border-bottom-color:rgba(52,211,153,.55);
+}
+.dropdown-content{
+max-height:0;
+overflow:hidden;
+transition:max-height 0.3s ease;
+}
+.dropdown-content.active{
+max-height:3000px;
+}
+.dropdown-inner{
+padding:24px;
+background:var(--card-bg);
+border:1px solid var(--border-subtle);
+border-top:none;
+border-radius:0 0 12px 12px;
+margin-top:-1px;
+}
+.dropdown-inner h4{
+font-size:1.1rem;
+font-weight:700;
+background:var(--sig-grad);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+background-clip:text;
+margin-bottom:12px;
+margin-top:20px;
+}
+.dropdown-inner h4:first-child{
+margin-top:0;
+}
+.dropdown-inner p{
+color:var(--text-muted);
+font-size:1.05rem;
+line-height:1.7;
+margin-bottom:12px;
+}
 
-    /* ── RETAKE ROW ── */
-    .retake-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:16px;}
-    .retake-link{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.08);color:rgba(230,237,247,0.40);font-size:.8rem;font-weight:700;text-decoration:none;transition:all .2s;}
-    .retake-link:hover{border-color:rgba(76,111,255,0.35);color:rgba(230,237,247,0.75);}
+.eu-footer{
+margin-top: 22px;
+padding: 18px 12px 16px;
+border-top: 1px solid rgba(148,163,184,.18);
+background: transparent;
+}
+.eu-footer .inner{
+max-width: 900px;
+margin: 0 auto;
+text-align: center;
+display: flex;
+flex-direction: column;
+gap: 10px;
+}
+.eu-footer .links{
+display:flex;
+gap: 14px;
+flex-wrap: wrap;
+justify-content:center;
+}
+.eu-footer a{
+color: rgba(165,180,252,.85);
+text-decoration:none;
+font-weight: 900;
+font-size: .85rem;
+border-bottom: 1px dashed rgba(165,180,252,.35);
+}
+.eu-footer a:hover{
+color: rgba(52,211,153,.95);
+border-bottom-color: rgba(52,211,153,.45);
+}
 
-    @keyframes fadeInUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+.menu-backdrop{
+position: fixed;
+inset: 0;
+z-index: 4000;
+background: rgba(0,0,0,.55);
+backdrop-filter: blur(6px);
+display: none;
+align-items: center;
+justify-content: center;
+padding: 18px;
+}
+.menu-backdrop.show{ display:flex; }
+.menu-modal{
+width: min(740px, 92vw);
+border-radius: 22px;
+border: 1px solid rgba(255,255,255,0.12);
+background:
+radial-gradient(900px 520px at 20% 10%, rgba(96,165,250,0.16), transparent 58%),
+radial-gradient(900px 520px at 80% 20%, rgba(20,184,166,0.14), transparent 62%),
+linear-gradient(180deg, rgba(9,12,22,0.98), rgba(6,9,16,0.98));
+box-shadow: 0 28px 90px rgba(0,0,0,.72);
+overflow: hidden;
+}
+.menu-header{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap: 10px;
+padding: 16px 16px;
+border-bottom: 1px solid rgba(255,255,255,0.10);
+}
+.menu-title{
+font-weight: 950;
+letter-spacing: .10em;
+text-transform: uppercase;
+font-size: .98rem;
+color: rgba(230,237,247,0.92);
+}
+.menu-close{
+border: 1px solid rgba(255,255,255,0.18);
+background: rgba(255,255,255,0.04);
+color: rgba(230,237,247,0.9);
+border-radius: 14px;
+padding: 10px 12px;
+cursor: pointer;
+font-weight: 950;
+touch-action: manipulation;
+transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+.menu-close:hover{
+transform: translateY(-1px);
+border-color: rgba(20,184,166,0.45);
+box-shadow: 0 14px 34px rgba(0,0,0,.35);
+}
+.menu-body{
+padding: 14px 16px 18px;
+}
+.menu-links{
+display:grid;
+gap: 12px;
+}
+.menu-link{
+width:100%;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:10px;
+padding: 14px 14px;
+border-radius: 18px;
+border: 1px solid rgba(255,255,255,0.10);
+background: rgba(255,255,255,0.03);
+color: rgba(230,237,247,0.90);
+font-weight: 950;
+text-decoration: none;
+cursor:pointer;
+touch-action: manipulation;
+transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease, opacity .15s ease;
+text-align:left;
+min-width:0;
+}
+.menu-link:visited{ color: rgba(230,237,247,0.90); }
+.menu-link:hover{
+transform: translateY(-1px);
+border-color: rgba(20,184,166,0.45);
+box-shadow: 0 14px 34px rgba(0,0,0,.35);
+}
+.menu-link span:first-child{
+color: rgba(230,237,247,0.92);
+min-width:0;
+overflow:hidden;
+text-overflow:ellipsis;
+white-space:nowrap;
+}
+.menu-link span:last-child{
+font-weight: 900;
+color: rgba(230,237,247,0.62);
+letter-spacing: .02em;
+flex: 0 0 auto;
+white-space:nowrap;
+}
 
-    
-    /* ── CARD TEXT HIERARCHY ── */
-    .card-type-headline{font-size:.96rem;color:var(--text);line-height:1.6;margin-bottom:8px;font-weight:600;}
-    .card-type-body{font-size:.87rem;color:var(--muted);line-height:1.65;}
+@media(max-width:768px){
+body{padding:18px 12px;padding-top:80px;}
+.hero{margin-bottom:48px;padding-top:40px;}
+.hero h1{font-size:2.2rem;line-height:1.12;}
+.hero p{font-size:1.02rem;}
+.hero-cta{padding:13px 24px;font-size:0.98rem;}
+.feature-grid{grid-template-columns:1fr;gap:18px;}
+.feature-card{padding:24px;}
+.card{padding:24px;margin-bottom:20px;}
+.section{margin-bottom:48px;}
+.section-title{font-size:1.5rem;margin-bottom:20px;}
+.section-subtitle{font-size:1rem;}
+.dropdowns-container{grid-template-columns:1fr;}
+}
 
-    /* ── TRAIT BARS ── */
-    .trait-bars{display:flex;flex-direction:column;gap:16px;padding:4px 0;}
-    .trait-row-wrap{display:flex;flex-direction:column;gap:4px;}
-    .trait-row{display:grid;grid-template-columns:130px 1fr 52px;align-items:center;gap:10px;}
-    .trait-desc{font-size:.79rem;color:rgba(230,237,247,0.52);line-height:1.55;padding-left:2px;}
-    @media(max-width:480px){.trait-row{grid-template-columns:100px 1fr 44px;}}
-    .trait-label{font-size:.78rem;color:var(--muted);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-    .trait-bar-track{height:6px;border-radius:999px;background:rgba(255,255,255,0.07);overflow:hidden;position:relative;}
-    .trait-bar-fill{height:100%;border-radius:999px;transition:width .6s cubic-bezier(.4,0,.2,1);min-width:3px;}
-    .trait-val{font-size:.75rem;font-weight:800;text-align:right;white-space:nowrap;}
+@media(min-width:769px) and (max-width:1024px){
+.hero h1{font-size:2.8rem;}
+.card{padding:28px;}
+.feature-card{padding:26px;}
+}
 
-    /* ── SOM GRID VISUAL ── */
-    .som-grid-wrap{margin-top:8px;}
-    .som-grid-label{font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2);margin-bottom:10px;}
-    .som-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;}
-    .som-cell{border-radius:8px;padding:8px 6px;text-align:center;border:1px solid transparent;font-size:.72rem;font-weight:700;letter-spacing:.03em;transition:all .2s;cursor:default;}
-    .som-cell.active{border-color:rgba(20,184,166,0.55);background:rgba(20,184,166,0.15);color:rgba(94,234,212,0.95);}
-    .som-cell.inactive{border-color:rgba(255,255,255,0.07);background:rgba(255,255,255,0.02);color:rgba(230,237,247,0.32);}
-    .som-cell-code{font-size:.65rem;opacity:.7;margin-top:2px;}
+.scroll-explore-btn{
+display:inline-flex;
+align-items:center;
+gap:8px;
+padding:11px 24px;
+border-radius:10px;
+background:rgba(76,111,255,0.10);
+border:1px solid rgba(76,111,255,0.32);
+color:rgba(165,180,252,0.95);
+font-weight:700;
+font-size:0.92rem;
+cursor:pointer;
+text-decoration:none;
+transition:all 0.2s ease;
+margin-top:20px;
+}
+.scroll-explore-btn:hover{
+background:rgba(76,111,255,0.20);
+border-color:rgba(76,111,255,0.55);
+transform:translateY(-1px);
+}
+.scroll-explore-btn svg{
+flex-shrink:0;
+}
 
-    /* ── SOM SCORE BARS ── */
-    .som-bars{display:flex;flex-direction:column;gap:8px;margin-top:4px;}
-    .som-bar-row{display:grid;grid-template-columns:90px 1fr 32px;align-items:center;gap:8px;}
-    .som-bar-label{font-size:.76rem;color:var(--muted);font-weight:600;}
-    .som-bar-fill{height:8px;border-radius:999px;}
-    .som-bar-val{font-size:.72rem;color:var(--muted2);font-weight:700;text-align:right;}
+.explore-disclaimer{
+font-size:0.84rem;
+color:rgba(148,163,184,0.72);
+text-align:center;
+margin:0 0 20px;
+line-height:1.5;
+font-style:italic;
+}
 
-    /* ── FOOTER ── */
-    .eu-footer{margin-top:36px;padding:18px 12px 16px;border-top:1px solid rgba(148,163,184,.18);background:transparent;}
-    .eu-footer-inner{max-width:900px;margin:0 auto;text-align:center;display:flex;flex-direction:column;gap:10px;}
-    .eu-footer-brand{font-weight:900;letter-spacing:.14em;font-size:.9rem;background:linear-gradient(90deg,#4c6fff,#00c2a8);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;}
-    .eu-footer-links{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;}
-    .eu-footer-links a{color:rgba(165,180,252,.85);text-decoration:none;font-weight:900;font-size:.85rem;border-bottom:1px dashed rgba(165,180,252,.35);}
-    .eu-footer-links a:hover{color:rgba(52,211,153,.95);border-bottom-color:rgba(52,211,153,.45);}
-    .eu-footer-meta{font-size:.78rem;color:rgba(229,231,235,.55);}
-  
-    /* ── ATLAS MODAL ── */
-    .atlas-modal-backdrop{position:fixed;inset:0;z-index:5000;background:rgba(0,0,0,.60);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:18px;}
-    .atlas-modal-backdrop.show{display:flex;}
-    .atlas-modal{width:min(680px,94vw);border-radius:20px;border:1px solid rgba(255,255,255,0.12);background:radial-gradient(900px 520px at 20% 10%,rgba(20,184,166,0.12),transparent 56%),radial-gradient(900px 520px at 80% 20%,rgba(59,130,246,0.10),transparent 60%),linear-gradient(180deg,rgba(9,12,22,0.99),rgba(6,9,16,0.99));box-shadow:0 28px 90px rgba(0,0,0,.75);overflow:hidden;max-height:90vh;display:flex;flex-direction:column;}
-    .atlas-modal-header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 18px;border-bottom:1px solid rgba(255,255,255,0.10);flex-shrink:0;}
-    .atlas-modal-title{font-weight:900;letter-spacing:.08em;text-transform:uppercase;font-size:.92rem;color:rgba(230,237,247,0.92);}
-    .atlas-modal-close{border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.04);color:rgba(230,237,247,0.9);border-radius:12px;padding:9px 12px;cursor:pointer;font-weight:900;touch-action:manipulation;transition:transform .15s ease,border-color .15s ease;}
-    .atlas-modal-close:hover{transform:translateY(-1px);border-color:rgba(20,184,166,0.45);}
-    .atlas-modal-body{padding:18px 20px 22px;overflow-y:auto;color:rgba(229,231,235,.82);font-size:.91rem;line-height:1.65;}
-    .atlas-modal-body h4{font-size:.93rem;font-weight:800;color:rgba(94,234,212,0.90);margin:16px 0 6px;}
-    .atlas-modal-body h4:first-child{margin-top:0;}
-    .atlas-modal-body p{margin-bottom:10px;color:rgba(229,231,235,.75);}
-    .atlas-modal-body p:last-child{margin-bottom:0;}
-    .atlas-modal-body ul{margin:6px 0 10px 18px;}
-    .atlas-modal-body li{margin-bottom:5px;color:rgba(229,231,235,.75);}
-    .atlas-modal-body strong{color:rgba(229,231,235,.92);}
+.show-types-btn{
+display:block;
+width:100%;
+max-width:280px;
+margin:20px auto 0;
+padding:13px 28px;
+border-radius:10px;
+background:linear-gradient(135deg, rgba(76,111,255,0.85), rgba(0,194,168,0.80));
+color:#fff;
+font-weight:800;
+font-size:1rem;
+cursor:pointer;
+border:1px solid rgba(255,255,255,0.14);
+transition:all 0.2s ease;
+letter-spacing:0.02em;
+}
+.show-types-btn:hover{
+transform:translateY(-2px);
+box-shadow:0 8px 24px rgba(76,111,255,0.28);
+}
+.show-types-btn:disabled{
+opacity:0.45;
+cursor:default;
+transform:none;
+box-shadow:none;
+}
 
-    /* ── WHAT IS UTF BUTTON ── */
-    .utf-cta-btn{display:flex;align-items:center;justify-content:center;gap:10px;padding:16px 24px;border-radius:14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.10);color:rgba(230,237,247,0.70);font-size:.95rem;font-weight:700;text-decoration:none;transition:all .2s;margin-top:12px;}
-    .utf-cta-btn:hover{border-color:rgba(76,111,255,0.40);color:var(--text);background:rgba(76,111,255,0.06);}
-    .utf-cta-btn svg{opacity:.6;transition:opacity .2s;}
-    .utf-cta-btn:hover svg{opacity:1;}
+.type-card{
+background:var(--bg-soft);
+border:1px solid var(--border-subtle);
+border-radius:16px;
+padding:24px 28px;
+animation:fadeIn 0.3s ease;
+}
+.type-title{
+font-size:1.5rem;
+font-weight:900;
+margin-bottom:10px;
+}
+.type-desc{
+font-size:1.05rem;
+color:var(--text-main);
+line-height:1.75;
+margin-bottom:14px;
+}
+.type-how{
+font-size:0.97rem;
+color:var(--text-muted);
+line-height:1.75;
+}
+.type-how strong{
+color:var(--accent);
+}
 
-    /* ── ACCURACY RATING ── */
-    .rating-gate{
-      padding:16px 22px 14px;
-      background:rgba(255,255,255,0.025);
-      border-left:1px solid rgba(94,234,212,0.20);
-      border-right:1px solid rgba(94,234,212,0.20);
-    }
-    .rating-gate-label{
-      font-size:.80rem;font-weight:700;color:rgba(230,237,247,0.72);
-      margin-bottom:10px;
-    }
-    .rating-nums{
-      display:flex;gap:5px;margin-bottom:10px;
-    }
-    .rating-num{
-      flex:1;height:34px;border-radius:8px;
-      border:1px solid rgba(255,255,255,0.10);
-      background:rgba(255,255,255,0.03);
-      color:rgba(230,237,247,0.50);
-      font-size:.80rem;font-weight:800;cursor:pointer;
-      display:flex;align-items:center;justify-content:center;
-      transition:all .12s;touch-action:manipulation;
-      -webkit-tap-highlight-color:transparent;
-    }
-    .rating-num:hover,.rating-num.sel{
-      background:rgba(94,234,212,0.12);
-      border-color:rgba(94,234,212,0.45);
-      color:rgba(94,234,212,0.95);
-    }
-    .rating-comment{
-      width:100%;background:rgba(255,255,255,0.03);
-      border:1px solid rgba(255,255,255,0.09);border-radius:8px;
-      color:var(--text);font-size:.82rem;padding:9px 11px;
-      resize:none;font-family:inherit;line-height:1.5;
-      outline:none;transition:border-color .15s;box-sizing:border-box;
-    }
-    .rating-comment:focus{border-color:rgba(94,234,212,0.30);}
-    .rating-comment::placeholder{color:rgba(230,237,247,0.25);}
-    /* ── THANK YOU / EMAIL ── */
-    .rating-ty{
-      display:none;padding:14px 22px 16px;
-      background:rgba(94,234,212,0.05);
-      border-left:1px solid rgba(94,234,212,0.18);
-      border-right:1px solid rgba(94,234,212,0.18);
-    }
-    .rating-ty.show{display:block;}
-    .rating-ty-msg{font-size:.84rem;color:rgba(94,234,212,0.85);font-weight:800;margin-bottom:8px;}
-    .rating-ty-sub{font-size:.78rem;color:rgba(230,237,247,0.45);margin-bottom:10px;line-height:1.55;}
-    .rating-email-row{display:flex;gap:7px;flex-wrap:wrap;}
-    .rating-email-in{
-      flex:1;min-width:0;background:rgba(255,255,255,0.04);
-      border:1px solid rgba(255,255,255,0.10);border-radius:8px;
-      color:var(--text);font-size:.82rem;padding:8px 11px;
-      outline:none;font-family:inherit;transition:border-color .15s;
-      box-sizing:border-box;
-    }
-    .rating-email-in:focus{border-color:rgba(94,234,212,0.30);}
-    .rating-email-in::placeholder{color:rgba(230,237,247,0.25);}
-    .rating-email-btn{
-      padding:8px 14px;border-radius:8px;font-size:.80rem;font-weight:800;
-      border:1px solid rgba(94,234,212,0.30);
-      background:rgba(94,234,212,0.09);color:rgba(94,234,212,0.85);
-      cursor:pointer;white-space:nowrap;transition:all .12s;
-      touch-action:manipulation;
-    }
-    .rating-email-btn:hover:not(:disabled){background:rgba(94,234,212,0.16);}
-    .rating-email-btn:disabled{opacity:.4;cursor:default;}
-    .rating-skip{
-      display:block;font-size:.73rem;color:rgba(230,237,247,0.28);
-      margin-top:6px;cursor:pointer;text-align:right;
-      transition:color .12s;
-    }
-    .rating-skip:hover{color:rgba(230,237,247,0.50);}
-  </style>
+/* Per-type gradients */
+.type-title-Nexus      { background:linear-gradient(135deg,#818cf8 0%,#06b6d4 100%); }
+.type-title-Harmonizer { background:linear-gradient(135deg,#7c3aed 0%,#a78bfa 100%); }
+.type-title-Architect  { background:linear-gradient(135deg,#60a5fa 0%,#6366f1 100%); }
+.type-title-Visionary  { background:linear-gradient(135deg,#fbbf24 0%,#f87171 100%); }
+.type-title-Sage       { background:linear-gradient(135deg,#34d399 0%,#0ea5e9 100%); }
+.type-title-Pathfinder { background:linear-gradient(135deg,#fb923c 0%,#fde047 100%); }
+.type-title-Navigator  { background:linear-gradient(135deg,#7dd3fc 0%,#c084fc 100%); }
+.type-title-Composer   { background:linear-gradient(135deg,#2dd4bf 0%,#e2c58a 100%); }
+.type-title-Luminary   { background:linear-gradient(135deg,#fcd34d 0%,#f97316 100%); }
+.type-title-Pioneer    { background:linear-gradient(135deg,#f87171 0%,#fbbf24 100%); }
+.type-title-Catalyst   { background:linear-gradient(135deg,#ea580c 0%,#fb923c 100%); }
+.type-title-Coordinator{ background:linear-gradient(135deg,#38bdf8 0%,#34d399 100%); }
+.type-title-Executive  { background:linear-gradient(135deg,#93c5fd 0%,#6366f1 100%); }
+.type-title-Sentinel   { background:linear-gradient(135deg,#94a3b8 0%,#60a5fa 100%); }
+.type-title-Anchor     { background:linear-gradient(135deg,#d4a574 0%,#7dd3fc 100%); }
+.type-title-Mechanist  { background:linear-gradient(135deg,#67e8f9 0%,#818cf8 100%); }
+.type-title-Artisan    { background:linear-gradient(135deg,#fbbf24 0%,#ef4444 100%); }
+.type-title-Synthesist { background:linear-gradient(135deg,#a78bfa 0%,#34d399 100%); }
+.type-title-Innovator  { background:linear-gradient(135deg,#4ade80 0%,#2dd4bf 100%); }
+.type-title-Bridge     { background:linear-gradient(135deg,#0891b2 0%,#06b6d4 100%); }
+.type-title-Operator   { background:linear-gradient(135deg,#7dd3fc 0%,#64748b 100%); }
+[class^="type-title-"], [class*=" type-title-"] {
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+
+.type-title-DRV { background:linear-gradient(135deg,#34d399 0%,#3b82f6 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.type-title-HRB { background:linear-gradient(135deg,#f97316 0%,#fb923c 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.type-title-TBZ { background:linear-gradient(135deg,#fbbf24 0%,#f97316 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.type-title-BLD { background:linear-gradient(135deg,#60a5fa 0%,#14b8a6 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.type-title-EQZ { background:linear-gradient(135deg,#a78bfa 0%,#38bdf8 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.type-title-ENH { background:linear-gradient(135deg,#4ade80 0%,#0ea5e9 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.type-title-BST { background:linear-gradient(135deg,#818cf8 0%,#c084fc 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.type-title-HVN { background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.type-title-REF { background:linear-gradient(135deg,#fcd34d 0%,#a78bfa 100%); -webkit-background-clip:text; background-clip:text; color:transparent; }
+</style>
 </head>
 <body>
-  <div class="toast" id="toast"></div>
 
-  <header class="topbar" role="banner">
-    <div class="topbar-inner">
-      <a class="home-btn" href="synthesis.html" aria-label="Home" title="Home">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M3 10.5L12 3l9 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M5.5 10.5V21h13V10.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </a>
-      <div class="topbar-center" aria-label="Page title">
-        <div class="brand-gradient">Empower.U</div>
-      </div>
-      <button class="menu-btn" id="btnMenu" type="button" aria-label="Menu" title="Menu">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M4 7h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <path d="M4 12h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <path d="M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-      </button>
-    </div>
-  </header>
+<div class="topbar-wrap">
+<div class="topbar">
+<div class="topbar-inner">
+<a class="home-btn" href="index.html" aria-label="Home">
+<svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+<path d="M3 10.5L12 3l9 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M5.5 10.5V21h13V10.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+</a>
+<div class="topbar-center">
+<div class="eu-gradient-text">Empower.U</div>
+</div>
+<button class="menu-btn" id="btnMenu" type="button" aria-label="Menu">
+<svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+<path d="M4 7h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+<path d="M4 12h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+<path d="M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+</svg>
+</button>
+</div>
+</div>
+</div>
 
-  <div class="modal-backdrop" id="menuModal" aria-hidden="true">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="menuTitle">
-      <div class="modal-header">
-        <div class="modal-title" id="menuTitle">Menu</div>
-        <button class="modal-close" id="btnCloseMenu" type="button">Close</button>
-      </div>
-      <div class="modal-body">
-        <div class="menu-links">
-          <a class="menu-link" href="index.html"><span>Home</span><span>Empower.U</span></a>
-          <a class="menu-link" href="com.html"><span>COM Assessment</span><span>Cognitive</span></a>
-          <a class="menu-link" href="som.html"><span>SOM Assessment</span><span>Seasonal</span></a>
-          <a class="menu-link" href="synthesis.html"><span>UTF Profile</span><span>Synthesis</span></a>
-          <a class="menu-link" href="explain.html"><span>What is UTF?</span><span>Guide</span></a>
-          <a class="menu-link" href="about.html"><span>About / Contact</span><span>Info</span></a>
-        </div>
-      </div>
-    </div>
-  </div>
+<!-- Menu modal -->
+<div class="menu-backdrop" id="menuModal" aria-hidden="true">
+<div class="menu-modal" role="dialog" aria-modal="true" aria-label="Menu">
+<div class="menu-header">
+<div class="menu-title">MENU</div>
+<button class="menu-close" id="menuClose" type="button">Close</button>
+</div>
+<div class="menu-body">
+<div class="menu-links">
+<a class="menu-link" href="index.html"><span>Home</span><span>Empower.U</span></a>
+<a class="menu-link" href="com.html"><span>COM Assessment</span><span>Cognitive</span></a>
+<a class="menu-link" href="som.html"><span>SOM Assessment</span><span>Seasonal</span></a>
+<a class="menu-link" href="synthesis.html"><span>UTF Profile</span><span>Synthesis</span></a>
+<a class="menu-link" href="explain.html"><span>What is UTF?</span><span>Guide</span></a>
+<a class="menu-link" href="about.html"><span>About / Contact</span><span>Info</span></a>
+</div>
+</div>
+</div>
+</div>
 
-  <div class="container">
+<div class="container">
 
-    <!-- STATE: neither complete -->
-    <div class="state-block" id="stateNeither">
-      <div class="state-icon">🧭</div>
-      <div class="state-title">Start your UTF profile</div>
-      <div class="state-body">Take both assessments to unlock your full profile. COM maps how you're wired. SOM maps where you are right now. Together they become something neither can do alone.</div>
-      <div class="state-cta-row">
-        <a class="cta-primary" href="com.html">Take COM first</a>
-        <a class="cta-secondary" href="explain.html">What is UTF?</a>
-      </div>
-    </div>
+<div class="hero">
+<h1>Unified Typing<br>Framework</h1>
+<p>UTF shows you two things other systems miss: how your mind is wired, and what your current season actually needs. Not who you should be. Just who you are, and where you are right now.</p>
+</div>
 
-    <!-- STATE: COM only -->
-    <div class="state-block" id="stateCOMOnly">
-      <div class="partial-done">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-        COM complete
-      </div>
-      <div class="state-title">One more layer</div>
-      <div class="state-body">Your cognitive wiring is mapped. Now take the SOM assessment to capture your current season. That's when the synthesis comes alive.</div>
-      <div class="state-cta-row">
-        <a class="cta-primary" href="som.html">Take SOM now</a>
-      </div>
-    </div>
+<!-- THE FRAMEWORK -->
+<div class="section">
+<h2 class="section-title" style="background:linear-gradient(135deg, #ffffff 0%, #4c6fff 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">The Architecture</h2>
 
-    <!-- STATE: SOM only -->
-    <div class="state-block" id="stateSOMOnly">
-      <div class="partial-done">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-        SOM complete
-      </div>
-      <div class="state-title">Almost there</div>
-      <div class="state-body">Your current season is mapped. Take the COM assessment to add your cognitive identity layer. That's what makes the synthesis meaningful.</div>
-      <div class="state-cta-row">
-        <a class="cta-primary" href="com.html">Take COM now</a>
-      </div>
-    </div>
+<div class="feature-grid">
+<div class="feature-card">
+<h4>COM: Cognitive Operating Mode</h4>
+<p>Your stable cognitive identity. How you naturally think, decide, and relate to people. This doesn't change with your mood or circumstances. It's how you're wired.</p>
+<p style="margin-top:12px;color:var(--accent);font-weight:600;">21 types across 9 dimensions + the E axis</p>
+</div>
+<div class="feature-card">
+<h4>SOM: Seasonal Operating Mode</h4>
+<p>Your current state. How much energy you have, what you're focused on, and what your system actually needs right now. This changes as your life changes.</p>
+<p style="margin-top:12px;color:var(--accent);font-weight:600;">9 modes across a 3×3 grid</p>
+</div>
+</div>
 
-    <!-- STATE: full result -->
-    <div id="resultBlock" style="animation:fadeInUp .5s ease both;">
+<div class="card">
+<p><strong>Together, COM + SOM = your UTF profile.</strong> Example: You might be a Composer (quality-obsessed, detail-driven, independent) in a Driver season (high energy, output-focused). That combination tells you this is a rare window where your perfectionism can actually produce. Set deadlines and ship. No other system gives you both layers.</p>
+</div>
 
-      <div class="page-title">Your UTF Profile</div>
-      <div class="page-sub">Your wiring and your current season, combined into one picture.</div>
-      <div class="disclaimer-note">For self-reflection. Your context always adds nuance this profile cannot.</div>
+<div style="text-align:center;margin-top:8px;">
+<a class="scroll-explore-btn" href="#explore-types" onclick="event.preventDefault();document.getElementById('explore-types').scrollIntoView({behavior:'smooth',block:'start'});">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+Explore all 21 types and 9 modes
+</a>
+</div>
+</div>
 
-      <!-- PROFILE CARDS -->
-      <div class="profile-grid">
-        <div class="profile-card" id="comCard">
-          <div class="card-meta-label">COM &mdash; Cognitive Mode</div>
-          <div class="card-meta-sub">Stable identity. Doesn&rsquo;t shift with mood or circumstance.</div>
-          <span class="card-type-name" id="comTypeName"></span>
-          <div class="card-type-headline" id="comTypeHeadline"></div>
-          <div class="card-type-body" id="comTypeBody"></div>
-        </div>
-        <div class="profile-card" id="somCard">
-          <div class="card-meta-label">SOM &mdash; Seasonal Mode</div>
-          <div class="card-meta-sub">Current season. Shifts as your life context changes.</div>
-          <span class="card-type-name" id="somTypeName"></span>
-          <div class="card-type-headline" id="somTypeHeadline"></div>
-          <div class="card-type-body" id="somTypeBody"></div>
-        </div>
-      </div>
+<!-- WHAT MAKES IT DIFFERENT -->
+<div class="section">
+<div class="dropdown-section">
+<div class="dropdown-toggle" onclick="toggleDropdown('mission')">
+<h3>What makes UTF different from MBTI, Big Five, and other systems?</h3>
+<span class="dropdown-icon" id="mission-icon">▼</span>
+</div>
+<div class="dropdown-content" id="mission-content">
+<div class="dropdown-inner">
+<p>Most personality systems give you a fixed label and stop there. MBTI sorts you into one of 16 boxes. Big Five gives you five scores but no actionable guidance. Enneagram describes your motivation but not your current capacity. None of them tell you what to do differently <em>this month</em>.</p>
+<p>UTF measures your stable cognitive wiring (COM) AND your current seasonal state (SOM) as two separate, interacting layers. This means it can tell you not just how you think, but whether your current season is aligned with your wiring or working against it, and what to do about it.</p>
+<p>We also measure on continuous dimensions, not binary switches. You can be high on both logic and empathy, both structure and flexibility. Real people don't fit in either/or boxes, and UTF doesn't try to force them.</p>
+</div>
+</div>
+</div>
+</div>
 
-      <!-- ATLAS: unified block -->
-      <div class="atlas-wrap">
-        <div class="atlas-copy-row">
-          <div class="atlas-copy-left">
-            <div class="atlas-copy-title">Atlas</div>
-            <div class="atlas-copy-desc">Copy your profile and paste it into any AI chat. The AI reads how you think, forms a first mathematical interpretation, checks likely mismatch points, and adapts its responses with more precision from the start.</div>
-          </div>
-        </div>
-        <div class="atlas-agreement">
-          <label>
-            <input type="checkbox" id="atlasAgreeChk" onchange="setAtlasCopyEnabled()" />
-            <div>I understand that Atlas is a self-reflection tool, not professional advice. I take full responsibility for how I interpret and act on anything an AI tells me using this profile. I agree to the <a href="#" id="openAtlasAgreement" onclick="event.preventDefault();event.stopPropagation();openAtlasAgreementModal();">Atlas User Agreement</a>.</div>
-          </label>
-        </div>
+<!-- WHAT YOU GET -->
+<div class="section">
+<div class="dropdown-section">
+<div class="dropdown-toggle" onclick="toggleDropdown('gets')">
+<h3>What this gets you</h3>
+<span class="dropdown-icon" id="gets-icon">▼</span>
+</div>
+<div class="dropdown-content" id="gets-content">
+<div class="dropdown-inner">
+<div class="feature-grid" style="margin:0;">
+<div class="feature-card">
+<h4>Decisions That Fit</h4>
+<p>Make choices that work with your wiring instead of against it. Know when to push and when to pull back.</p>
+</div>
+<div class="feature-card">
+<h4>Clearer Communication</h4>
+<p>Understand how you process information so you can work better with people who think differently.</p>
+</div>
+<div class="feature-card">
+<h4>Seasonal Awareness</h4>
+<p>Know whether you're in a build season, a recovery season, or a transition. Stop forcing the wrong gear.</p>
+</div>
+<div class="feature-card">
+<h4>AI That Actually Knows You</h4>
+<p>Your UTF profile generates an Atlas you can paste into any AI conversation. It reads how you think and what you need right now, and shapes every response around that.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 
-        <!-- Accuracy rating gate (required before copy unlocks) -->
-        <div class="rating-gate" id="ratingGate" style="display:none;">
-          <div class="rating-gate-label">How accurately does this profile describe you? <span style="color:rgba(94,234,212,0.70);">(required to copy)</span></div>
-          <div class="rating-nums" id="ratingNums">
-            <button class="rating-num" type="button" data-v="1" onclick="setRating(1)">1</button>
-            <button class="rating-num" type="button" data-v="2" onclick="setRating(2)">2</button>
-            <button class="rating-num" type="button" data-v="3" onclick="setRating(3)">3</button>
-            <button class="rating-num" type="button" data-v="4" onclick="setRating(4)">4</button>
-            <button class="rating-num" type="button" data-v="5" onclick="setRating(5)">5</button>
-            <button class="rating-num" type="button" data-v="6" onclick="setRating(6)">6</button>
-            <button class="rating-num" type="button" data-v="7" onclick="setRating(7)">7</button>
-            <button class="rating-num" type="button" data-v="8" onclick="setRating(8)">8</button>
-            <button class="rating-num" type="button" data-v="9" onclick="setRating(9)">9</button>
-            <button class="rating-num" type="button" data-v="10" onclick="setRating(10)">10</button>
-          </div>
-          <textarea class="rating-comment" id="ratingComment" rows="2" maxlength="400"
-            placeholder="Anything feel off or especially accurate? (optional)"></textarea>
-        </div>
+<!-- THE SYSTEM -->
+<div class="section">
+<div class="dropdown-section">
+<div class="dropdown-toggle" onclick="toggleDropdown('system')">
+<h3>How the two layers work together</h3>
+<span class="dropdown-icon" id="system-icon">▼</span>
+</div>
+<div class="dropdown-content" id="system-content">
+<div class="dropdown-inner">
+<p>Take the COM assessment (about 15 minutes) to map your stable cognitive identity. Take the SOM assessment (about 5 minutes) to map your current season. The synthesis page combines them into your UTF profile and generates your Atlas, a portable profile you can paste into any AI chat for personalized guidance.</p>
+<p>Everything stays on your device unless you choose to share it. Your results, your conversations, your growth. You own it.</p>
+</div>
+</div>
+</div>
+</div>
 
-        <!-- Thank you + early adopter email opt-in (shown after first copy) -->
-        <div class="rating-ty" id="ratingTy">
-          <div class="rating-ty-msg">Thank you for the rating.</div>
-          <div class="rating-ty-sub">Want to know when new modules, features, and tools launch? Early adopters get first access.</div>
-          <div class="rating-email-row">
-            <input class="rating-email-in" id="ratingEmailIn" type="email"
-              placeholder="your@email.com (optional)" maxlength="200" autocomplete="email" />
-            <button class="rating-email-btn" id="ratingEmailBtn" type="button" onclick="submitRatingEmail()">Notify me</button>
-          </div>
-          <span class="rating-skip" onclick="dismissRatingEmail()">No thanks</span>
-        </div>
+<!-- EXPLORE TYPES -->
+<div class="section" id="explore-types">
+<h2 class="section-title">Look Up Any Type</h2>
+<p class="section-subtitle">Choose a COM type, a SOM mode, or both. These are general descriptions of each pattern. Your actual experience depends on your full profile and how both layers interact.</p>
 
-        <button class="copy-btn" id="copyBtn" type="button" onclick="copyAtlas()" disabled>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Copy your Atlas
-        </button>
-      </div>
-      <div id="copiedNote" style="display:none;text-align:center;margin-top:10px;font-size:.88rem;color:rgba(52,211,153,.9);font-weight:800;">Copied. Paste into any AI chat to get started.</div>
-      <textarea id="atlasBox" style="position:fixed;opacity:0;pointer-events:none;width:1px;height:1px;top:-100px;" aria-hidden="true" tabindex="-1"></textarea>
+<div class="dropdowns-container">
+<div class="dropdown-col">
+<h3 class="type-section-heading">COM Types (21)</h3>
+<div class="type-dropdown">
+<label for="com-select">Select a COM type:</label>
+<select id="com-select">
+<option value="">Choose a type</option>
+</select>
+</div>
+</div>
 
-      <!-- RIGHT NOW -->
-      <div class="acc-section" style="margin-top:18px;">
-        <button class="acc-btn acc-btn-featured open" type="button" onclick="toggleAcc('nowPanel',this)">
-          <span>Right now</span>
-          <span class="acc-chevron">&#9660;</span>
-        </button>
-        <div class="acc-panel open" id="nowPanel">
-          <div class="acc-inner">
-            <div class="interaction-text" id="interactionText"></div>
-            <div class="d9-modifier" id="d9Modifier" style="display:none;margin-top:12px;"></div>
-          </div>
-        </div>
-      </div>
+<div class="dropdown-col">
+<h3 class="type-section-heading">SOM Modes (9)</h3>
+<div class="type-dropdown">
+<label for="som-select">Select a SOM mode:</label>
+<select id="som-select">
+<option value="">Choose a mode</option>
+</select>
+</div>
+</div>
+</div>
 
+<button class="show-types-btn" onclick="showSelectedTypes()">Show</button>
 
-      <!-- EXPLORE CTA: above trait bars -->
-      <div class="explore-cta">
-        <div class="explore-cta-title">There&rsquo;s more to explore</div>
-        <div class="explore-cta-sub">Your profile has more layers. Open any section below or scroll back up to revisit your results.</div>
-        <div class="explore-chips">
-          <span class="explore-chip" onclick="openAndScroll('nowPanel',null)">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            Right now
-          </span>
-          <span class="explore-chip" onclick="openAndScroll('commPanel',null)">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-            Communication style
-          </span>
-          <span class="explore-chip" onclick="openAndScroll('dimsPanel',null)">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-            Dimension snapshot
-          </span>
-        </div>
-        <div class="retake-row">
-          <a class="retake-link" href="com.html">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.72"/></svg>
-            Retake COM
-          </a>
-          <a class="retake-link" href="som.html">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.72"/></svg>
-            Retake SOM
-          </a>
-        </div>
-      </div>
+<div id="explore-results" style="margin-top:32px;display:none;">
+<p class="explore-disclaimer">Standalone descriptions only. Your real results depend on your full assessment and how both layers interact.</p>
+<div class="dropdowns-container">
+<div class="dropdown-col" id="com-reveal-col" style="display:none;">
+<h3 class="type-section-heading">COM</h3>
+<div id="com-reveal" class="type-reveal show"></div>
+</div>
+<div class="dropdown-col" id="som-reveal-col" style="display:none;">
+<h3 class="type-section-heading">SOM</h3>
+<div id="som-reveal" class="type-reveal show"></div>
+</div>
+</div>
+</div>
+</div>
 
+<!-- THE SCIENCE -->
+<div class="section">
+<h2 class="section-title">The Science Behind It</h2>
 
-      <!-- DIMENSION SNAPSHOT -->
-      <div class="acc-section">
-        <button class="acc-btn" type="button" onclick="toggleAcc('dimsPanel',this)">
-          <span>Trait map</span>
-          <span class="acc-chevron">&#9660;</span>
-        </button>
-        <div class="acc-panel" id="dimsPanel">
-          <div class="acc-inner" id="dimsContent"></div>
-        </div>
-      </div>
+<div class="dropdown-section">
+<div class="dropdown-toggle" onclick="toggleDropdown('tech')">
+<h3>How does UTF measure cognitive patterns?</h3>
+<span class="dropdown-icon" id="tech-icon">▼</span>
+</div>
+<div class="dropdown-content" id="tech-content">
+<div class="dropdown-inner">
+<h4>Dimensional Measurement</h4>
+<p>COM measures 9 cognitive dimensions: pattern thinking, decision speed, systems thinking, structure preference, social reading, quality focus, people priority, independence, and emotional stability. These shape your type. The E axis (social energy) runs alongside them as a separate inward/outward orientation that colors how your type expresses. Your type emerges from the combination of all 9, not from answering a handful of binary questions.</p>
+<h4>21 Types, Not Buckets</h4>
+<p>Each COM type represents a distinct cognitive profile, a real pattern that shows up when you measure cognition across multiple dimensions simultaneously. These aren't arbitrary labels. Each type has specific dimension signatures, gate rules, and distance targets that are mathematically validated.</p>
+<h4>Forced-Choice Seasonal Measurement</h4>
+<p>SOM uses 27 forced-choice questions where each option maps to one of 5 seasonal dimensions: energy, recovery need, output focus, people focus, and change focus. The format eliminates acquiescence bias and measures what you're actually doing, not what sounds good.</p>
+<h4>Two-Layer Architecture</h4>
+<p>COM measures stable traits. SOM measures current state. The synthesis layer computes interactions between them: alignment, tension, burnout risk, and season-appropriate coaching. This is the only personality system that produces both layers and connects them.</p>
+</div>
+</div>
+</div>
+</div>
 
+<!-- ATLAS -->
+<div class="section" id="atlas-intro">
+<div class="dropdown-section">
+<div class="dropdown-toggle" onclick="toggleDropdown('atlas')">
+<h3>Atlas: your cognitive advisor</h3>
+<span class="dropdown-icon" id="atlas-icon">▼</span>
+</div>
+<div class="dropdown-content" id="atlas-content">
+<div class="dropdown-inner">
+<p>Atlas is what happens when your UTF profile meets any AI. When you activate Atlas on the synthesis page, it generates an Atlas you paste into any AI chat: ChatGPT, Claude, Gemini, whatever you use. The AI then knows how you think, what your season needs, and how to talk to you.</p>
+<p>It's not a separate app. It's a portable profile that makes any AI smarter about you. The AI adapts its tone, advice, examples, and priorities to match your actual wiring and current state. No generic advice. No one-size-fits-all.</p>
+<p>Everything stays private. You paste it yourself. Nothing is sent anywhere automatically. You control what any AI knows about you.</p>
+</div>
+</div>
+</div>
+</div>
 
-      <!-- COMMUNICATION STYLE -->
-      <div class="acc-section">
-        <button class="acc-btn" type="button" onclick="toggleAcc('commPanel',this)">
-          <span>How you communicate and connect</span>
-          <span class="acc-chevron">&#9660;</span>
-        </button>
-        <div class="acc-panel" id="commPanel">
-          <div class="acc-inner" id="commContent"></div>
-        </div>
-      </div>
+<!-- CTA -->
+<div class="hero-cta-wrapper" style="margin:48px auto 32px;max-width:max-content;">
+<a href="com.html" class="hero-cta hero-cta-primary">Take the COM Assessment</a>
+<a href="synthesis.html" class="hero-cta hero-cta-secondary">Go to Synthesis</a>
+</div>
 
-      <!-- WHAT IS UTF: standalone bottom CTA -->
-      <a class="utf-cta-btn" href="explain.html">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        Learn how UTF works
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;"><polyline points="9 18 15 12 9 6"/></svg>
-      </a>
+</div>
 
-    </div>
-
-  </div>
-
-  <footer class="eu-footer">
-    <div class="eu-footer-inner">
-      <div class="eu-footer-brand">Empower.U</div>
-      <div class="eu-footer-links">
-        <a href="index.html">Home</a>
-        <a href="explain.html">What is UTF?</a>
-        <a href="about.html">About</a>
-      </div>
-      <div class="eu-footer-meta">self-reflection tools built for clarity. &copy; 2025</div>
-    </div>
-  </footer>
+<!-- Footer -->
+<footer style="margin-top:48px;padding:24px 12px;border-top:1px solid rgba(148,163,184,0.18);text-align:center;">
+<div style="font-weight:900;letter-spacing:.14em;font-size:.9rem;background:linear-gradient(90deg,#4c6fff,#00c2a8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;color:transparent;margin-bottom:10px;">Empower.U</div>
+<div style="display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin-bottom:10px;">
+<a href="index.html" style="font-size:.85rem;font-weight:800;color:rgba(165,180,252,.85);text-decoration:none;">Home</a>
+<a href="explain.html" style="font-size:.85rem;font-weight:800;color:rgba(165,180,252,.85);text-decoration:none;">What is UTF?</a>
+<a href="about.html" style="font-size:.85rem;font-weight:800;color:rgba(165,180,252,.85);text-decoration:none;">About</a>
+</div>
+<div style="font-size:.78rem;color:rgba(229,231,235,.55);">self-reflection tools built for clarity. © 2025</div>
+</footer>
 
 <script>
-// ─────────────────────────────────────────────────────────────────
-// CONSTANTS
-// ─────────────────────────────────────────────────────────────────
-var COM_KEY = "empoweru_utf2_last_com_result";
-var SOM_KEY = "empoweru_utf2_som_latest";
-
-var COM_CODES = {
-  Nexus:"NXS", Harmonizer:"HRM", Architect:"ARC", Visionary:"VIS",
-  Sage:"SGE", Pathfinder:"PTH", Navigator:"NAV", Composer:"CMP",
-  Luminary:"LMN", Pioneer:"PIO", Catalyst:"CAT", Coordinator:"CRD",
-  Executive:"EXC", Sentinel:"SNT", Anchor:"ANK", Mechanist:"MCH",
-  Artisan:"ART", Synthesist:"SYN", Innovator:"INV", Bridge:"BRG",
-  Operator:"OPR"
-};
-var TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
-
-var COM_HOW_TEXTS = {
-  Nexus:"Your mind doesn't process things one at a time. It maps them. Relationships between ideas, people, systems, and problems reveal themselves to you in layers that take time to walk others through. You've probably always been this way, seeing the architecture underneath situations while others are responding to what's visible. This means you often feel out of step. Not because you're wrong, but because what's obvious to you isn't visible to others yet. That gap can create a sense of distance in shared understanding, especially when translation isn't happening. It can surface as impatience, withdrawal, or just doing it yourself because explaining takes longer than finishing. The people closest to you sometimes need you to translate, not because you don't care, but because what's obvious to you genuinely isn't visible to everyone else yet. When you slow down enough to bring someone into your world, when you translate instead of just executing, the things you build don't just work. They change how people understand the problem entirely. That's the difference between insight that stays internal and insight that actually changes things.",
-  Harmonizer:"You pick up on emotional undercurrents the way some people hear music, not by trying, just by being present. You know when something's off before the conversation even starts. You sense when someone's holding back, when two people are subtly out of sync, when the energy in a room has shifted. This isn't a skill you learned. It's just how you experience the world. The weight of that is real. You absorb things that aren't yours to carry, and because you're so attuned to everyone else's state, checking in on your own can feel like an afterthought. You might put off the honest conversation because you know exactly how much it'll cost everyone emotionally. That knowing makes it harder, not easier, to start it. But the spaces you create, where people feel genuinely safe to be honest without being judged, those are rare. That kind of space is genuinely rare. You give people the thing they didn't know they were missing: the feeling that someone actually understands what's going on inside them. That changes relationships, families, and teams in ways that nothing else can.",
-  Architect:"There's a deep satisfaction for you in taking something messy and giving it structure, not rigid structure, but the kind that makes everything else easier. You think naturally in terms of what comes first, what depends on what, and how to make something sustainable rather than just flashy. People around you might not always see the work you put into that, but they feel the difference when things flow. Your edge shows up when the plan starts feeling more important than the people in it. When someone brings a good idea that doesn't fit your framework, you might move past it quickly, not because it's wrong, but because it doesn't fit the structure you've already mapped. Structure is your gift, but it becomes a wall when you grip it too tightly. When you build with room for surprise, when the plan serves the goal instead of replacing it, you become the person who turns intention into reality. Not just once, but reliably, repeatedly, in a way people learn to trust completely. That kind of reliability is quiet, but it's the backbone of anything that actually lasts.",
-  Visionary:"Possibilities are more real to you than the present sometimes. You see what could exist, what could change, what could mean something, and that vision pulls you forward even when the practical details haven't caught up yet. It's not daydreaming. It's a fundamentally different orientation to time: you think from the future backward, while most people think from the present forward. The tension this creates is real. You can feel stuck in conversations about logistics when your mind has already moved to what it all means. People close to you might wish you were more present, more grounded, more willing to commit to one direction instead of keeping everything open. The gap between seeing it and moving on it is where your best ideas can quietly die. But when you do commit, when you point that vision at something concrete and let it become real, you create direction that purely practical people could never generate. You don't just set goals. You set meaning. And people follow meaning in a way they never follow a checklist.",
-  Sage:"You have a relationship with understanding that few people develop. Where others are satisfied with a workable answer, you keep pulling at threads, not out of anxiety, but because you can feel when something doesn't fully hold together yet. Your mind tests ideas the way good engineers test bridges: at the stress points, under pressure, from angles nobody else thought to try. This means you're sometimes quiet when others want you to speak up, and slow when others want you to commit. It's not that you can't decide. You won't hand someone a conclusion you haven't pressure-tested. The people around you might read this as hesitation or overthinking, and sometimes they're right. There's a line between getting it right and hiding behind the process of getting it right. But when you do speak, it carries. Not because you're loud about it, but because everyone in the room can sense that you've actually thought it through, really thought it through, not just formed a quick opinion. The trust people place in your judgment isn't given easily, and you've earned every bit of it by never taking shortcuts with the truth.",
-  Pathfinder:"Stillness feels like stalling to you. Not because you're restless for the sake of it, but because you genuinely learn faster from experience than from theory. You understand things by doing them, touching them, testing them in real conditions. A map you drew yourself is always more useful than one someone handed you. The tricky part is that this energy can scatter. You start things beautifully, with courage and instinct that other people admire, but the finish line doesn't always hold your attention the way the starting line did. The next thing appears before the current thing is done, and over time, you can end up surrounded by promising starts that never became anything. But when you find something worth returning to, when the path stays interesting past the first stretch, your ability to navigate uncertainty is genuinely unmatched. You've been in territory other people are still afraid of, and that experience compounds into something no amount of planning could replicate. The person who went first always understands the terrain best.",
-  Navigator:"You pick up on what people actually mean, not just what they're saying. The hesitation behind a yes. The real question underneath the surface question. The thing someone needs but hasn't figured out how to ask for yet. You see it naturally, without forcing it, and something in you wants to help, not by telling them what to do, but by helping them see it for themselves. The cost of this gift is that you can lose yourself in other people's clarity. You take on weight that was never yours, feel responsible for outcomes you can't control, and sometimes forget that helping everyone else find their direction doesn't automatically give you yours. The boundary between supporting someone and carrying them gets blurry when you're this attuned. But the people you've helped don't just feel assisted. They feel understood. That's different from advice. That's different from being told what to do. You give people the experience of being truly seen, and then you help them take their own next step. That kind of presence doesn't get talked about in loud ways, but it's the thing people remember years later.",
-  Composer:"There's something in you that registers quality at a level that's hard to articulate. Not just whether something works, but whether it works the way it should, whether the details cohere, whether the tone is honest, whether the whole thing holds together in a way that feels true. This isn't perfectionism for its own sake. It's an instinct for coherence that runs deeper than it tends to look from the outside. This means you sometimes struggle in environments that reward volume over care. You can feel out of place when people rush past the part that matters to you, the finishing, the refining, the moment when something clicks from almost-right to actually-right. And you might hold things too long, polishing past the point where releasing would have served everyone better, including you. But your work carries something that mass-produced work never will. People feel the care in it, even when they can't name what's different. Your 90% still carries something most finished work doesn't, and when you learn to release at the right moment, not perfect, but true, and what you put into the world has a quality that speaks for itself. That's your signature. Protect it.",
-  Luminary:"There's a natural momentum to you that other people feel and respond to. When you're energized and clear, people around you get clearer too, not because you told them what to think, but because your presence creates a kind of permission to move. This isn't something you perform. It's just what happens when you show up fully. The hidden cost is that when your energy dips, when you're tired, uncertain, or disconnected, the drain hits harder than it would for someone less visible. You give more of yourself socially than you realize, and the tank can empty before you notice. People who are drawn to your energy don't always check whether you have enough left for yourself. But when you're in the right room with people who match your frequency, the effect is something genuinely rare. You don't just lead. You make everyone around you believe the thing is actually possible. That's not charisma. That's resonance. And it's genuinely rare.",
-  Pioneer:"You have a relationship with the unknown that's genuinely your own. Where others see risk, you see possibility that hasn't been tested yet. You'd rather be wrong in new territory than right in a place you've already mapped. This isn't recklessness. It's a deep need to discover through direct experience. The pattern that trips you up is finishing. Once you've proven something can work, once the concept is real, your attention is already looking for the next horizon. The things you started can get left behind, not because they weren't good, but because the part that excites you is the opening, not the maintaining. People who care about follow-through might find this frustrating. But the things that exist because you went first? Nobody else was going to build those. You create possibility where there was none, and the people who come after you, the ones who finish and refine and scale, owe the beginning to someone who had the courage to move without a guarantee. That matters more than it gets credit for.",
-  Catalyst:"You have an instinct for the decisive moment: the point where thinking stops being useful and action becomes the only thing that matters. While other people are weighing options and hedging, you've already committed. Not carelessly, but with a clarity that cuts through the noise before most people have finished framing the question. This speed creates real value, but it also means you can occasionally move past something worth pausing on. You can be two moves ahead while the people around you are still trying to understand the first one. Doubling down feels natural to you, and pivoting can feel like going backwards, even when it's actually the move that gets you there faster. The people closest to you might wish you'd pause more, and sometimes they're right. But when the direction is right and the moment calls for action, nobody moves like you do. You turn stalled situations into moving ones, and people who've been stuck watch you resolve in an afternoon what they spent weeks avoiding. That ability to break inertia when it matters most is genuinely rare, and the people around you know it, even when they don't say it.",
-  Coordinator:"You have a natural sense for what needs to happen next and who needs to be involved. You don't just talk about getting people on the same page. You actually do it, often without anyone noticing how much quiet work that takes. Things feel smoother when you're around, not because you're controlling, but because you're paying attention to what everyone else is too busy to track. The pattern to watch is overcommitment. You say yes because you can see how to help, and before long you're holding more than your share. Your own needs tend to go last, not because you don't have them, but because everyone else's feel more urgent. Over time, that imbalance builds. You give more than tends to get noticed, and you deserve to protect that. But the things that actually happen when multiple people are involved? You're usually the reason they didn't fall apart. You're the thread that holds the whole thing together, and the people around you don't realize how much smoother their lives run because of you until you're not there. That's not invisible. That's the thing everything else depends on.",
-  Executive:"You see what needs to happen and you're willing to be the one who makes it happen, even when the calls are hard and nobody else wants to step up. You don't need everyone to agree before you move. You need clarity, and once you have it, you act with a directness that most people find either reassuring or intimidating, depending on where they're standing. The edge you need to watch is how this lands on the people around you. When you're locked into getting something done, you can push past what someone is able to give without realizing it. Stay connected to the people closest to you, not just in what you do for them but in what you let them see of you. Everything running through the filter of what needs to happen next can make warmth feel like an afterthought. But when the stakes are real and someone needs to make the call, you're the person everyone looks at. Not because you volunteered, but because they know you'll actually carry it. The ability to hold that weight, decide under pressure, and still show up. That's not common. And the people who've seen you do it don't forget.",
-  Sentinel:"There's a part of you that's always scanning for cracks, not because you're anxious, but because you understand that the things people rely on need someone paying attention to whether they'll hold. Consistency isn't boring to you. It's the thing that makes everything else possible. You notice when standards slip, when risks are being ignored, when someone is building on a foundation that won't last. The tension is that this same instinct can make change feel threatening, even when the change is good. You can find yourself protecting something past the point where it still serves the purpose it was built for. New ideas might feel risky not because they're bad, but because they disrupt the order you've carefully maintained. But the things you protect actually survive. While others chase whatever's new and watch it fall apart, the things you held steady are still standing, still reliable, still doing what they were meant to do. That quiet reliability is the thing everything else depends on, and the ones who depend on it know exactly who to thank.",
-  Anchor:"You don't get pulled into the panic of the moment because you've seen enough to know that most crises feel bigger than they actually are. Where others react, you observe. Where others speed up, you hold pace. This isn't detachment. It's a kind of earned perspective that comes from paying attention to patterns over time instead of getting lost in individual events. The thing to be honest about is that this steadiness can become its own kind of rigidity. When change actually matters, your steadiness is most powerful when it can flex with it. The people around you might need you to move faster than feels comfortable, and their urgency sometimes deserves more than a steady hand. But the reason people come back to you is that you were right more often than the people who panicked. Your calm isn't performative. It's real, and it gives other people permission to slow down and think clearly. That kind of presence is something you can't manufacture, and the people in your life lean on it more than they'll ever say.",
-  Mechanist:"When something breaks, you don't look at the symptoms. You go straight to the mechanism. There's a satisfaction in understanding how the pieces connect, why something fails, and what it would take to make it work properly. This isn't something you turn on and off. It's how you relate to the world: through understanding how things function at a level most people don't slow down enough to examine. The cost of this depth is that it can crowd out connection. You might find people problems less interesting than mechanical ones, because human dynamics feel less structured and less solvable. Over time, the preference for focused, solitary depth can narrow your world. The human side is worth your attention even when it doesn't have clean answers. But the fix you build actually fixes the problem. Not a patch, not a workaround. The real solution that takes the patience and precision most processes skip. When something truly breaks and everyone else is guessing, you're the one who knows exactly where to look. That's not something people pick up casually. It's built from years of caring about how things actually work, and it's irreplaceable.",
-  Artisan:"For you, the process of making something is where the meaning lives. Not the finished product, not the recognition. The act of shaping, adjusting, feeling when something is getting closer to right. You have a relationship with your craft that's hard to explain to people who work primarily in ideas or words. It's physical, it's intuitive, and it's deeply personal. The tension shows up when the world wants you to produce on demand. Timelines, packaging, selling what you've made, these can feel like they strip away the thing that made the work meaningful in the first place. You might resist finishing because the making was the point, and the moment it's done, something essential is lost. But the thing you made in flow? It has something in it that manufactured work never will. People can feel the difference between something that was produced and something that was crafted, even if they can't explain why. Your hands carry knowledge that no process can replicate, and the things you shape carry a quality that speaks for itself. That's your signature.",
-  Synthesist:"Your mind naturally holds multiple perspectives at once without collapsing them into a premature conclusion. Where other people see contradiction, you see parts of a larger whole that haven't been connected yet. This makes you unusually valuable in any situation where different people see different things and someone needs to make sense of all of it. The weight of this is real. You get pulled into every conversation, every conflict, every decision where nuance matters. You can hesitate to name the main point because you're trying to honor every perspective. Sometimes the most useful thing you can do is be direct, and that directness can feel like betraying the complexity you worked so hard to hold. But when you do name it, when you say here's what I think this actually is, it carries more weight than anyone else's opinion in the room, because everyone knows you genuinely considered their view before arriving at yours. Your conclusions feel fair because they are fair. That's why people don't just listen to you. They believe you.",
-  Innovator:"You're not trying to tear everything down and start over. You're looking at what already exists and finding the specific improvements that make it meaningfully better. This is a fundamentally practical kind of intelligence. You test, you iterate, you measure, and you make changes that actually hold up in real life instead of just sounding good on paper. The pattern to watch is that this pragmatism can keep you playing inside boundaries that might need to be broken. You improve the engine when the whole thing might be pointed in the wrong direction. Staying inside the lines feels responsible, but it's not always enough. Sometimes the best upgrade is a redesign, and that's a harder leap for you. But the improvements you make actually stick. While the people chasing reinvention are busy tearing things down and starting from scratch, your upgrades are already running and compounding. You make things better in ways that survive reality, not just imagination, and that practical impact is worth more than any grand idea that never becomes real.",
-  Bridge:"There's a warmth in you that other people respond to almost immediately. You're genuinely curious about what makes someone tick, and that curiosity creates connection that feels real because it is. You make introductions that actually matter, create spaces where different kinds of people feel welcome, and bring an energy that turns groups of strangers into something that feels like community. The thing to be honest about is that this giving can become depleting. You say yes because you see the connection it could create, and before long you've poured more into others than you've kept for yourself. The boundary between generosity and self-neglect gets blurry when making people feel good feels so natural and so rewarding. But the connections you build are real. Not networking, not transactional. Actual relationships where people feel seen and included. The communities that form around you aren't accidents. They exist because you made the space for them, and that ability to create belonging is something most people can't manufacture. You don't just connect people. You make them feel like they're home.",
-  Operator:"You have a relationship with competence that doesn't need external validation. Give you something real to do with a clear path to doing it well, and you come alive. You don't need the thing to be exciting or novel. You need it to be doable, and you need to be able to do it right. There's a quiet dignity in that orientation that gets overlooked in a world obsessed with reinvention. The pattern to watch is rigidity when things change. You've built your reliability on approaches that work, and when the ground shifts beneath them, your instinct is to hold the method steady. The people around you might need you to flex in ways that feel uncomfortable, and their urgency sometimes points to something real worth hearing. But in a world full of people chasing the next big thing, you're the one who actually follows through. Consistently. Without drama. Without needing to reinvent the process every time. The people who depend on you don't worry about whether it'll get done. They know it will. That kind of trust isn't glamorous, but it's the foundation everything else is built on. And the people who understand that value you more than they'll ever say."
-};
-
-var SOM_FULL_DESCS = {
-  DRV:"Full capacity, output focused. This is an execution season. You have real momentum and the fuel to sustain it. Point it at something worth building and keep recovery intentional so output stays clean.",
-  HRB:"Full capacity, people focused. Relationships, tone, and trust feel unusually important right now. You have the lift to stay genuinely present with people. Keep boundaries so connection stays nourishing, not draining.",
-  TBZ:"Full capacity, change focused. Novelty and movement feel genuinely energizing this season. You are learning fast through experience and iteration. Run experiments with limits, then keep the winners.",
-  BLD:"Steady capacity, output focused. This is a deep work season. Quiet momentum beats bursts right now. Reduce distractions, stay with what matters, and let the consistency compound.",
-  EQZ:"Steady capacity, people focused. Connection is present and sustainable, not intense. You do best with simple routines and steady relationships. Keep the pace warm and manageable.",
-  ENH:"Steady capacity, change focused. You are expanding through smart adjustments, not overhauls. Small improvements compound when you keep them realistic. Trust the process over the pace.",
-  BST:"Protected capacity, output focused. Fewer priorities and strong boundaries are your best move right now. Make progress through smaller, reliable steps. Protecting your stability is not retreat.",
-  HVN:"Protected capacity, people focused. Comfort, trust, and restoration are what this season is asking for. Lean into safe connection and reduced load. Give yourself permission to rebuild before pushing again.",
-  REF:"Protected capacity, change focused. You are recalibrating and updating direction. Progress can look uneven from the inside, but it is still progress. Keep changes small enough that your system can absorb them."
-};
-
-// ── PER-TYPE GRADIENT MAPS ──────────────────────────────────────────────
-var COM_GRADIENTS = {
-  Nexus:       "linear-gradient(135deg,#818cf8 0%,#06b6d4 100%)",
-  Harmonizer:  "linear-gradient(135deg,#7c3aed 0%,#a78bfa 100%)",
-  Architect:   "linear-gradient(135deg,#60a5fa 0%,#6366f1 100%)",
-  Visionary:   "linear-gradient(135deg,#fbbf24 0%,#f87171 100%)",
-  Sage:        "linear-gradient(135deg,#34d399 0%,#0ea5e9 100%)",
-  Pathfinder:  "linear-gradient(135deg,#fb923c 0%,#fde047 100%)",
-  Navigator:   "linear-gradient(135deg,#7dd3fc 0%,#c084fc 100%)",
-  Composer:    "linear-gradient(135deg,#2dd4bf 0%,#e2c58a 100%)",
-  Luminary:    "linear-gradient(135deg,#fcd34d 0%,#f97316 100%)",
-  Pioneer:     "linear-gradient(135deg,#f87171 0%,#fbbf24 100%)",
-  Catalyst:    "linear-gradient(135deg,#ea580c 0%,#fb923c 100%)",
-  Coordinator: "linear-gradient(135deg,#38bdf8 0%,#34d399 100%)",
-  Executive:   "linear-gradient(135deg,#93c5fd 0%,#6366f1 100%)",
-  Sentinel:    "linear-gradient(135deg,#94a3b8 0%,#60a5fa 100%)",
-  Anchor:      "linear-gradient(135deg,#d4a574 0%,#7dd3fc 100%)",
-  Mechanist:   "linear-gradient(135deg,#67e8f9 0%,#818cf8 100%)",
-  Artisan:     "linear-gradient(135deg,#fbbf24 0%,#ef4444 100%)",
-  Synthesist:  "linear-gradient(135deg,#a78bfa 0%,#34d399 100%)",
-  Innovator:   "linear-gradient(135deg,#4ade80 0%,#2dd4bf 100%)",
-  Bridge:      "linear-gradient(135deg,#0891b2 0%,#06b6d4 100%)",
-  Operator:    "linear-gradient(135deg,#7dd3fc 0%,#64748b 100%)"
-};
-var SOM_GRADIENTS = {
-  DRV: "linear-gradient(135deg,#34d399 0%,#3b82f6 100%)",
-  HRB: "linear-gradient(135deg,#ea580c 0%,#fb923c 100%)",
-  TBZ: "linear-gradient(135deg,#fbbf24 0%,#f97316 100%)",
-  BLD: "linear-gradient(135deg,#60a5fa 0%,#14b8a6 100%)",
-  EQZ: "linear-gradient(135deg,#a78bfa 0%,#38bdf8 100%)",
-  ENH: "linear-gradient(135deg,#4ade80 0%,#0ea5e9 100%)",
-  BST: "linear-gradient(135deg,#818cf8 0%,#c084fc 100%)",
-  HVN: "linear-gradient(135deg,#4f46e5 0%,#7c3aed 100%)",
-  REF: "linear-gradient(135deg,#fcd34d 0%,#a78bfa 100%)"
-};
-
-
-
-var SOM_MODE_NAMES = {
-  DRV:"Driver", HRB:"Harbor", TBZ:"Trailblazer",
-  BLD:"Builder", EQZ:"Equalizer", ENH:"Enhancer",
-  BST:"Bastion", HVN:"Haven", REF:"Reformer"
-};
-
-var SOM_MODE_DESCS = {
-  DRV: { h:"High energy, output focused.",      b:"This is an execution season. You have real momentum and the fuel to sustain it. Point it at something worth building and keep recovery intentional so output stays clean." },
-  HRB: { h:"High energy, people focused.",      b:"Relationships, tone, and trust feel unusually important right now. You have the lift to stay genuinely present with people. Keep boundaries so connection stays nourishing, not draining." },
-  TBZ: { h:"High energy, change focused.",      b:"Novelty and movement feel genuinely energizing this season. You're learning fast through experience and iteration. Run experiments with limits, then keep the winners." },
-  BLD: { h:"Steady energy, output focused.",    b:"This is a deep work season. Quiet momentum beats bursts right now. Reduce distractions, stay with what matters, and let the consistency compound." },
-  EQZ: { h:"Steady energy, people focused.",    b:"Connection is present and sustainable, not intense. You do best with simple routines and steady relationships. Keep the pace warm and manageable." },
-  ENH: { h:"Steady energy, change focused.",    b:"You're expanding capacity through smart adjustments, not overhauls. Small improvements compound when you keep them realistic. This is a growth season that asks you to trust the process." },
-  BST: { h:"Protected capacity, output focused.", b:"Fewer priorities and strong boundaries are your best move right now. Make progress through smaller, reliable steps. Protecting your stability is not retreat. It's precision." },
-  HVN: { h:"Protected capacity, people focused.", b:"Comfort, trust, and restoration are what this season is asking for. Lean into safe connection and reduced load. Give yourself permission to rebuild before pushing again." },
-  REF: { h:"Protected capacity, change focused.", b:"You're recalibrating and updating direction. Progress can look uneven from the inside, but it is still progress. Keep changes small enough that your system can absorb them." }
-};
-
-
-var COM_TYPE_DESCS = {
-  Nexus:       { h:"You see how everything connects. You build from that place most people can't reach.",        b:"Your mind maps relationships between ideas and systems in layers others have to be walked through. When you bring someone into your world, what you build together changes how they understand the problem entirely." },
-  Harmonizer:  { h:"You feel the room before anyone says a word. You hold space most people don't realize they needed.", b:"You sense what's unspoken and help people feel genuinely heard without taking sides. The spaces you create, where people can be honest without being judged, are rare and lasting." },
-  Architect:   { h:"You make things make sense. Where others see chaos, you see steps, sequence, and a path forward.", b:"There is a deep satisfaction in taking something messy and giving it structure that makes everything else easier. When the plan serves the goal, you become the person who turns intention into reality, reliably." },
-  Visionary:   { h:"You live a few steps ahead of everyone else, not because you're rushing, but because the future is where your mind naturally goes.", b:"Possibilities are more real to you than the present sometimes. When you commit, the direction you choose carries a weight that purely practical minds could never generate." },
-  Sage:        { h:"You go deeper than most people would ever think to. You stay there until it actually makes sense.", b:"Where others settle for a workable answer, you keep pulling threads because you can feel when something doesn't fully hold. When you do speak, it carries, because everyone can sense you actually thought it through." },
-  Pathfinder:  { h:"You learn by moving. While others are still planning, you've already started, adjusting as you go.", b:"Your instincts in new territory are sharper than almost anyone's. When you find something worth returning to, your ability to navigate uncertainty is genuinely unmatched." },
-  Navigator:   { h:"You understand people at a level they don't always understand themselves. You help them find their own way.", b:"You pick up on what people actually mean, not just what they say. The people you've helped don't just feel assisted. They feel understood, and that's something they carry forward." },
-  Composer:    { h:"You feel the difference between good enough and right. You can't rest until it's right.", b:"Something in you registers quality at a level most people can't access. Your work carries something that rushed work never will. People feel the care in it even when they can't name what's different." },
-  Luminary:    { h:"When you walk into a room, something shifts. People orient toward you, not because you demand it, but because your energy gives things direction.", b:"There is a natural momentum to you that others feel and respond to. When you are in the right room, the effect is something most people never get to create. That's not charisma. That's resonance." },
-  Pioneer:     { h:"You go where no one else is willing to go, not for the risk, but because something in you needs to know what's out there.", b:"Where others see risk, you see possibility that hasn't been tested yet. The things that exist because you went first wouldn't exist without you." },
-  Catalyst:    { h:"You don't wait for permission to start. When something needs to change, you're already moving.", b:"You have an instinct for the decisive moment. When the direction is right, nobody moves like you do. You turn stalled situations into moving ones, and people around you know it." },
-  Coordinator: { h:"You're the reason things actually come together, not in theory but in practice, with real people.", b:"You have a natural sense for what needs to happen next and who needs to be involved. The things that actually work when people need to collaborate? You're usually the reason they didn't fall apart." },
-  Executive:   { h:"You carry the weight of decisions other people avoid. You follow through when it counts.", b:"You see what needs to happen and you're willing to be the one who makes it happen, even when the calls are hard. When the stakes are real and someone needs to make the call, you're the person everyone looks at." },
-  Sentinel:    { h:"You see what could go wrong before it does. You're the reason things stay solid when everything else is shifting.", b:"Consistency is not boring to you. It's what makes everything else possible. The things you protect actually survive while everything else falls apart." },
-  Anchor:      { h:"You're the steady center that other people orbit around, especially when everything else feels uncertain.", b:"You don't get pulled into the panic of the moment. Your calm gives others permission to slow down and think clearly, and that's something you can't manufacture." },
-  Mechanist:   { h:"You understand how things actually work, not the theory, not the appearance, but the real mechanics underneath.", b:"When something breaks, you go straight to the mechanism. The fix you build actually fixes the problem. Not a patch. The real solution nobody else had the patience to find." },
-  Artisan:     { h:"You make things with your hands, your mind, and your full attention. The work itself is where you come alive.", b:"The process of shaping something is where the meaning lives for you. What you made in flow has something manufactured work never will. People can feel the difference, even if they can't explain why." },
-  Synthesist:  { h:"You hold the whole picture when everyone else is stuck in their piece of it. You bring it together without losing anyone.", b:"Your mind holds multiple perspectives at once without collapsing them too early. When you name what something actually is, it carries more weight than anyone else's read, because everyone knows you actually considered their view first." },
-  Innovator:   { h:"You see exactly where things could work better. You build the upgrade that actually sticks.", b:"You find the specific improvements that make something meaningfully better. While others chase reinvention, your upgrades are already running and compounding." },
-  Bridge:      { h:"You bring people together, not by organizing them, but by making them feel like they belong.", b:"There's a warmth in you that others respond to almost immediately. The connections you build are real. You make people feel like they're home, and that ability is something most people only wish they had." },
-  Operator:    { h:"You get things done, clearly, consistently, and without needing anyone to notice.", b:"You have a relationship with competence that doesn't need external validation. In a world full of people chasing the next thing, you're the one who actually follows through. That kind of trust is the foundation everything else is built on." }
-};
-
-
-// ─────────────────────────────────────────────────────────────────
-// COM GROUP MAPPING
-// ─────────────────────────────────────────────────────────────────
-function getCOMGroup(type){
-  if(["Nexus","Visionary","Sage","Synthesist"].indexOf(type)>=0) return "VISION";
-  if(["Executive","Catalyst","Pioneer","Architect","Operator"].indexOf(type)>=0) return "EXECUTION";
-  if(["Harmonizer","Navigator","Bridge","Coordinator","Luminary"].indexOf(type)>=0) return "SOCIAL";
-  if(["Composer","Artisan","Mechanist","Innovator"].indexOf(type)>=0) return "CRAFT";
-  return "ADAPTIVE"; // Pathfinder, Sentinel, Anchor
-}
-
-// ─────────────────────────────────────────────────────────────────
-// INTERACTION TEXT (COM group x SOM mode)
-// ─────────────────────────────────────────────────────────────────
-var INTERACTION = {
-  VISION:{
-    DRV:"Your pattern-mapping function is running with full energy behind it right now. Ideas can move from synthesis to output without the usual translation loss. This window favors acting on what you already understand.",
-    HRB:"Your integrative thinking is currently oriented toward people rather than systems. The relational context you're picking up on is real input, not distraction. Your depth of read makes connection more precise right now.",
-    TBZ:"High energy and a change orientation means your pattern-seeking is actively scanning new territory. The breadth of input you're gathering right now feeds the synthesis that comes later.",
-    BLD:"Steady capacity plus integrative thinking is a productive pairing. Your ability to see what others miss is available without the pressure to move fast. Depth of work is available to you right now.",
-    EQZ:"Your pattern-recognition is running steadily, and the balanced relational context means you're getting real signal from the people around you. A compounding season with low noise.",
-    ENH:"Your integrative mind is well-matched to a refinement season. You can find the structural improvements that aren't obvious to others and apply them without disrupting what's already working.",
-    BST:"With protected capacity and output orientation, your pattern-mapping narrows naturally to highest-leverage inputs. You're not scanning broadly right now, and that's appropriate - depth over range.",
-    HVN:"Protected capacity plus people orientation means your integrative function is resting alongside your energy. This is a season for absorbing, not synthesizing. Let input accumulate without forcing output.",
-    REF:"A recalibration season for a framework-level thinker means the structures themselves are under review, not just the tactics. That's where your function works most fundamentally."
+// ============================================================
+// TYPE DATA: 21 COM TYPES + 9 SOM MODES
+// ============================================================
+var COM_TYPES = {
+  Nexus: {
+    desc: "You naturally see how things connect before most people do.",
+    how: "This pattern often shows up as layered thinking. You are usually tracking relationships, structure, and downstream effects at the same time, which can make your conclusions feel obvious to you long before they are obvious to anyone else. The main friction is not lack of clarity. It is translation. A lot depends on whether you slow down enough to bring other people into what you already see."
   },
-  EXECUTION:{
-    DRV:"Full capacity aligned with output orientation. Your execution function has both the energy and the directional clarity it needs. This is the season to move on what you've already decided.",
-    HRB:"Your execution drive is running alongside a people-oriented season. The output right now is relational - the relationships built in a high-energy people season carry forward as real strategic leverage.",
-    TBZ:"Execution drive with a change orientation means your energy is going toward exploration rather than delivery. The experiments you run now clarify the targets you'll execute against later.",
-    BLD:"Steady capacity and output orientation is a high-reliability pairing for an execution-wired person. Consistent effort on a defined target is exactly what this season supports.",
-    EQZ:"Steady capacity, balanced orientation. Your execution function is running at a sustainable rate. The relational bandwidth available right now means your work and your relationships aren't competing.",
-    ENH:"Steady capacity with a change orientation favors iterative improvement - which is execution at its most precise. Improvement on what exists, applied consistently, is the output this season rewards.",
-    BST:"Protected capacity with output orientation. Your execution drive is present, but the available fuel is limited. Fewer targets, higher completion rate per target - this is precision, not retreat.",
-    HVN:"Protected capacity with people orientation. Your execution function is in maintenance mode. The output right now is restoration, which is a necessary condition for the execution that comes after.",
-    REF:"Protected capacity with change orientation. Before committing to the next execution sprint, this season is providing the recalibration that prevents misdirected effort."
+  Harmonizer: {
+    desc: "You are highly responsive to tone, tension, and what is happening between people.",
+    how: "This pattern usually shows up as emotional awareness that is immediate rather than deliberate. You tend to notice strain, distance, or misalignment early, and you often adjust yourself in response to it without thinking much about it. The strength here is relational sensitivity. The risk is carrying too much that was never fully yours to carry."
   },
-  SOCIAL:{
-    DRV:"Full capacity with people orientation is the highest-fuel version of your relational function. Your social processing is running fast and clear. This is a season where connection can be both deep and wide.",
-    HRB:"Full capacity plus people orientation is a direct match for your COM wiring. Your relational capacity and your available energy are aligned. The primary risk is output with no recovery built in.",
-    TBZ:"Full capacity with change orientation means your social function is expanding its range. New people, new relational dynamics - your instinct to connect is meeting new contexts to practice in.",
-    BLD:"Steady capacity and output orientation creates conditions for your relational depth to compound. Trust-building happens through consistency, and this season provides the stability that consistency requires.",
-    EQZ:"Steady capacity with people orientation matches your COM function directly. Connection is present and not overloaded. This is the sustainable rhythm your relational wiring is built for.",
-    ENH:"Steady capacity with change orientation applied to a relational COM means you're refining how your social function works. Small adjustments to how you show up in connection will compound outward.",
-    BST:"Protected capacity with people orientation. Your relational function is still active, but total available energy is limited. The distinction right now is between connections that restore and connections that draw down.",
-    HVN:"Protected capacity with people orientation is recovery routed through relationship for a social-wired person. Safe connection is a legitimate recovery mechanism - not a delay of rest.",
-    REF:"Protected capacity with change orientation means your relational context is shifting alongside your internal recalibration. Some connections will realign; that's a function of the transition, not a problem."
+  Architect: {
+    desc: "You naturally turn complexity into order, sequence, and workable structure.",
+    how: "This pattern tends to show up as a strong instinct for planning, organizing, and building things in a way that can actually hold. You often see what has to come first, what depends on what, and where weak structure will cause problems later. At your best, you create frameworks that make good work easier. The main thing to watch is becoming more loyal to the structure than to the real goal."
   },
-  CRAFT:{
-    DRV:"Full capacity with output orientation gives your quality function the fuel to produce at its standard, not just refine. Your internal bar and the energy to meet it are running together right now.",
-    HRB:"Full capacity with people orientation is pulling your craft function toward collaboration. A craft-wired person in a people season may find that external input surfaces something the internal process wouldn't reach alone.",
-    TBZ:"Full capacity with change orientation is asking your quality-focused function to experiment before refining. The discomfort of trying approaches before they're polished is the mechanism the season uses.",
-    BLD:"Steady capacity and output orientation is the natural environment for a craft-wired person. Depth of focus on a single target, with consistent energy, is where your quality standard produces best.",
-    EQZ:"Steady capacity with balanced orientation. Your craft is running consistently and the social load is manageable. A stable season for output that meets your standard without interference.",
-    ENH:"A refinement season with steady capacity is your most native combination. Your quality function works best when it can improve what exists - and this season gives you the stability to do that cleanly.",
-    BST:"Protected capacity with output orientation. Your quality standard is still active; the available energy is what's limited. Fewer targets at full standard is a more accurate description than reduced quality.",
-    HVN:"Protected capacity with people orientation. Your craft function is in a low-output state. Recovery for a quality-focused person can involve light creative engagement - that's still rest if the pressure is off.",
-    REF:"Protected capacity with change orientation. Your standards and methods are being questioned alongside your energy. That's appropriate - refinement of the craft framework itself is meaningful work."
+  Visionary: {
+    desc: "Your mind moves easily toward possibility, direction, and what something could become.",
+    how: "This pattern usually shows up as future-oriented thinking. You are often more engaged by what is emerging than by what is already settled, and you tend to evaluate the present partly through where it could lead. The strength is direction-setting. The friction is that vision does not automatically become movement unless something eventually locks in and gets carried forward."
   },
-  ADAPTIVE:{
-    DRV:"Full capacity with output orientation gives your navigation function both energy and a clear directional signal. Uncertain territory is easier to cover when you have fuel and a target.",
-    HRB:"Full capacity with people orientation means your adaptive function is tracking relational dynamics rather than environmental ones. Your stability provides a reliable reference point for the people around you.",
-    TBZ:"Full capacity with change orientation is a direct match for an adaptive COM. Your navigation instincts are engaged and well-fueled. This is a season for active exploration rather than consolidation.",
-    BLD:"Steady capacity with output orientation is asking your adaptive function to hold a consistent course rather than explore. The season is rewarding persistence on a defined path.",
-    EQZ:"Steady capacity with balanced orientation. Your adaptive function has enough context from the people around you and enough stability to function without pressure. Bandwidth is available.",
-    ENH:"Steady capacity with change orientation matches your adaptive instincts. Small course corrections applied consistently is exactly how your navigation function works best.",
-    BST:"Protected capacity with output orientation. Your situational reading is fully active - what's reduced is the fuel for broad response. Read clearly, act selectively. That's the appropriate mode.",
-    HVN:"Protected capacity with people orientation. Your adaptive function is using trusted relationships as the primary signal source during a period of low energy. That's a sound navigation strategy.",
-    REF:"Protected capacity with change orientation is familiar terrain for an adaptive person. Recalibration is not a disruption to your function - it's an expression of it."
+  Sage: {
+    desc: "You are built to go deeper than surface answers and stay there until things genuinely hold together.",
+    how: "This pattern tends to show up as careful, pressure-tested thinking. You usually do not like speaking too early, deciding too fast, or handing over conclusions you do not trust yet. What others may read as slowness is often scrutiny. At your best, your judgment carries weight because it has been earned. The main balance point is knowing when more refinement will help and when it is simply delaying expression."
+  },
+  Pathfinder: {
+    desc: "You understand by moving, testing, and learning through contact with reality.",
+    how: "This pattern usually shows up as action-led learning. You tend to gain clarity faster from direct experience than from abstraction alone, and you often trust what has been lived more than what has only been described. The strength here is adaptability in motion. The friction is that novelty can pull your attention forward before every path has fully matured."
+  },
+  Navigator: {
+    desc: "You tend to read people from the inside and orient toward helping them find direction.",
+    how: "This pattern often shows up as strong interpersonal interpretation. You usually notice what someone means beneath what they say, where they are stuck, and what kind of response will actually land. The strength is depth of understanding. The thing to watch is over-identifying with other people's movement and losing clarity about what is yours versus what is theirs."
+  },
+  Composer: {
+    desc: "You are tuned to coherence, refinement, and the difference between acceptable and right.",
+    how: "This pattern tends to show up as a strong internal bar for quality. You often notice inconsistencies, rough edges, tonal problems, or places where something is almost there but not fully resolved. The strength is depth of finish and integrity of output. The friction is that release can become difficult when your eye keeps seeing what could still be improved."
+  },
+  Luminary: {
+    desc: "Your presence tends to affect the energy, confidence, or momentum around you.",
+    how: "This pattern usually shows up as visible influence. When you are clear and engaged, other people often become clearer and more engaged too. The strength is not just expression. It is activation. You shift atmosphere. The main thing to watch is that visible energy can hide real depletion, especially when other people keep drawing from what you naturally generate."
+  },
+  Pioneer: {
+    desc: "You are built for first movement, new ground, and going where certainty does not exist yet.",
+    how: "This pattern tends to show up as a strong willingness to enter the unknown without needing guarantees first. You often feel more alive at the edge of something than inside a fully mapped process. The strength is initiative under uncertainty. The tension is that maintenance, repetition, and long-tail completion can feel much less compelling once the frontier feeling is gone."
+  },
+  Catalyst: {
+    desc: "You tend to act quickly when a situation has reached the point where movement matters more than more discussion.",
+    how: "This pattern often shows up as decisive momentum. You usually have a strong feel for when something is ready to move, and you are often willing to be the one who commits when others are still circling. The strength is breaking inertia. The thing to watch is not speed itself, but whether the speed is still listening closely enough to what changed while you were already moving."
+  },
+  Coordinator: {
+    desc: "You are naturally oriented toward getting moving parts, people, and responsibilities to actually come together.",
+    how: "This pattern tends to show up as real-world coordination rather than abstract organization. You often notice what needs to happen next, who needs what, and where things are likely to break down if no one is paying attention. The strength is reliable integration. The friction is that your usefulness can make it easy to become the person who quietly carries too much."
+  },
+  Executive: {
+    desc: "You are comfortable carrying weight, making hard calls, and moving responsibility forward.",
+    how: "This pattern usually shows up as direct, outcome-aware leadership. You often orient quickly around what has to happen and are less dependent on consensus than many people are. The strength is steadiness under pressure. The balance point is remembering that strong direction lands best when people can also feel the person inside it, not just the force of the decision."
+  },
+  Sentinel: {
+    desc: "You are built to preserve stability, notice risk, and protect what people are relying on.",
+    how: "This pattern tends to show up as vigilance around standards, weak points, and long-term reliability. You often care less about novelty for its own sake and more about whether something will actually hold. The strength is protectiveness with substance behind it. The tension is that real change can initially register as threat even when it is necessary."
+  },
+  Anchor: {
+    desc: "You tend to bring steadiness, perspective, and calm structure into unstable situations.",
+    how: "This pattern often shows up as a slower, more grounded response to pressure. You usually do not get pulled as easily into the emotional size of the moment, which helps you keep perspective when others accelerate too fast. The strength is stabilizing presence. The thing to watch is when steadiness becomes over-holding and necessary movement starts to feel like disruption rather than adjustment."
+  },
+  Mechanist: {
+    desc: "You are naturally drawn to how systems actually function beneath the surface.",
+    how: "This pattern tends to show up as precision around causes, mechanisms, and structural fixes. You usually want to understand why something works, why it failed, and what would correct it at the real source rather than at the level of symptoms. The strength is technical depth and clean problem solving. The friction is that human systems do not always behave with the same clarity as mechanical ones."
+  },
+  Artisan: {
+    desc: "You come alive through shaping, crafting, and bringing something into form with real care.",
+    how: "This pattern usually shows up as close relationship to process. You often care not just about the outcome, but about the act of making itself, the feel of the work, and whether something carries the right quality in it. The strength is depth of craft. The tension is that external pressure, speed, or packaging can feel like it strips away the part that made the work meaningful in the first place."
+  },
+  Synthesist: {
+    desc: "You are built to hold complexity without flattening it too early.",
+    how: "This pattern tends to show up as unusual comfort with multiple truths, competing perspectives, and layered interpretation. You often see where different views fit into a larger whole before other people do. The strength is integrative clarity. The friction is that naming the main point can feel costly when you can still see everything that would be left out."
+  },
+  Innovator: {
+    desc: "You tend to see exactly where something could be improved and how to make that improvement real.",
+    how: "This pattern usually shows up as practical change-making. You often orient toward what can be upgraded, tightened, or made more effective without needing to destroy everything and start over. The strength is useful evolution. The thing to watch is whether the frame itself sometimes needs more than optimization."
+  },
+  Bridge: {
+    desc: "You create connection by making people feel included, welcomed, and able to belong.",
+    how: "This pattern tends to show up as social warmth with real connective force behind it. You often help different people feel comfortable around each other, and you can make a space feel more human simply by how you show up in it. The strength is belonging-creation. The friction is that constant generosity can become quietly draining if you do not protect your own center as actively as you protect the atmosphere around others."
+  },
+  Operator: {
+    desc: "You are built for competence, consistency, and getting real things done well.",
+    how: "This pattern usually shows up as grounded execution. You often prefer work that is tangible, clear, and worth doing properly, and you do not need much performance around that to stay engaged. The strength is dependable follow-through. The thing to watch is whether methods that once worked well are being protected past the point where adaptation would serve the outcome better."
   }
 };
-// ─────────────────────────────────────────────────────────────────
-// D9 MODIFIERS
-// ─────────────────────────────────────────────────────────────────
-var D9_STABLE = {
-  HIGH:"High emotional regulation with full capacity: your system can sustain this pace without accumulating disruption underneath. The floor is real.",
-  STEADY:"High emotional regulation in a steady season means the baseline is reliable. Your function isn't being taxed by regulation right now.",
-  LOW:"High emotional regulation means the protected-capacity season is doing what it's designed to. Restoration is actually occurring, not just rest."
+
+var SOM_TYPES = {
+  DRV: {
+    name: "Driver",
+    desc: "High capacity and strong output pull. This is a season of movement.",
+    how: "This season usually feels like forward pressure in a good sense. There is usable energy, real momentum, and a stronger instinct to act, build, and carry things through. The opportunity here is obvious. So is the risk. If everything becomes movement, quality and recovery can quietly fall behind. This season works best when the momentum is pointed, not just used."
+  },
+  HRB: {
+    name: "Harbor",
+    desc: "High capacity with a strong pull toward people, trust, and relational presence.",
+    how: "This season often feels more open, socially available, and emotionally connective than usual. Relationships may matter more, closeness may come easier, and you may have more lift for conversation, care, or group energy. The strength is that connection can feel genuinely nourishing right now. The thing to watch is whether availability starts turning into overextension."
+  },
+  TBZ: {
+    name: "Trailblazer",
+    desc: "High capacity with a strong pull toward novelty, movement, and fresh direction.",
+    how: "This season usually feels exploratory. You may feel more energized by change, more interested in trying things, and more willing to move toward what feels alive rather than what is already settled. The strength is experimental energy with real fuel behind it. The balance point is making sure novelty is creating signal rather than scattering focus."
+  },
+  BLD: {
+    name: "Builder",
+    desc: "Steady capacity with a consistent output pull. This is a season for solid work.",
+    how: "This season often feels less dramatic than a surge state, but more reliable. There may not be explosive energy, yet there is enough steadiness to make meaningful progress if you stay with what matters. The strength here is compound effort. This season usually works best when you stop looking for a dramatic push and let consistency do the job."
+  },
+  EQZ: {
+    name: "Equalizer",
+    desc: "Steady capacity with a people-centered orientation. Connection is present without overload.",
+    how: "This season usually feels socially workable rather than socially intense. Relationships matter, but not in a chaotic or consuming way. There is often enough room for warmth, steadiness, and real contact without the sense that everything is emotionally amplified. The strength is sustainable connection. This season tends to work best when you let simplicity be enough."
+  },
+  ENH: {
+    name: "Enhancer",
+    desc: "Steady capacity with a pull toward refinement, change, and intelligent adjustment.",
+    how: "This season often feels like gradual expansion. You may not be trying to reinvent your life, but you are more likely to notice what could be improved and to make meaningful adjustments where they count. The strength is change that can actually hold. This season usually works best when the improvements stay realistic enough to integrate cleanly."
+  },
+  BST: {
+    name: "Bastion",
+    desc: "Protected capacity with an output pull. You still want progress, but the bandwidth is narrower.",
+    how: "This season usually feels like needing tighter boundaries around what gets your energy. There may still be a desire to move, finish, or stay productive, but the system is asking for selectivity rather than breadth. The strength is disciplined focus under lower capacity. This season works best when fewer targets are treated as the strategy, not as a failure."
+  },
+  HVN: {
+    name: "Haven",
+    desc: "Protected capacity with a people-centered pull. Safety, comfort, and trusted connection matter more right now.",
+    how: "This season often feels quieter, softer, and more protective. You may want closeness, but not noise. Support, trust, and emotionally safe connection tend to matter more than expansion or intensity. The strength is restorative relational space. This season usually works best when you stop treating lower openness as weakness and start treating it as information."
+  },
+  REF: {
+    name: "Reformer",
+    desc: "Protected capacity with a pull toward change. Something is shifting, but not all at once.",
+    how: "This season usually feels transitional. You may sense that something needs to change, but the shape of that change may still be forming. Progress can feel uneven because part of the work is reorientation itself. The strength is honest recalibration. This season tends to work best when you let smaller shifts accumulate instead of forcing total clarity before the system is ready."
+  }
 };
-var D9_REACTIVE = {
-  HIGH:"Low emotional regulation with full capacity: the pace is generating more internal load than the regulation system can process cleanly. Intentional anchors are a functional requirement, not optional.",
-  STEADY:"Low emotional regulation in a steady season means internal load may be accumulating without obvious external cause. The regulation system is working harder than the season suggests.",
-  LOW:"Low emotional regulation with protected capacity: recovery that doesn't address the regulation load isn't full recovery. The system needs more than output reduction."
-};
 
-// ─────────────────────────────────────────────────────────────────
-// COMMUNICATION STYLE
-// ─────────────────────────────────────────────────────────────────
-function getCommStyle(dims){
-  var e   = dims.E   || 0;
-  var d2  = dims.D2  || 0;
-  var d4  = dims.D4  || 0;
-  var d5  = dims.D5  || 0;
-  var d7  = dims.D7  || 0;
-  var d6  = dims.D6  || 0;
-  var d8  = dims.D8  || 0;
+var comCodes = {"Nexus":"NXS","Harmonizer":"HRM","Architect":"ARC","Visionary":"VIS","Sage":"SGE","Pathfinder":"PTH","Navigator":"NAV","Composer":"CMP","Luminary":"LMN","Pioneer":"PIO","Catalyst":"CAT","Coordinator":"CRD","Executive":"EXC","Sentinel":"SNT","Anchor":"ANK","Mechanist":"MCH","Artisan":"ART","Synthesist":"SYN","Innovator":"INV","Bridge":"BRG","Operator":"OPR"};
 
-  var outward = e >= TH.H;
-  var inward  = e <= TH.L;
-  var direct  = d2 >= TH.H;
-  var warm    = d7 >= TH.H;
-  var reads   = d5 >= TH.H;
-  var precise = d6 >= TH.H || d8 >= TH.H;
-  var structured = d4 >= TH.H;
+// ============================================================
+// DROPDOWN LOGIC
+// ============================================================
+function populateDropdowns(){
+  var comSel = document.getElementById("com-select");
+  var somSel = document.getElementById("som-select");
+  if (!comSel || !somSel) return;
 
-  var label, processing, landing;
-
-  if(outward && direct && reads){
-    label = "Engaging and decisive";
-    processing = "You process best out loud, with other people in the room. Conversation is where your thinking sharpens, not where it gets muddied.";
-    landing = "You communicate directly and read the room naturally. Most people feel heard when they're talking to you, even when you're moving fast.";
-  } else if(outward && direct && !reads){
-    label = "Clear and momentum-focused";
-    processing = "You think fast and speak with clarity. You prefer conversations that move toward a decision rather than circle around one.";
-    landing = "You communicate efficiently and focus on outcomes. When you have something to say, it tends to be well-organized and direct.";
-  } else if(outward && !direct && warm){
-    label = "Open and relationship-first";
-    processing = "You think through conversations and take your time arriving at positions. The relational context matters to you as much as the content.";
-    landing = "People feel at ease talking to you. You create space for others to think out loud, which makes you someone people come back to.";
-  } else if(outward && !direct && reads){
-    label = "Attuned and exploratory";
-    processing = "You process ideas through conversation and stay genuinely curious about other people's perspectives before forming your own.";
-    landing = "You communicate in a way that draws people out. Your questions often do more work than your statements.";
-  } else if(inward && direct && precise){
-    label = "Precise and self-sufficient";
-    processing = "You think privately first. When you bring something to a conversation, it's already been through your own refinement process.";
-    landing = "You communicate with accuracy and economy. You don't say more than what the situation needs, and that restraint is often the most useful thing in the room.";
-  } else if(inward && !direct && reads){
-    label = "Careful and deeply listening";
-    processing = "You process things very carefully. Your thinking benefits from quiet time before conversation, and you notice subtleties others miss.";
-    landing = "You listen in a way that makes people feel genuinely understood. Your responses tend to land with more precision because you can see the full picture.";
-  } else if(inward && direct && warm){
-    label = "Thoughtful and direct";
-    processing = "You do your best thinking privately, but when you're ready to speak you don't hedge. You've already worked through the complexity before it arrives.";
-    landing = "Your communication is quiet until it isn't. When you do speak, people tend to listen, because it's clearly worth hearing.";
-  } else if(!outward && !inward && structured){
-    label = "Organized and consistent";
-    processing = "You prefer structured conversations over open-ended ones. Clear agendas and well-framed questions help you think at your best.";
-    landing = "You communicate reliably and systematically. People know what to expect from you, which builds a particular kind of trust over time.";
-  } else {
-    label = "Adaptive and context-sensitive";
-    processing = "Your communication style flexes with the situation. You read what the moment needs and adjust accordingly, which makes you effective across a wide range of contexts.";
-    landing = "You don't have a rigid way of showing up in conversations. You tend to match the energy and needs of the person in front of you.";
-  }
-
-  return { label:label, processing:processing, landing:landing };
-}
-
-// ─────────────────────────────────────────────────────────────────
-// DIMENSION SNAPSHOT
-// ─────────────────────────────────────────────────────────────────
-var DIM_META = [
-  {key:"D1", name:"Pattern thinking", desc:"How strongly you pull meaning and structure out of complex or ambiguous situations."},
-  {key:"D2", name:"Decisiveness", desc:"How readily you commit to a direction once you have enough to go on."},
-  {key:"D3", name:"Systems thinking", desc:"How strongly you connect ideas across different areas into one unified picture."},
-  {key:"D4", name:"Need for structure", desc:"How much you rely on clear steps and a defined plan before you move."},
-  {key:"D5", name:"Reading the room", desc:"How attuned you are to unspoken dynamics, group tone, and what people aren't saying."},
-  {key:"D6", name:"Quality standard", desc:"How high your internal bar is for what counts as done. High means you keep refining until it's right."},
-  {key:"D7", name:"People in decisions", desc:"How much the people involved factor into your decisions. Measures decision input, not depth of care."},
-  {key:"D8", name:"Independence", desc:"How much you rely on your own judgment before acting rather than checking with others first."},
-  {key:"D9", name:"Emotional steadiness", desc:"How much emotional turbulence disrupts your ability to function. High steadiness does not mean low depth."}
-];
-
-function dimLabel(v){
-  if(v >= TH.VH) return "Very High";
-  if(v >= TH.H)  return "High";
-  if(v >= TH.M)  return "Moderate";
-  if(v > TH.VL)  return "Low";
-  return "Very Low";
-}
-function dimColor(v){
-  if(v >= TH.H)  return "rgba(94,234,212,0.85)";
-  if(v >= TH.M)  return "rgba(165,180,252,0.88)";
-  if(v >= TH.L)  return "rgba(165,180,252,0.88)";
-  return "rgba(165,180,252,0.88)";
-}
-
-// ─────────────────────────────────────────────────────────────────
-// ATLAS PAYLOAD BUILDER
-// ─────────────────────────────────────────────────────────────────
-function encodeVec(avgDims, dimScores){
-  var cogKeys = ["D1","D2","D3","D4","D5","D6","D7","D8","D9","E"];
-  var cogVec = cogKeys.map(function(k){
-    return Math.round((avgDims[k]||0)*10);
-  });
-  var somKeys = ["EP","EM","OUT","PPL","CHG"];
-  var somVec = somKeys.map(function(k){
-    return Math.round(dimScores[k]||0);
-  });
-  return cogVec.concat(somVec).join(" ");
-}
-
-function eLabel(e){
-  if(e >= TH.H) return "outward";
-  if(e <= TH.L) return "inward";
-  return "mixed";
-}
-function d9Label(d9){
-  if(d9 === null || d9 === undefined) return null;
-  if(d9 >= TH.H) return "stable";
-  if(d9 <= TH.L) return "reactive";
-  return "moderate";
-}
-
-function buildAtlasPayload(comResult, somResult, interactionText, commStyle){
-  var comType  = comResult.primaryType || "Unknown";
-  var somType  = somResult.primaryType || "Unknown";
-  var somName  = SOM_MODE_NAMES[somType] || somType;
-  var grid     = (somResult.meta && somResult.meta.grid) ? somResult.meta.grid : {};
-  var tier     = grid.tier   || "UNKNOWN";
-  var orient   = grid.orient || "UNKNOWN";
-  var net      = grid.net    || 0;
-  var avgDims  = comResult.avgDims   || {};
-  var dimSc    = somResult.dimScores || {};
-  var d9v      = (avgDims.D9 !== undefined && avgDims.D9 !== null) ? avgDims.D9 : null;
-  var eVal     = avgDims.E || 0;
-
-  function tl(v){
-    if(v===undefined||v===null) return "nd";
-    if(v>=TH.VH) return "VH"; if(v>=TH.H) return "H";
-    if(v>=TH.M)  return "M";  if(v>TH.VL) return "L"; return "VL";
-  }
-  function tv(v){ return typeof v==="number" ? v.toFixed(2) : "nd"; }
-  function sl(v){ return (typeof v==="number" ? Math.round(v) : 0)+"/14"; }
-  function flag(bool){ return bool ? "1" : "0"; }
-
-  var uList = [];
-  if(comResult.undertones && comResult.undertones.length){
-    comResult.undertones.forEach(function(u){ uList.push(u.name || u.code); });
-  }
-
-  var f = {
-    pattern_thinker:           flag(avgDims.D1 >= TH.H),
-    decisive:                  flag(avgDims.D2 >= TH.H),
-    deliberate:                flag(avgDims.D2 <= TH.L),
-    systems_thinker:           flag(avgDims.D3 >= TH.H),
-    structure_driven:          flag(avgDims.D4 >= TH.H),
-    fluid_executor:            flag(avgDims.D4 <= TH.L),
-    high_social_read:          flag(avgDims.D5 >= TH.H),
-    high_quality_drive:        flag(avgDims.D6 >= TH.H),
-    high_relational_weighting: flag(avgDims.D7 >= TH.H),
-    autonomous:                flag(avgDims.D8 >= TH.H),
-    collaborative:             flag(avgDims.D8 <= TH.L),
-    emotionally_stable:        flag(d9v !== null && d9v >= TH.H),
-    emotionally_sensitive:     flag(d9v !== null && d9v <= TH.L),
-    outward_processor:         flag(eVal >= TH.H),
-    inward_processor:          flag(eVal <= TH.L),
-    full_capacity:             flag(tier === "HIGH"),
-    protected_capacity:        flag(tier === "LOW"),
-    output_season:             flag(orient === "OUT"),
-    people_season:             flag(orient === "PPL"),
-    change_season:             flag(orient === "CHG")
-  };
-
-  var comDescObj = COM_TYPE_DESCS[comType] || {};
-  var somDescObj = SOM_MODE_DESCS[somType] || {};
-  var comHow = (typeof COM_HOW_TEXTS !== "undefined" && COM_HOW_TEXTS[comType]) ? COM_HOW_TEXTS[comType] : "";
-  var somFull = (typeof SOM_FULL_DESCS !== "undefined" && SOM_FULL_DESCS[somType]) ? SOM_FULL_DESCS[somType] : "";
-
-  function addAmb(arr, code, priority, reason, question){
-    arr.push({code:code, priority:priority, reason:reason, question:question});
-  }
-
-  var ambiguities = [];
-
-  if(tier === "LOW" || tier === "HIGH" || Math.abs(net) >= 5){
-    addAmb(
-      ambiguities,
-      "stable_vs_seasonal",
-      1,
-      "Current SOM intensity may be amplifying, muting, or distorting how COM normally shows up.",
-      "Does this pattern feel true across years, or is your current season amplifying it right now?"
-    );
-  }
-
-  if(eVal <= TH.L && ((avgDims.D1 || 0) >= TH.H || (avgDims.D3 || 0) >= TH.H || (avgDims.D6 || 0) >= TH.H || (avgDims.D5 || 0) >= TH.H)){
-    addAmb(
-      ambiguities,
-      "internal_vs_external",
-      3,
-      "Strong internal signal may be underestimated externally because processing is inward.",
-      "Is this something other people clearly see in you, or is it mostly happening internally before you speak?"
-    );
-  }
-
-  if((avgDims.D2 || 0) <= TH.L && (((avgDims.D1 || 0) >= TH.H) || ((avgDims.D3 || 0) >= TH.H))){
-    addAmb(
-      ambiguities,
-      "deliberate_vs_unsure",
-      3,
-      "Low decisiveness may reflect a careful threshold rather than true uncertainty.",
-      "When you pause before deciding, is it because you do not know yet, or because you do not want to commit too early?"
-    );
-  }
-
-  if((avgDims.D4 || 0) >= TH.H && ((avgDims.D1 || 0) >= TH.H || (avgDims.D6 || 0) >= TH.H || (avgDims.D8 || 0) >= TH.H)){
-    addAmb(
-      ambiguities,
-      "natural_structure_vs_compensation",
-      2,
-      "High structure may be native support or an adaptation developed to maintain control and precision.",
-      "Does structure feel naturally supportive to you even when relaxed, or more like something you rely on to keep things from slipping?"
-    );
-  }
-
-  if((avgDims.D5 || 0) >= TH.H && ((avgDims.D7 || 0) >= TH.H || eVal <= TH.L)){
-    addAmb(
-      ambiguities,
-      "attunement_baseline_vs_load",
-      2,
-      "Strong social tracking can be natural attunement or something sharpened through pressure and vigilance.",
-      "Is your sensitivity to other people's tone and subtext naturally effortless, or effective but costly?"
-    );
-  }
-
-  if((avgDims.D9 || 0) >= TH.H && (tier === "HIGH" || ((avgDims.D7 || 0) >= TH.H && (avgDims.D5 || 0) >= TH.H))){
-    addAmb(
-      ambiguities,
-      "steadiness_vs_control",
-      2,
-      "High emotional steadiness may be genuine regulation or disciplined control learned under pressure.",
-      "When life is quiet and there is no pressure, do you still feel this emotionally steady, or is that steadiness something you actively maintain?"
-    );
-  }
-
-  if((avgDims.D8 || 0) >= TH.H && ((avgDims.D7 || 0) >= TH.H || (avgDims.D5 || 0) >= TH.H)){
-    addAmb(
-      ambiguities,
-      "independence_vs_context",
-      4,
-      "Strong autonomy may be global, or mostly strongest in work, problem solving, and high-stakes situations.",
-      "Is your independence true across most of life, or strongest in specific contexts like work, leadership, or pressure?"
-    );
-  }
-
-  if((avgDims.D7 || 0) >= TH.H || (avgDims.D5 || 0) >= TH.H || eVal >= TH.H || eVal <= TH.L){
-    addAmb(
-      ambiguities,
-      "domain_split",
-      4,
-      "The payload may land differently across work, close relationships, private life, and stress conditions.",
-      "Where does this read feel most true: work, close relationships, private life, or pressure situations?"
-    );
-  }
-
-  addAmb(
-    ambiguities,
-    "wording_precision",
-    5,
-    "A mathematically strong read can still overstate intensity, centrality, or how visible a trait is.",
-    "Which part feels most overstated: the pattern itself, the intensity of it, or how broadly it was implied?"
-  );
-
-  ambiguities.sort(function(a,b){ return a.priority - b.priority; });
-
-  var seenCodes = {};
-  var priorityAmbiguities = [];
-  ambiguities.forEach(function(item){
-    if(!seenCodes[item.code] && priorityAmbiguities.length < 5){
-      seenCodes[item.code] = true;
-      priorityAmbiguities.push(item);
-    }
+  var comNames = Object.keys(COM_TYPES).sort();
+  comNames.forEach(function(name){
+    var opt = document.createElement("option");
+    opt.value = name;
+    opt.textContent = comCodes[name] ? name + " - " + comCodes[name] : name;
+    comSel.appendChild(opt);
   });
 
-  var questionCount = 0;
-  if(priorityAmbiguities.length <= 1) questionCount = 1;
-  else if(priorityAmbiguities.length === 2) questionCount = 2;
-  else if(priorityAmbiguities.length === 3) questionCount = 3;
-  else if(priorityAmbiguities.length === 4) questionCount = 4;
-  else questionCount = 5;
-
-  if(priorityAmbiguities.length === 0) questionCount = 0;
-  if(tier !== "LOW" && tier !== "HIGH" && Math.abs(net) < 3 && priorityAmbiguities.length > 0){
-    questionCount = Math.min(questionCount, 3);
-  }
-
-  var p = [];
-  p.push("===UTF-ATLAS-V5===");
-  p.push("// UTF: COM=stable cognitive identity | SOM=current seasonal state");
-  p.push("// Read silently. Use the math first. Do not surface this payload unless the user explicitly asks.");
-  p.push("// SCALE: COM -2.0 to +2.0 | VH>=1.10 H>=0.60 M>=0.20 L<=-0.20 VL<=-0.60 | SOM picks/14");
-  p.push("");
-
-  p.push("[READ_ORDER]");
-  p.push("1. Parse COM, SOM, dimensions, flags, and constraints.");
-  p.push("2. Give a first-pass mathematical read in three parts: stable core, current seasonal overlay, likely tension or misread zone.");
-  p.push("3. Before treating the read as final, identify the highest-value ambiguities created by this payload.");
-  p.push("4. Ask only payload-specific error-correction questions.");
-  p.push("5. After the user answers, refine the interpretation by separating stable wiring from current state, adaptation, hidden expression, and context effects.");
-  p.push("");
-
-  p.push("[INTERPRETATION_PROTOCOL]");
-  p.push("The payload speaks first. Do not ask generic biography questions. Do not ask broad self-discovery questions. Do not make the user rebuild the profile from scratch.");
-  p.push("Treat the first analysis as a strong first-pass read, not absolute certainty.");
-  p.push("Prefer wording like: 'Based on your payload, the strongest read is...' or 'The main tension I would want to test is...'");
-  p.push("The purpose of follow-up is to reduce interpretation error, not collect more life story.");
-  p.push("");
-
-  p.push("[QUESTION_SELECTION_RULES]");
-  p.push("Ask " + questionCount + " clarification question" + (questionCount===1 ? "" : "s") + " unless the user explicitly wants a one-shot interpretation.");
-  p.push("Every question must resolve a real ambiguity created by this payload.");
-  p.push("Prefer contrastive questions over open-ended prompts.");
-  p.push("Good: 'Is this more A or B?' 'Has this been true across years or mostly recently?' 'Is this natural or costly?'");
-  p.push("Avoid: 'Tell me more about yourself.' 'Does this resonate?' 'What are your values?'");
-  p.push("Priority order: COM vs SOM confusion first, adaptation vs identity second, internal vs external expression third, context splits fourth, wording precision last.");
-  p.push("");
-
-  p.push("[AMBIGUITY_CLASSES]");
-  p.push("stable_vs_seasonal = SOM may be amplifying, muting, or distorting visible COM expression.");
-  p.push("internal_vs_external = the trait may be strong internally but not obvious outwardly.");
-  p.push("adaptation_vs_identity = the score may reflect learned compensation rather than deepest default wiring.");
-  p.push("context_split = the trait may be globally true or mostly limited to work, relationships, private life, or pressure.");
-  p.push("wording_precision = the direction may be right while the intensity or breadth is overstated.");
-  p.push("");
-
-  p.push("[COM] " + comType + " | " + (comDescObj.h || ""));
-  if(comHow) p.push("DEPTH: " + comHow);
-  if(uList.length) p.push("UNDERTONE: " + uList.join(", "));
-  p.push("D1_pattern="   + tl(avgDims.D1)+"("+tv(avgDims.D1)+")  // extracts patterns and structure from complexity");
-  p.push("D2_decision="  + tl(avgDims.D2)+"("+tv(avgDims.D2)+")  // commitment threshold: H=commits with partial data L=waits for structural clarity");
-  p.push("D3_systems="   + tl(avgDims.D3)+"("+tv(avgDims.D3)+")  // connects ideas across domains into unified picture");
-  p.push("D4_structure=" + tl(avgDims.D4)+"("+tv(avgDims.D4)+")  // structure reliance: H=relies on explicit plans L=uses internal mapping to guide execution");
-  p.push("D5_social="    + tl(avgDims.D5)+"("+tv(avgDims.D5)+")  // reads unspoken dynamics and interpersonal subtext; not a social preference score");
-  p.push("D6_quality="   + tl(avgDims.D6)+"("+tv(avgDims.D6)+")  // quality threshold: H=refines until aligned (risk: slower output) L=optimizes for speed and iteration");
-  p.push("D7_people="    + tl(avgDims.D7)+"("+tv(avgDims.D7)+")  // people factor in decisions: reflects decision input NOT emotional depth or care");
-  p.push("D8_autonomy="  + tl(avgDims.D8)+"("+tv(avgDims.D8)+")  // self-direction: H=acts on own judgment L=processes with others before acting");
-  p.push("D9_stability=" + (d9v!==null ? tl(d9v)+"("+tv(d9v)+")" : "nd") + "  // emotional steadiness under load; H does not mean low depth or low intensity");
-  p.push("E_social="     + tl(eVal)+"("+tv(eVal)+")  // processing style: H=thinks out loud with people L=thinks privately before sharing");
-  p.push("COMM: " + commStyle.label + " | " + commStyle.processing);
-  p.push("");
-
-  p.push("[SOM] " + somName + " (" + somType + ") | " + (somDescObj.h || ""));
-  p.push("SEASON: " + somFull);
-  p.push("TIER=" + tier + " NET=" + net + " ORIENT=" + orient);
-  p.push("cap="+sl(dimSc.EP)+" rec="+sl(dimSc.EM)+" bld="+sl(dimSc.OUT)+" ppl="+sl(dimSc.PPL)+" chg="+sl(dimSc.CHG));
-  p.push("NOW: " + interactionText.split(".").slice(0,2).join(".").trim() + ".");
-  p.push("");
-
-  p.push("[FLAGS]");
-  Object.keys(f).forEach(function(k){ p.push(k+"="+f[k]); });
-  p.push("");
-
-  p.push("[PRIORITY_AMBIGUITIES]");
-  if(priorityAmbiguities.length){
-    priorityAmbiguities.forEach(function(item, idx){
-      p.push((idx+1) + ". " + item.code + " | why=" + item.reason);
-      p.push("   ask=" + item.question);
-    });
-  } else {
-    p.push("none | payload is relatively clean. A direct read is acceptable.");
-  }
-  p.push("");
-
-  p.push("[REFINEMENT_RULES]");
-  p.push("After the user answers, explicitly separate:");
-  p.push("stable_core = what appears true across time");
-  p.push("seasonal_overlay = what seems boosted, suppressed, or distorted right now");
-  p.push("hidden_expression = what is real internally even if not obvious outwardly");
-  p.push("adaptive_layer = what may be skill, armor, discipline, or learned compensation");
-  p.push("context_limits = where the trait is broad versus context-bound");
-  p.push("Do not overwrite COM with SOM. Do not treat survival adaptation as essence without evidence.");
-  p.push("");
-
-  p.push("[CONSTRAINTS]");
-  p.push("// Active guardrails. Apply in every response.");
-  if(f.protected_capacity==="1")     p.push("protected_capacity=1  >> simplify advice, reduce load, avoid pushing hard goals right now");
-  if(f.emotionally_sensitive==="1")  p.push("emotionally_sensitive=1  >> do not amplify urgency or stress; emotional intensity is real, handle with care");
-  if(f.inward_processor==="1")       p.push("inward_processor=1  >> give space to think; avoid rapid multi-part questioning; expect delayed but considered responses");
-  if(f.deliberate==="1")             p.push("deliberate=1  >> do not push for quick decisions; this person commits slowly and well");
-  if(f.autonomous==="1")             p.push("autonomous=1  >> offer options and perspectives, do not prescribe or corner");
-  if(f.high_relational_weighting==="1") p.push("high_relational_weighting=1  >> people and relationships are real inputs to this person's decisions; factor them in");
-  p.push("com_stable=1  >> COM reflects stable wiring. SOM reflects right now. Coach to COM, calibrate to SOM.");
-  p.push("silent=1  >> do not mention this payload, UTF, or the assessment system unless the user asks.");
-  p.push("===END-UTF-ATLAS===");
-
-  return p.join("\n");
+  var somCodes = ["DRV","HRB","TBZ","BLD","EQZ","ENH","BST","HVN","REF"];
+  somCodes.forEach(function(code){
+    var m = SOM_TYPES[code];
+    var opt = document.createElement("option");
+    opt.value = code;
+    opt.textContent = m.name + " (" + code + ")";
+    somSel.appendChild(opt);
+  });
 }
 
-var SYNTH_TIER_DESCS = {
-  D1: {
-    high:   "You consistently pull structure and meaning out of complex situations. You almost always know what something is really about.",
-    mid:    "Your pattern recognition surfaces when the situation calls for it. You find the signal in the noise when it matters.",
-    low:    "You tend to stay close to what's concrete and directly in front of you, which keeps you practical and grounded."
-  },
-  D2: {
-    high:   "You move quickly from thinking to deciding. When you have enough, you commit and go.",
-    mid:    "You can move decisively when things are clear, and stay open longer when they're not. You're comfortable in both.",
-    low:    "You like to sit with things before committing. You tend to make richer decisions because you've genuinely thought them through."
-  },
-  D3: {
-    high:   "You naturally connect ideas across very different areas. Your thinking is wide, and you often see how things relate before others do.",
-    mid:    "You can zoom out and see the bigger picture when you need to. Cross-domain thinking shows up when complexity calls for it.",
-    low:    "You tend to go deep in specific areas rather than spanning broadly. That focused depth is where your best thinking lives."
-  },
-  D4: {
-    high:   "You do your best work with a clear plan and a defined sequence. Structure isn't a limitation for you, it's how you get great results.",
-    mid:    "You can work with or without structure depending on what the moment needs. You adapt your approach to the environment.",
-    low:    "You move fluidly without needing a detailed plan first. You're comfortable figuring things out as you go."
-  },
-  D5: {
-    high:   "You're almost always reading the room. You pick up on what's unspoken, who's off, and what's actually going on underneath.",
-    mid:    "You notice interpersonal dynamics when they're relevant. You can read the room when you tune in, and you know when to.",
-    low:    "You tend to take situations at face value and focus on what's directly in front of you, which makes you clear-headed and direct."
-  },
-  D6: {
-    high:   "Your internal bar for quality is always active. You notice when something isn't quite right, and you keep refining until it is.",
-    mid:    "You hold your work to a high standard when it counts. You know the difference between good enough and genuinely done.",
-    low:    "You move with momentum and don't get caught up refining past the point of usefulness. You know when to ship and move on."
-  },
-  D7: {
-    high:   "People are a consistent part of how you make decisions. You naturally account for how choices land on the people involved.",
-    mid:    "You factor in the people side when it's relevant. When relationships matter to a decision, you're attuned to that.",
-    low:    "You tend to evaluate things on their merits first, separate from the social dimension. That makes you clear and objective."
-  },
-  D8: {
-    high:   "You trust your own judgment and act on it. You don't need external validation to feel confident in your direction.",
-    mid:    "You're comfortable working independently and know when getting input makes sense. You adapt to what the situation calls for.",
-    low:    "You naturally think things through with others before acting. Collaboration is genuinely part of how you do your best work."
-  },
-  D9: {
-    high:   "You stay functionally stable through emotional turbulence. Things move through you without disrupting your ability to function.",
-    mid:    "You're generally steady, and your emotional landscape shows up more fully in contexts or relationships that really matter to you.",
-    low:    "You feel things deeply and those feelings are present in how you navigate. Your emotional life is rich and close to the surface."
-  }
-};
+function revealCOMType(val){
+  var el = document.getElementById("com-reveal");
+  var col = document.getElementById("com-reveal-col");
+  if (!el) return;
+  if (!val){ el.innerHTML = ""; if(col) col.style.display="none"; return; }
+  var t = COM_TYPES[val];
+  if (!t){ el.innerHTML = ""; if(col) col.style.display="none"; return; }
 
-function synthTierDesc(key, v){
-  var d = SYNTH_TIER_DESCS[key];
-  if(!d) return "";
-  if(v >= TH.H)  return d.high;
-  if(v > TH.VL)  return d.mid;
-  return d.low;
-}
-
-// ─────────────────────────────────────────────────────────────────
-// RENDER
-// ─────────────────────────────────────────────────────────────────
-function render(comResult, somResult){
-  var comType   = comResult.primaryType || "Unknown";
-  var somType   = somResult.primaryType || "Unknown";
-  var somName   = SOM_MODE_NAMES[somType] || somType;
-  var avgDims   = comResult.avgDims || {};
-  var dimScores = somResult.dimScores || {};
-  var tier      = (somResult.meta && somResult.meta.grid) ? somResult.meta.grid.tier : "STEADY";
-  var group     = getCOMGroup(comType);
-  var d9Val     = (avgDims.D9 !== undefined) ? avgDims.D9 : null;
-
-  // COM card
-  var comData = COM_TYPE_DESCS[comType] || {};
-  var comNameEl = document.getElementById("comTypeName");
-  var comCode = (COM_CODES && COM_CODES[comType]) ? COM_CODES[comType] : "";
-  comNameEl.textContent = comCode ? comType + " - " + comCode : comType;
-  comNameEl.style.background = COM_GRADIENTS[comType] || "linear-gradient(135deg,#818cf8,#06b6d4)";
-  comNameEl.style.webkitBackgroundClip = "text";
-  comNameEl.style.backgroundClip = "text";
-  comNameEl.style.webkitTextFillColor = "transparent";
-  document.getElementById("comTypeHeadline").textContent = comData.h || "";
-  document.getElementById("comTypeBody").textContent = comData.b || "";
-  // (group, undertones visible in dimension snapshot accordion)
-
-  // SOM card: "Name - CODE"
-  var somData = SOM_MODE_DESCS[somType] || {};
-  var somNameEl = document.getElementById("somTypeName");
-  somNameEl.textContent = somName + " - " + somType;
-  somNameEl.style.background = SOM_GRADIENTS[somType] || "linear-gradient(135deg,#60a5fa,#14b8a6)";
-  somNameEl.style.webkitBackgroundClip = "text";
-  somNameEl.style.backgroundClip = "text";
-  somNameEl.style.webkitTextFillColor = "transparent";
-  document.getElementById("somTypeHeadline").textContent = somData.h || "";
-  document.getElementById("somTypeBody").textContent = somData.b || "";
-
-  // Interaction text
-  var baseInteraction = (INTERACTION[group] && INTERACTION[group][somType])
-    ? INTERACTION[group][somType]
-    : "Your current season is shaping how your natural strengths show up. The combination of your cognitive wiring and seasonal state creates a specific window worth paying attention to.";
-
-  document.getElementById("interactionText").textContent = baseInteraction;
-
-  // D9 modifier
-  var d9Mod = document.getElementById("d9Modifier");
-  if(d9Val !== null){
-    var modText = null;
-    if(d9Val >= TH.H && D9_STABLE[tier]){
-      modText = D9_STABLE[tier];
-      d9Mod.className = "d9-modifier stable";
-    } else if(d9Val <= TH.L && D9_REACTIVE[tier]){
-      modText = D9_REACTIVE[tier];
-      d9Mod.className = "d9-modifier reactive";
-    }
-    if(modText){
-      d9Mod.textContent = modText;
-      d9Mod.style.display = "";
-    }
-  }
-
-  // Communication style
-  var comm = getCommStyle(avgDims);
-  var commEl = document.getElementById("commContent");
-  commEl.innerHTML =
-    "<div class='label'>Style</div><p><strong>" + comm.label + "</strong></p>" +
-    "<div class='label'>How you process</div><p>" + comm.processing + "</p>" +
-    "<div class='label'>How you land</div><p>" + comm.landing + "</p>";
-
-  // Dimension snapshot: trait bars
-  var dimsEl = document.getElementById("dimsContent");
-
-  // COM bars (D1–D9): value range -2 to +2, map to 0–100%
-  function barPct(v){ return Math.round(((v + 2) / 4) * 100); }
-  function barColor(v){
-    if(v >= TH.H)  return "linear-gradient(90deg,#3b82f6,#14b8a6)";
-    if(v >= TH.M)  return "linear-gradient(90deg,#6366f1,#8b5cf6)";
-    if(v >= TH.L)  return "linear-gradient(90deg,#3b4fd4,#5b7cf7)";
-    return "linear-gradient(90deg,#2d3f9e,#4460d4)";
-  }
-
-  var eVal = avgDims.E || 0;
-  var comBarsHtml = "<div class='label'>Cognitive dimensions</div><div class='trait-bars'>";
-  DIM_META.forEach(function(meta){
-    var v = avgDims[meta.key];
-    if(v === undefined || v === null) return;
-    var pct = barPct(v);
-    var col = barColor(v);
-    var tdesc = synthTierDesc(meta.key, v);
-    comBarsHtml += "<div class='trait-row-wrap'>" +
-      "<div class='trait-row'>" +
-        "<span class='trait-label'>" + meta.name + "</span>" +
-        "<div class='trait-bar-track'><div class='trait-bar-fill' style='width:" + pct + "%;background:" + col + ";'></div></div>" +
-        "<span class='trait-val' style='color:" + dimColor(v) + ";'>" + dimLabel(v) + "</span>" +
-      "</div>" +
-      (tdesc ? "<div class='trait-desc'>" + tdesc + "</div>" : "") +
+  el.innerHTML =
+    "<div class='type-card'>" +
+      "<div class='type-title type-title-" + val + "'>" + val + (comCodes[val] ? " - " + comCodes[val] : "") + "</div>" +
+      "<div class='type-desc'>" + t.desc + "</div>" +
+      "<div class='type-how'><strong>How this pattern tends to show up:</strong> " + t.how + "</div>" +
     "</div>";
-  });
-  // E axis
-  var ePct = barPct(eVal);
-  var eCol = eVal >= TH.H ? "linear-gradient(90deg,#f59e0b,#f97316)" : eVal <= TH.L ? "linear-gradient(90deg,#6366f1,#4c6fff)" : "rgba(148,163,184,0.45)";
-  var eText = eVal >= TH.H ? "Outward" : eVal <= TH.L ? "Inward" : "Mixed";
-  var eSentence = eVal >= TH.H
-    ? "You tend to think clearer through interaction, and people-time is generally more energizing than draining."
-    : eVal <= TH.L
-      ? "You tend to think best privately first, and quiet time is generally what restores your clarity."
-      : "You can switch between social and solo depending on what the moment needs.";
-  comBarsHtml += "<div class='trait-row-wrap'>" +
-    "<div class='trait-row'>" +
-      "<span class='trait-label'>Social energy</span>" +
-      "<div class='trait-bar-track'><div class='trait-bar-fill' style='width:" + ePct + "%;background:" + eCol + ";'></div></div>" +
-      "<span class='trait-val' style='color:" + (eVal >= TH.H ? "#f59e0b" : eVal <= TH.L ? "#818cf8" : "var(--muted2)") + ";'>" + eText + "</span>" +
-    "</div>" +
-    "<div class='trait-desc'>" + eSentence + "</div>" +
-  "</div>";
-  comBarsHtml += "</div>";
 
-  // SOM grid + bars
-  var somGrid = [
-    {code:"DRV",name:"Driver"},{code:"HRB",name:"Harbor"},{code:"TBZ",name:"Trailblazer"},
-    {code:"BLD",name:"Builder"},{code:"EQZ",name:"Equalizer"},{code:"ENH",name:"Enhancer"},
-    {code:"BST",name:"Bastion"},{code:"HVN",name:"Haven"},{code:"REF",name:"Reformer"}
-  ];
-  var somGridHtml = "<div class='label' style='margin-top:20px;'>Season mode</div><div class='som-grid-wrap'><div class='som-grid'>";
-  somGrid.forEach(function(m){
-    var isActive = (m.code === somType);
-    somGridHtml += "<div class='som-cell " + (isActive ? "active" : "inactive") + "'>" + m.name + "<div class='som-cell-code'>" + m.code + "</div></div>";
-  });
-  somGridHtml += "</div></div>";
-
-  var somDimsList = [
-    {k:"EP",n:"Current capacity",col:"#14b8a6"},
-    {k:"EM",n:"Recovery pull",   col:"#f59e0b"},
-    {k:"OUT",n:"Build focus",    col:"#3b82f6"},
-    {k:"PPL",n:"People pull",    col:"#a855f7"},
-    {k:"CHG",n:"Change pull",    col:"#f97316"}
-  ];
-  var DIM_MAX = 14; // max picks per dim
-  var somBarsHtml = "<div class='label' style='margin-top:16px;'>Season dimensions</div><div class='som-bars'>";
-  somDimsList.forEach(function(d){
-    var v = dimScores[d.k] || 0;
-    var pct = Math.round((v / DIM_MAX) * 100);
-    var isOrient = (d.k==="OUT"||d.k==="PPL"||d.k==="CHG");
-    somBarsHtml += "<div class='som-bar-row'>" +
-      "<span class='som-bar-label'>" + d.n + "</span>" +
-      "<div class='trait-bar-track' style='height:" + (isOrient ? "8" : "6") + "px;'>" +
-        "<div class='som-bar-fill' style='width:" + pct + "%;background:" + d.col + ";opacity:.85;height:100%;border-radius:999px;transition:width .6s cubic-bezier(.4,0,.2,1);'></div>" +
-      "</div>" +
-      "<span class='som-bar-val'>" + v + "</span>" +
-      "</div>";
-  });
-  somBarsHtml += "</div>";
-
-  dimsEl.innerHTML = comBarsHtml + somGridHtml + somBarsHtml;
-
-  // Atlas payload
-  var interactionForAtlas = baseInteraction;
-  var payload = buildAtlasPayload(comResult, somResult, interactionForAtlas, comm);
-  document.getElementById("atlasBox").value = payload;
-
-  // Show result block
-  document.getElementById("resultBlock").style.display = "block";
+  if (col) col.style.display = "";
 }
 
-// ─────────────────────────────────────────────────────────────────
-// COPY ATLAS
-// ─────────────────────────────────────────────────────────────────
-function copyAtlas(){
-  var box = document.getElementById("atlasBox");
-  var btn = document.getElementById("copyBtn");
-  var note = document.getElementById("copiedNote");
-  var text = box.value || "";
-  if(!text) return;
-  try{fetch("https://empowerutf.up.railway.app/api/atlas/event",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({com_type:_comType,som_mode:_somMode,event_type:"copy"})});}catch(e){}
-  // Submit rating on first copy only
-  if(!_ratingDone && _rating > 0){
-    _ratingDone = true;
-    var comment = (document.getElementById("ratingComment")||{}).value||"";
-    var payload = {rating:_rating, comment:comment.trim().slice(0,400),
-                   com_type:_comType, som_mode:_somMode, ts:new Date().toISOString()};
-    try{
-      (function attempt(r){
-        fetch("https://empowerutf.up.railway.app/api/rating",{method:"POST",headers:{"Content-Type":"application/json"},
-          body:JSON.stringify(payload)})
-        .then(function(res){ if(!res.ok && r>0) setTimeout(function(){attempt(r-1);},8000); })
-        .catch(function(){ if(r>0) setTimeout(function(){attempt(r-1);},8000); });
-      })(3);
-    }catch(e){}
-    try{
-      var prev = JSON.parse(localStorage.getItem("eu_ratings")||"[]");
-      prev.push(payload); localStorage.setItem("eu_ratings",JSON.stringify(prev));
-    }catch(e){}
-    var ty = document.getElementById("ratingTy");
-    if(ty) ty.classList.add("show");
-  }
-  function onCopied(){
-    btn.classList.add("copied");
-    btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Copied';
-    if(note) note.style.display = "";
-    setTimeout(function(){
-      btn.classList.remove("copied");
-      btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy your Atlas';
-      if(note) note.style.display = "none";
-    }, 3000);
-  }
-  if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(text).then(onCopied).catch(function(){
-      box.style.position="fixed";box.style.opacity="0";box.style.width="1px";box.style.height="1px";
-      box.removeAttribute("aria-hidden");box.select();document.execCommand("copy");
-      box.setAttribute("aria-hidden","true");onCopied();
-    });
-  } else {
-    box.style.position="fixed";box.style.opacity="0";box.style.width="1px";box.style.height="1px";
-    box.removeAttribute("aria-hidden");box.select();document.execCommand("copy");
-    box.setAttribute("aria-hidden","true");onCopied();
-  }
+function revealSOMType(val){
+  var el = document.getElementById("som-reveal");
+  var col = document.getElementById("som-reveal-col");
+  if (!el) return;
+  if (!val){ el.innerHTML = ""; if(col) col.style.display="none"; return; }
+  var t = SOM_TYPES[val];
+  if (!t){ el.innerHTML = ""; if(col) col.style.display="none"; return; }
+
+  el.innerHTML =
+    "<div class='type-card'>" +
+      "<div class='type-title type-title-" + val + "'>" + t.name + " (" + val + ")</div>" +
+      "<div class='type-desc'>" + t.desc + "</div>" +
+      "<div class='type-how'><strong>What this season is like:</strong> " + t.how + "</div>" +
+    "</div>";
+
+  if (col) col.style.display = "";
+}
+function showSelectedTypes(){
+  var comVal = document.getElementById("com-select").value;
+  var somVal = document.getElementById("som-select").value;
+  if (!comVal && !somVal) return;
+  revealCOMType(comVal);
+  revealSOMType(somVal);
+  var results = document.getElementById("explore-results");
+  if(results) results.style.display = "";
 }
 
-// ─────────────────────────────────────────────────────────────────
-// ACCORDION
-// ─────────────────────────────────────────────────────────────────
-function toggleAcc(panelId, btn){
-  var panel = document.getElementById(panelId);
-  if(!panel) return;
-  var isOpen = panel.classList.toggle("open");
-  if(btn) btn.classList.toggle("open", isOpen);
+function toggleDropdown(id){
+  var content = document.getElementById(id + "-content");
+  var icon = document.getElementById(id + "-icon");
+  if (!content) return;
+  var isOpen = content.classList.toggle("active");
+  if (content.parentElement) content.parentElement.querySelector(".dropdown-toggle").classList.toggle("active", isOpen);
+  if (icon) icon.textContent = isOpen ? "▲" : "▼";
 }
 
-function openAndScroll(panelId, _unused){
-  var panel = document.getElementById(panelId);
-  if(!panel) return;
-  var btn = panel.previousElementSibling;
-  if(!panel.classList.contains("open")){
-    panel.classList.add("open");
-    if(btn) btn.classList.add("open");
-  }
-  setTimeout(function(){ panel.parentElement.scrollIntoView({behavior:"smooth",block:"start"}); }, 80);
-}
-
-// ─────────────────────────────────────────────────────────────────
-// TOAST
-// ─────────────────────────────────────────────────────────────────
-function showToast(msg){
-  var t = document.getElementById("toast");
-  if(!t){ alert(msg); return; }
-  t.textContent = msg;
-  t.classList.add("show");
-  clearTimeout(window.__toastT);
-  window.__toastT = setTimeout(function(){ t.classList.remove("show"); }, 4800);
-}
-
-// ─────────────────────────────────────────────────────────────────
+// ============================================================
 // MENU
-// ─────────────────────────────────────────────────────────────────
-// ── ATLAS AGREEMENT ─────────────────────────────────────────────────────────
-var _rating = 0;
-var _ratingDone = false;
-var _comType = "";
-var _somMode = "";
-
-function setRating(v){
-  _rating = v;
-  document.querySelectorAll(".rating-num").forEach(function(b){
-    b.classList.toggle("sel", parseInt(b.getAttribute("data-v"),10) === v);
-  });
-  setAtlasCopyEnabled();
-}
-
-function setAtlasCopyEnabled(){
-  var chk  = document.getElementById("atlasAgreeChk");
-  var btn  = document.getElementById("copyBtn");
-  var gate = document.getElementById("ratingGate");
-  if(!btn) return;
-  var agreed = !!(chk && chk.checked);
-  if(gate) gate.style.display = agreed ? "" : "none";
-  btn.disabled = !(agreed && _rating > 0);
-}
-
-function submitRatingEmail(){
-  var inp = document.getElementById("ratingEmailIn");
-  var ebtn = document.getElementById("ratingEmailBtn");
-  var email = inp ? inp.value.trim() : "";
-  if(email){
-    try{
-      var list = JSON.parse(localStorage.getItem("eu_early_adopters") || "[]");
-      list.push({email:email, com:_comType, som:_somMode, ts:new Date().toISOString()});
-      localStorage.setItem("eu_early_adopters", JSON.stringify(list));
-    }catch(e){}
-    try{
-      (function attempt(r){
-        fetch("https://empowerutf.up.railway.app/api/early-adopter", {
-          method:"POST",
-          headers:{"Content-Type":"application/json"},
-          body:JSON.stringify({email:email, com_type:_comType, som_mode:_somMode, ts:new Date().toISOString()})
-        })
-        .then(function(res){ if(!res.ok && r>0) setTimeout(function(){attempt(r-1);},8000); })
-        .catch(function(){ if(r>0) setTimeout(function(){attempt(r-1);},8000); });
-      })(3);
-    }catch(e){}
-  }
-  if(ebtn){ ebtn.textContent = "Done"; ebtn.disabled = true; }
-  if(inp) inp.disabled = true;
-}
-
-function dismissRatingEmail(){
-  var ty = document.getElementById("ratingTy");
-  if(ty) ty.classList.remove("show");
-}
-
-function openAtlasAgreementModal(){
-  var m = document.getElementById("atlasAgreementModal");
-  if(!m) return;
-  m.classList.add("show"); m.setAttribute("aria-hidden","false");
-  document.body.style.overflow="hidden";
-}
-function closeAtlasAgreementModal(){
-  var m = document.getElementById("atlasAgreementModal");
-  if(!m) return;
-  m.classList.remove("show"); m.setAttribute("aria-hidden","true");
-  document.body.style.overflow="";
-}
-
-document.addEventListener("DOMContentLoaded", function(){
-  var link = document.getElementById("openAtlasAgreement");
-  var closeBtn = document.getElementById("closeAtlasAgreement");
-  var backdrop = document.getElementById("atlasAgreementModal");
-  if(link) link.addEventListener("click", function(e){ e.preventDefault(); openAtlasAgreementModal(); });
-  if(closeBtn) closeBtn.addEventListener("click", closeAtlasAgreementModal);
-  if(backdrop) backdrop.addEventListener("click", function(e){ if(e.target===backdrop) closeAtlasAgreementModal(); });
-});
-
-document.getElementById("btnMenu").addEventListener("click", function(){
-  var m = document.getElementById("menuModal");
+// ============================================================
+function openMenu(){
+  var m = document.getElementById("menuModal"); if(!m) return;
   m.classList.add("show"); m.setAttribute("aria-hidden","false");
   document.body.style.overflow = "hidden";
-});
-document.getElementById("btnCloseMenu").addEventListener("click", function(){
-  var m = document.getElementById("menuModal");
+}
+function closeMenu(){
+  var m = document.getElementById("menuModal"); if(!m) return;
   m.classList.remove("show"); m.setAttribute("aria-hidden","true");
   document.body.style.overflow = "";
-});
+}
+
+document.getElementById("btnMenu").addEventListener("click", openMenu);
+document.getElementById("menuClose").addEventListener("click", closeMenu);
 document.getElementById("menuModal").addEventListener("click", function(e){
-  if(e.target === this){ this.classList.remove("show"); this.setAttribute("aria-hidden","true"); document.body.style.overflow = ""; }
+  if (e.target === document.getElementById("menuModal")) closeMenu();
 });
-document.addEventListener("keydown", function(e){ if(e.key==="Escape"){ var m=document.getElementById("menuModal"); if(m){ m.classList.remove("show"); m.setAttribute("aria-hidden","true"); document.body.style.overflow=""; } closeAtlasAgreementModal(); }});
+document.addEventListener("keydown", function(e){
+  if (e.key === "Escape") closeMenu();
+});
 
-// ─────────────────────────────────────────────────────────────────
-// INIT
-// ─────────────────────────────────────────────────────────────────
-(function init(){
-  var comRaw = null, somRaw = null;
-  try{ comRaw = JSON.parse(localStorage.getItem(COM_KEY) || "null"); } catch(e){}
-  try{ somRaw = JSON.parse(localStorage.getItem(SOM_KEY) || "null"); } catch(e){}
-
-  var hasCOM = !!(comRaw && comRaw.primaryType);
-  var hasSOM = !!(somRaw && somRaw.primaryType);
-  if(hasCOM) _comType = comRaw.primaryType || "";
-  if(hasSOM) _somMode = somRaw.primaryType || "";
-
-  if(hasCOM && hasSOM){
-    render(comRaw, somRaw);
-  } else if(hasCOM && !hasSOM){
-    document.getElementById("stateCOMOnly").classList.add("show");
-  } else if(!hasCOM && hasSOM){
-    document.getElementById("stateSOMOnly").classList.add("show");
-  } else {
-    document.getElementById("stateNeither").classList.add("show");
-  }
-})();
+populateDropdowns();
 </script>
 
-  <!-- Atlas Agreement Modal -->
-  <div class="atlas-modal-backdrop" id="atlasAgreementModal" aria-hidden="true" onclick="if(event.target===this)closeAtlasAgreementModal();">
-    <div class="atlas-modal" role="dialog" aria-modal="true" aria-labelledby="atlasAgreementTitle">
-      <div class="atlas-modal-header">
-        <div class="atlas-modal-title" id="atlasAgreementTitle">Atlas User Agreement</div>
-        <button class="atlas-modal-close" id="closeAtlasAgreement" type="button" onclick="closeAtlasAgreementModal()">Close</button>
-      </div>
-      <div class="atlas-modal-body">
-        <h4>1) What Atlas is</h4>
-        <p>Atlas is a portable cognitive profile you generate from your UTF assessment results. When pasted into an AI chat, it helps the AI calibrate its responses to how you actually think and what your current season needs. It is a self-reflection and decision-support tool, nothing more.</p>
-
-        <h4>2) What Atlas is not</h4>
-        <p>Atlas is <strong>not therapy</strong>, not medical or mental health treatment, and not a clinical diagnostic tool. It does not provide professional advice of any kind. The AI responses it enables are not a substitute for professional judgment, whether psychological, medical, legal, financial, or otherwise.</p>
-
-        <h4>3) Your responsibility</h4>
-        <p>By copying and using your Atlas, you acknowledge and agree that:</p>
-        <ul>
-          <li>You are solely responsible for how you interpret, apply, or act on any response an AI provides using this profile.</li>
-          <li>Empower.U does not control what any third-party AI says, how it interprets your profile, or what advice it gives.</li>
-          <li>You will use your own judgment before acting on anything an AI tells you.</li>
-          <li>Empower.U accepts no responsibility for decisions, actions, or outcomes resulting from your use of Atlas with any AI system.</li>
-        </ul>
-
-        <h4>4) Data and privacy</h4>
-        <p>Your Atlas contains a structured summary of your assessment results. It does not include your name, raw answers, or any personally identifying information. You control it entirely. Empower.U does not send it anywhere. You decide what any AI receives.</p>
-        <p>Be aware that when you paste your Atlas into a third-party AI system (ChatGPT, Claude, Gemini, etc.), it is governed by that platform's privacy policy, not Empower.U's. Only share it in contexts you trust.</p>
-
-        <h4>5) Appropriate use</h4>
-        <p>Use Atlas for personal insight, self-reflection, and exploring how you think. Do not use it to make high-stakes decisions without human professional input. Do not share another person's profile without their knowledge and consent.</p>
-
-        <h4>6) Consent</h4>
-        <p>Checking the agreement box confirms you have read and accepted these terms, and that you take full personal responsibility for how you use Atlas.</p>
-      </div>
-    </div>
-  </div>
 </body>
 </html>
