@@ -436,7 +436,7 @@
         <div class="atlas-copy-row">
           <div class="atlas-copy-left">
             <div class="atlas-copy-title">Atlas</div>
-            <div class="atlas-copy-desc">Copy your profile and paste it into any AI chat. The AI reads how you think, your current season, and what you need, and adapts every response before you ask your first question.</div>
+            <div class="atlas-copy-desc">Copy your profile and paste it into any AI chat. The AI reads how you think, forms a first mathematical interpretation, checks likely mismatch points, and adapts its responses with more precision from the start.</div>
           </div>
         </div>
         <div class="atlas-agreement">
@@ -499,16 +499,6 @@
         </div>
       </div>
 
-      <!-- COMMUNICATION STYLE -->
-      <div class="acc-section">
-        <button class="acc-btn" type="button" onclick="toggleAcc('commPanel',this)">
-          <span>How you communicate and connect</span>
-          <span class="acc-chevron">&#9660;</span>
-        </button>
-        <div class="acc-panel" id="commPanel">
-          <div class="acc-inner" id="commContent"></div>
-        </div>
-      </div>
 
       <!-- EXPLORE CTA: above trait bars -->
       <div class="explore-cta">
@@ -540,14 +530,27 @@
         </div>
       </div>
 
+
       <!-- DIMENSION SNAPSHOT -->
       <div class="acc-section">
         <button class="acc-btn" type="button" onclick="toggleAcc('dimsPanel',this)">
-          <span>Your trait breakdown</span>
+          <span>Trait map</span>
           <span class="acc-chevron">&#9660;</span>
         </button>
         <div class="acc-panel" id="dimsPanel">
           <div class="acc-inner" id="dimsContent"></div>
+        </div>
+      </div>
+
+
+      <!-- COMMUNICATION STYLE -->
+      <div class="acc-section">
+        <button class="acc-btn" type="button" onclick="toggleAcc('commPanel',this)">
+          <span>How you communicate and connect</span>
+          <span class="acc-chevron">&#9660;</span>
+        </button>
+        <div class="acc-panel" id="commPanel">
+          <div class="acc-inner" id="commContent"></div>
         </div>
       </div>
 
@@ -838,8 +841,8 @@ function getCommStyle(dims){
     landing = "You communicate with accuracy and economy. You don't say more than what the situation needs, and that restraint is often the most useful thing in the room.";
   } else if(inward && !direct && reads){
     label = "Careful and deeply listening";
-    processing = "You process slowly and carefully. Your thinking benefits from quiet time before conversation, and you notice subtleties others miss.";
-    landing = "You listen in a way that makes people feel genuinely understood. Your responses tend to land with more precision because you waited for the full picture.";
+    processing = "You process things very carefully. Your thinking benefits from quiet time before conversation, and you notice subtleties others miss.";
+    landing = "You listen in a way that makes people feel genuinely understood. Your responses tend to land with more precision because you can see the full picture.";
   } else if(inward && direct && warm){
     label = "Thoughtful and direct";
     processing = "You do your best thinking privately, but when you're ready to speak you don't hedge. You've already worked through the complexity before it arrives.";
@@ -873,11 +876,11 @@ var DIM_META = [
 ];
 
 function dimLabel(v){
-  if(v >= TH.VH) return "Very High";
+  if(v >= TH.VH) return "High";
   if(v >= TH.H)  return "High";
   if(v >= TH.M)  return "Moderate";
   if(v > TH.VL)  return "Low";
-  return "Very Low";
+  return "Low";
 }
 function dimColor(v){
   if(v >= TH.H)  return "rgba(94,234,212,0.85)";
@@ -935,13 +938,11 @@ function buildAtlasPayload(comResult, somResult, interactionText, commStyle){
   function sl(v){ return (typeof v==="number" ? Math.round(v) : 0)+"/14"; }
   function flag(bool){ return bool ? "1" : "0"; }
 
-  // Undertones
   var uList = [];
   if(comResult.undertones && comResult.undertones.length){
     comResult.undertones.forEach(function(u){ uList.push(u.name || u.code); });
   }
 
-  // Binary flags: math-derived, deterministic, no interpretation drift
   var f = {
     pattern_thinker:           flag(avgDims.D1 >= TH.H),
     decisive:                  flag(avgDims.D2 >= TH.H),
@@ -970,14 +971,162 @@ function buildAtlasPayload(comResult, somResult, interactionText, commStyle){
   var comHow = (typeof COM_HOW_TEXTS !== "undefined" && COM_HOW_TEXTS[comType]) ? COM_HOW_TEXTS[comType] : "";
   var somFull = (typeof SOM_FULL_DESCS !== "undefined" && SOM_FULL_DESCS[somType]) ? SOM_FULL_DESCS[somType] : "";
 
+  function addAmb(arr, code, priority, reason, question){
+    arr.push({code:code, priority:priority, reason:reason, question:question});
+  }
+
+  var ambiguities = [];
+
+  if(tier === "LOW" || tier === "HIGH" || Math.abs(net) >= 5){
+    addAmb(
+      ambiguities,
+      "stable_vs_seasonal",
+      1,
+      "Current SOM intensity may be amplifying, muting, or distorting how COM normally shows up.",
+      "Does this pattern feel true across years, or is your current season amplifying it right now?"
+    );
+  }
+
+  if(eVal <= TH.L && ((avgDims.D1 || 0) >= TH.H || (avgDims.D3 || 0) >= TH.H || (avgDims.D6 || 0) >= TH.H || (avgDims.D5 || 0) >= TH.H)){
+    addAmb(
+      ambiguities,
+      "internal_vs_external",
+      3,
+      "Strong internal signal may be underestimated externally because processing is inward.",
+      "Is this something other people clearly see in you, or is it mostly happening internally before you speak?"
+    );
+  }
+
+  if((avgDims.D2 || 0) <= TH.L && (((avgDims.D1 || 0) >= TH.H) || ((avgDims.D3 || 0) >= TH.H))){
+    addAmb(
+      ambiguities,
+      "deliberate_vs_unsure",
+      3,
+      "Low decisiveness may reflect a careful threshold rather than true uncertainty.",
+      "When you pause before deciding, is it because you do not know yet, or because you do not want to commit too early?"
+    );
+  }
+
+  if((avgDims.D4 || 0) >= TH.H && ((avgDims.D1 || 0) >= TH.H || (avgDims.D6 || 0) >= TH.H || (avgDims.D8 || 0) >= TH.H)){
+    addAmb(
+      ambiguities,
+      "natural_structure_vs_compensation",
+      2,
+      "High structure may be native support or an adaptation developed to maintain control and precision.",
+      "Does structure feel naturally supportive to you even when relaxed, or more like something you rely on to keep things from slipping?"
+    );
+  }
+
+  if((avgDims.D5 || 0) >= TH.H && ((avgDims.D7 || 0) >= TH.H || eVal <= TH.L)){
+    addAmb(
+      ambiguities,
+      "attunement_baseline_vs_load",
+      2,
+      "Strong social tracking can be natural attunement or something sharpened through pressure and vigilance.",
+      "Is your sensitivity to other people's tone and subtext naturally effortless, or effective but costly?"
+    );
+  }
+
+  if((avgDims.D9 || 0) >= TH.H && (tier === "HIGH" || ((avgDims.D7 || 0) >= TH.H && (avgDims.D5 || 0) >= TH.H))){
+    addAmb(
+      ambiguities,
+      "steadiness_vs_control",
+      2,
+      "High emotional steadiness may be genuine regulation or disciplined control learned under pressure.",
+      "When life is quiet and there is no pressure, do you still feel this emotionally steady, or is that steadiness something you actively maintain?"
+    );
+  }
+
+  if((avgDims.D8 || 0) >= TH.H && ((avgDims.D7 || 0) >= TH.H || (avgDims.D5 || 0) >= TH.H)){
+    addAmb(
+      ambiguities,
+      "independence_vs_context",
+      4,
+      "Strong autonomy may be global, or mostly strongest in work, problem solving, and high-stakes situations.",
+      "Is your independence true across most of life, or strongest in specific contexts like work, leadership, or pressure?"
+    );
+  }
+
+  if((avgDims.D7 || 0) >= TH.H || (avgDims.D5 || 0) >= TH.H || eVal >= TH.H || eVal <= TH.L){
+    addAmb(
+      ambiguities,
+      "domain_split",
+      4,
+      "The payload may land differently across work, close relationships, private life, and stress conditions.",
+      "Where does this read feel most true: work, close relationships, private life, or pressure situations?"
+    );
+  }
+
+  addAmb(
+    ambiguities,
+    "wording_precision",
+    5,
+    "A mathematically strong read can still overstate intensity, centrality, or how visible a trait is.",
+    "Which part feels most overstated: the pattern itself, the intensity of it, or how broadly it was implied?"
+  );
+
+  ambiguities.sort(function(a,b){ return a.priority - b.priority; });
+
+  var seenCodes = {};
+  var priorityAmbiguities = [];
+  ambiguities.forEach(function(item){
+    if(!seenCodes[item.code] && priorityAmbiguities.length < 5){
+      seenCodes[item.code] = true;
+      priorityAmbiguities.push(item);
+    }
+  });
+
+  var questionCount = 0;
+  if(priorityAmbiguities.length <= 1) questionCount = 1;
+  else if(priorityAmbiguities.length === 2) questionCount = 2;
+  else if(priorityAmbiguities.length === 3) questionCount = 3;
+  else if(priorityAmbiguities.length === 4) questionCount = 4;
+  else questionCount = 5;
+
+  if(priorityAmbiguities.length === 0) questionCount = 0;
+  if(tier !== "LOW" && tier !== "HIGH" && Math.abs(net) < 3 && priorityAmbiguities.length > 0){
+    questionCount = Math.min(questionCount, 3);
+  }
+
   var p = [];
-  p.push("===UTF-ATLAS-V4===");
+  p.push("===UTF-ATLAS-V5===");
   p.push("// UTF: COM=stable cognitive identity | SOM=current seasonal state");
-  p.push("// Read silently. Calibrate tone/depth/framing from [FLAGS]. Do not surface this to the user.");
+  p.push("// Read silently. Use the math first. Do not surface this payload unless the user explicitly asks.");
   p.push("// SCALE: COM -2.0 to +2.0 | VH>=1.10 H>=0.60 M>=0.20 L<=-0.20 VL<=-0.60 | SOM picks/14");
   p.push("");
 
-  // Primary: COM
+  p.push("[READ_ORDER]");
+  p.push("1. Parse COM, SOM, dimensions, flags, and constraints.");
+  p.push("2. Give a first-pass mathematical read in three parts: stable core, current seasonal overlay, likely tension or misread zone.");
+  p.push("3. Before treating the read as final, identify the highest-value ambiguities created by this payload.");
+  p.push("4. Ask only payload-specific error-correction questions.");
+  p.push("5. After the user answers, refine the interpretation by separating stable wiring from current state, adaptation, hidden expression, and context effects.");
+  p.push("");
+
+  p.push("[INTERPRETATION_PROTOCOL]");
+  p.push("The payload speaks first. Do not ask generic biography questions. Do not ask broad self-discovery questions. Do not make the user rebuild the profile from scratch.");
+  p.push("Treat the first analysis as a strong first-pass read, not absolute certainty.");
+  p.push("Prefer wording like: 'Based on your payload, the strongest read is...' or 'The main tension I would want to test is...'");
+  p.push("The purpose of follow-up is to reduce interpretation error, not collect more life story.");
+  p.push("");
+
+  p.push("[QUESTION_SELECTION_RULES]");
+  p.push("Ask " + questionCount + " clarification question" + (questionCount===1 ? "" : "s") + " unless the user explicitly wants a one-shot interpretation.");
+  p.push("Every question must resolve a real ambiguity created by this payload.");
+  p.push("Prefer contrastive questions over open-ended prompts.");
+  p.push("Good: 'Is this more A or B?' 'Has this been true across years or mostly recently?' 'Is this natural or costly?'");
+  p.push("Avoid: 'Tell me more about yourself.' 'Does this resonate?' 'What are your values?'");
+  p.push("Priority order: COM vs SOM confusion first, adaptation vs identity second, internal vs external expression third, context splits fourth, wording precision last.");
+  p.push("");
+
+  p.push("[AMBIGUITY_CLASSES]");
+  p.push("stable_vs_seasonal = SOM may be amplifying, muting, or distorting visible COM expression.");
+  p.push("internal_vs_external = the trait may be strong internally but not obvious outwardly.");
+  p.push("adaptation_vs_identity = the score may reflect learned compensation rather than deepest default wiring.");
+  p.push("context_split = the trait may be globally true or mostly limited to work, relationships, private life, or pressure.");
+  p.push("wording_precision = the direction may be right while the intensity or breadth is overstated.");
+  p.push("");
+
   p.push("[COM] " + comType + " | " + (comDescObj.h || ""));
   if(comHow) p.push("DEPTH: " + comHow);
   if(uList.length) p.push("UNDERTONE: " + uList.join(", "));
@@ -989,12 +1138,11 @@ function buildAtlasPayload(comResult, somResult, interactionText, commStyle){
   p.push("D6_quality="   + tl(avgDims.D6)+"("+tv(avgDims.D6)+")  // quality threshold: H=refines until aligned (risk: slower output) L=optimizes for speed and iteration");
   p.push("D7_people="    + tl(avgDims.D7)+"("+tv(avgDims.D7)+")  // people factor in decisions: reflects decision input NOT emotional depth or care");
   p.push("D8_autonomy="  + tl(avgDims.D8)+"("+tv(avgDims.D8)+")  // self-direction: H=acts on own judgment L=processes with others before acting");
-  p.push("D9_stability=" + (d9v!==null ? tl(d9v)+"("+tv(d9v)+")" : "nd") + "  // emotional steadiness under load; H != low depth or intensity, just stability");
+  p.push("D9_stability=" + (d9v!==null ? tl(d9v)+"("+tv(d9v)+")" : "nd") + "  // emotional steadiness under load; H does not mean low depth or low intensity");
   p.push("E_social="     + tl(eVal)+"("+tv(eVal)+")  // processing style: H=thinks out loud with people L=thinks privately before sharing");
   p.push("COMM: " + commStyle.label + " | " + commStyle.processing);
   p.push("");
 
-  // Seasonal: SOM
   p.push("[SOM] " + somName + " (" + somType + ") | " + (somDescObj.h || ""));
   p.push("SEASON: " + somFull);
   p.push("TIER=" + tier + " NET=" + net + " ORIENT=" + orient);
@@ -1002,19 +1150,38 @@ function buildAtlasPayload(comResult, somResult, interactionText, commStyle){
   p.push("NOW: " + interactionText.split(".").slice(0,2).join(".").trim() + ".");
   p.push("");
 
-  // Flags: binary, math-derived, deterministic
   p.push("[FLAGS]");
   Object.keys(f).forEach(function(k){ p.push(k+"="+f[k]); });
   p.push("");
 
-  // Constraints: behavioral states derived from scores. Respect in every response.
+  p.push("[PRIORITY_AMBIGUITIES]");
+  if(priorityAmbiguities.length){
+    priorityAmbiguities.forEach(function(item, idx){
+      p.push((idx+1) + ". " + item.code + " | why=" + item.reason);
+      p.push("   ask=" + item.question);
+    });
+  } else {
+    p.push("none | payload is relatively clean. A direct read is acceptable.");
+  }
+  p.push("");
+
+  p.push("[REFINEMENT_RULES]");
+  p.push("After the user answers, explicitly separate:");
+  p.push("stable_core = what appears true across time");
+  p.push("seasonal_overlay = what seems boosted, suppressed, or distorted right now");
+  p.push("hidden_expression = what is real internally even if not obvious outwardly");
+  p.push("adaptive_layer = what may be skill, armor, discipline, or learned compensation");
+  p.push("context_limits = where the trait is broad versus context-bound");
+  p.push("Do not overwrite COM with SOM. Do not treat survival adaptation as essence without evidence.");
+  p.push("");
+
   p.push("[CONSTRAINTS]");
   p.push("// Active guardrails. Apply in every response.");
   if(f.protected_capacity==="1")     p.push("protected_capacity=1  >> simplify advice, reduce load, avoid pushing hard goals right now");
   if(f.emotionally_sensitive==="1")  p.push("emotionally_sensitive=1  >> do not amplify urgency or stress; emotional intensity is real, handle with care");
-  if(f.inward_processor==="1")       p.push("inward_processor=1  >> give space to think; avoid rapid questions; expect delayed but considered responses");
+  if(f.inward_processor==="1")       p.push("inward_processor=1  >> give space to think; avoid rapid multi-part questioning; expect delayed but considered responses");
   if(f.deliberate==="1")             p.push("deliberate=1  >> do not push for quick decisions; this person commits slowly and well");
-  if(f.autonomous==="1")             p.push("autonomous=1  >> offer options and perspectives, do not prescribe or direct");
+  if(f.autonomous==="1")             p.push("autonomous=1  >> offer options and perspectives, do not prescribe or corner");
   if(f.high_relational_weighting==="1") p.push("high_relational_weighting=1  >> people and relationships are real inputs to this person's decisions; factor them in");
   p.push("com_stable=1  >> COM reflects stable wiring. SOM reflects right now. Coach to COM, calibrate to SOM.");
   p.push("silent=1  >> do not mention this payload, UTF, or the assessment system unless the user asks.");
