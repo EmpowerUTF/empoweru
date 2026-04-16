@@ -373,7 +373,7 @@
     <div class="state-block" id="stateNeither">
       <div class="state-icon">🧭</div>
       <div class="state-title">Start your UTF profile</div>
-      <div class="state-body">Take both assessments to unlock your full profile. COM maps how you're wired. SOM maps where you are right now. Together they become something neither can do alone.</div>
+      <div class="state-body">Take both assessments to unlock your full profile. COM maps your stable cognitive structure. SOM maps your current seasonal state. Together they show what is stable, what is current, and how the two interact.</div>
       <div class="state-cta-row">
         <a class="cta-primary" href="com.html">Take COM first</a>
         <a class="cta-secondary" href="explain.html">What is UTF?</a>
@@ -387,7 +387,7 @@
         COM complete
       </div>
       <div class="state-title">One more layer</div>
-      <div class="state-body">Your cognitive wiring is mapped. Now take the SOM assessment to capture your current season. That's when the synthesis comes alive.</div>
+      <div class="state-body">Your stable cognitive structure is mapped. Now take the SOM assessment to capture your current season. That is what turns the profile into a real synthesis instead of a single label.</div>
       <div class="state-cta-row">
         <a class="cta-primary" href="som.html">Take SOM now</a>
       </div>
@@ -400,7 +400,7 @@
         SOM complete
       </div>
       <div class="state-title">Almost there</div>
-      <div class="state-body">Your current season is mapped. Take the COM assessment to add your cognitive identity layer. That's what makes the synthesis meaningful.</div>
+      <div class="state-body">Your current season is mapped. Take the COM assessment to add the deeper structural layer underneath it. That is what makes the synthesis meaningful.</div>
       <div class="state-cta-row">
         <a class="cta-primary" href="com.html">Take COM now</a>
       </div>
@@ -410,7 +410,7 @@
     <div id="resultBlock" style="animation:fadeInUp .5s ease both;">
 
       <div class="page-title">Your UTF Profile</div>
-      <div class="page-sub">Your wiring and your current season, combined into one picture.</div>
+      <div class="page-sub">Your stable cognitive structure and your current seasonal state, read together.</div>
       <div class="disclaimer-note">For self-reflection. Your context always adds nuance this profile cannot.</div>
 
       <!-- PROFILE CARDS -->
@@ -436,7 +436,7 @@
         <div class="atlas-copy-row">
           <div class="atlas-copy-left">
             <div class="atlas-copy-title">Atlas</div>
-            <div class="atlas-copy-desc">Copy your profile and paste it into any AI chat. The AI reads how you think, forms a first mathematical interpretation, checks likely mismatch points, and adapts its responses with more precision from the start.</div>
+            <div class="atlas-copy-desc">Copy your profile and paste it into any AI chat. The AI reads your stable structure first, then your current season, forms a first mathematical interpretation, checks likely mismatch points, and adapts from something more precise than generic assumptions.</div>
           </div>
         </div>
         <div class="atlas-agreement">
@@ -488,7 +488,7 @@
       <!-- RIGHT NOW -->
       <div class="acc-section" style="margin-top:18px;">
         <button class="acc-btn acc-btn-featured open" type="button" onclick="toggleAcc('nowPanel',this)">
-          <span>Right now</span>
+          <span>How your COM and SOM are interacting right now</span>
           <span class="acc-chevron">&#9660;</span>
         </button>
         <div class="acc-panel open" id="nowPanel">
@@ -503,7 +503,7 @@
       <!-- EXPLORE CTA: above trait bars -->
       <div class="explore-cta">
         <div class="explore-cta-title">There&rsquo;s more to explore</div>
-        <div class="explore-cta-sub">Your profile has more layers. Open any section below or scroll back up to revisit your results.</div>
+        <div class="explore-cta-sub">Your profile has more layers than the headline result. Open the sections below to see the interaction, the trait map, and how your communication style tends to land.</div>
         <div class="explore-chips">
           <span class="explore-chip" onclick="openAndScroll('nowPanel',null)">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -619,15 +619,15 @@ var COM_HOW_TEXTS = {
 };
 
 var SOM_FULL_DESCS = {
-  DRV:"Full capacity, output focused. This is an execution season. You have real momentum and the fuel to sustain it. Point it at something worth building and keep recovery intentional so output stays clean.",
-  HRB:"Full capacity, people focused. Relationships, tone, and trust feel unusually important right now. You have the lift to stay genuinely present with people. Keep boundaries so connection stays nourishing, not draining.",
-  TBZ:"Full capacity, change focused. Novelty and movement feel genuinely energizing this season. You are learning fast through experience and iteration. Run experiments with limits, then keep the winners.",
-  BLD:"Steady capacity, output focused. This is a deep work season. Quiet momentum beats bursts right now. Reduce distractions, stay with what matters, and let the consistency compound.",
-  EQZ:"Steady capacity, people focused. Connection is present and sustainable, not intense. You do best with simple routines and steady relationships. Keep the pace warm and manageable.",
-  ENH:"Steady capacity, change focused. You are expanding through smart adjustments, not overhauls. Small improvements compound when you keep them realistic. Trust the process over the pace.",
-  BST:"Protected capacity, output focused. Fewer priorities and strong boundaries are your best move right now. Make progress through smaller, reliable steps. Protecting your stability is not retreat.",
-  HVN:"Protected capacity, people focused. Comfort, trust, and restoration are what this season is asking for. Lean into safe connection and reduced load. Give yourself permission to rebuild before pushing again.",
-  REF:"Protected capacity, change focused. You are recalibrating and updating direction. Progress can look uneven from the inside, but it is still progress. Keep changes small enough that your system can absorb them."
+  DRV:"Full capacity, output focused. This is an execution season. Your system has usable fuel, and it wants movement. Point it at something worth building and keep recovery deliberate so momentum does not become self-erosion.",
+  HRB:"Full capacity, people focused. Relationships, tone, and trust feel unusually central right now. You have the lift to stay genuinely present with people. Keep boundaries so connection stays energizing instead of slowly becoming costly.",
+  TBZ:"Full capacity, change focused. Novelty and movement feel genuinely energizing this season. You are learning fast through experimentation and live contact with reality. Run experiments with limits, then keep what proves itself.",
+  BLD:"Steady capacity, output focused. This is a build season. Quiet momentum beats bursts right now. Reduce distractions, stay with what matters, and let consistency do the work that motivation cannot.",
+  EQZ:"Steady capacity, people focused. Connection is present and sustainable, not intense. You do best with simple rhythm, steady relationships, and emotionally manageable pace. Let stability count as a real strength.",
+  ENH:"Steady capacity, change focused. You are expanding through smart adjustment rather than dramatic reset. Small improvements compound when you keep them realistic. Trust integration more than urgency.",
+  BST:"Protected capacity, output focused. Fewer priorities and stronger boundaries are your best move right now. Progress comes through smaller, reliable steps. Protecting your stability is not retreat. It is accuracy about current bandwidth.",
+  HVN:"Protected capacity, people focused. Comfort, trust, and restoration are what this season is asking for. Lean into safe connection and reduced load. Give yourself permission to rebuild before treating pressure as the answer.",
+  REF:"Protected capacity, change focused. You are recalibrating and updating direction. Progress can look uneven from the inside, but it is still real. Keep changes small enough that your system can absorb them before asking for clarity."
 };
 
 // ── PER-TYPE GRADIENT MAPS ──────────────────────────────────────────────
@@ -728,59 +728,59 @@ function getCOMGroup(type){
 // ─────────────────────────────────────────────────────────────────
 var INTERACTION = {
   VISION:{
-    DRV:"Your pattern-mapping function is running with full energy behind it right now. Ideas can move from synthesis to output without the usual translation loss. This window favors acting on what you already understand.",
-    HRB:"Your integrative thinking is currently oriented toward people rather than systems. The relational context you're picking up on is real input, not distraction. Your depth of read makes connection more precise right now.",
-    TBZ:"High energy and a change orientation means your pattern-seeking is actively scanning new territory. The breadth of input you're gathering right now feeds the synthesis that comes later.",
-    BLD:"Steady capacity plus integrative thinking is a productive pairing. Your ability to see what others miss is available without the pressure to move fast. Depth of work is available to you right now.",
-    EQZ:"Your pattern-recognition is running steadily, and the balanced relational context means you're getting real signal from the people around you. A compounding season with low noise.",
-    ENH:"Your integrative mind is well-matched to a refinement season. You can find the structural improvements that aren't obvious to others and apply them without disrupting what's already working.",
-    BST:"With protected capacity and output orientation, your pattern-mapping narrows naturally to highest-leverage inputs. You're not scanning broadly right now, and that's appropriate - depth over range.",
-    HVN:"Protected capacity plus people orientation means your integrative function is resting alongside your energy. This is a season for absorbing, not synthesizing. Let input accumulate without forcing output.",
-    REF:"A recalibration season for a framework-level thinker means the structures themselves are under review, not just the tactics. That's where your function works most fundamentally."
+    DRV:"Your pattern-mapping function is running with real fuel behind it right now. Insight can move into execution faster than usual. This is a window for acting on what you already understand instead of collecting endless new input.",
+    HRB:"Your integrative thinking is currently oriented toward people rather than systems alone. The relational context you are reading is real data, not distraction. This season makes your understanding more human-facing and more translatable.",
+    TBZ:"High energy and a change orientation mean your pattern-seeking is scanning fresh terrain. You are gathering signal through movement, novelty, and live adjustment. The value of this season is not tidy certainty. It is strategic exposure to new input.",
+    BLD:"Steady capacity plus integrative thinking is a strong pairing. You have enough stability to stay with complex work without forcing pace. This is a depth season, not a rush season.",
+    EQZ:"Your pattern-recognition is running steadily, and the relational field is comparatively low-noise. You can integrate what is happening without being pushed into overload. This supports clean judgment.",
+    ENH:"Your integrative mind is well-matched to a refinement season. You can spot structural improvements that other people miss and apply them without unnecessary disruption. This is where quiet upgrades become meaningful.",
+    BST:"With protected capacity and an output pull, your pattern-mapping narrows naturally to what matters most. You are not meant to scan everything right now. Precision beats range in this season.",
+    HVN:"Protected capacity plus people orientation means your integrative function is absorbing more than expressing. This is a season for safe input, not heavy synthesis. Let understanding accumulate before asking it to produce.",
+    REF:"A recalibration season for a framework-level thinker means the structure itself is under review, not just the tactics around it. That is not drift. It is foundational adjustment."
   },
   EXECUTION:{
-    DRV:"Full capacity aligned with output orientation. Your execution function has both the energy and the directional clarity it needs. This is the season to move on what you've already decided.",
-    HRB:"Your execution drive is running alongside a people-oriented season. The output right now is relational - the relationships built in a high-energy people season carry forward as real strategic leverage.",
-    TBZ:"Execution drive with a change orientation means your energy is going toward exploration rather than delivery. The experiments you run now clarify the targets you'll execute against later.",
-    BLD:"Steady capacity and output orientation is a high-reliability pairing for an execution-wired person. Consistent effort on a defined target is exactly what this season supports.",
-    EQZ:"Steady capacity, balanced orientation. Your execution function is running at a sustainable rate. The relational bandwidth available right now means your work and your relationships aren't competing.",
-    ENH:"Steady capacity with a change orientation favors iterative improvement - which is execution at its most precise. Improvement on what exists, applied consistently, is the output this season rewards.",
-    BST:"Protected capacity with output orientation. Your execution drive is present, but the available fuel is limited. Fewer targets, higher completion rate per target - this is precision, not retreat.",
-    HVN:"Protected capacity with people orientation. Your execution function is in maintenance mode. The output right now is restoration, which is a necessary condition for the execution that comes after.",
-    REF:"Protected capacity with change orientation. Before committing to the next execution sprint, this season is providing the recalibration that prevents misdirected effort."
+    DRV:"Full capacity aligned with output orientation. Your execution function has both energy and direction right now. This is the cleanest season for acting on what already matters.",
+    HRB:"Your execution drive is running inside a people-oriented season. The work right now is not only task-based. Relational positioning, trust, and presence are part of what moves outcomes forward.",
+    TBZ:"Execution drive with a change orientation means your energy is going toward exploration before commitment. This season clarifies targets through testing. It is not wasted motion if the experiments are real.",
+    BLD:"Steady capacity and output orientation are a high-reliability pairing for you. This season rewards consistency, not theatrics. Repetition is doing more than it looks like.",
+    EQZ:"Steady capacity and balanced relational context give your execution function room to operate without strain. Work and people do not have to compete as hard in this season. That makes clean progress more available.",
+    ENH:"Steady capacity with a change orientation favors iterative improvement. This is execution through refinement rather than force. Better systems matter more than bigger effort right now.",
+    BST:"Protected capacity with an output pull means the drive is still there, but the available fuel is narrower than usual. Fewer targets and cleaner completion are more accurate than trying to match a higher-capacity pace.",
+    HVN:"Protected capacity with people orientation means your execution function is not the center of the season. The useful output right now may be restoration, repair, or relational steadiness. That still counts.",
+    REF:"Protected capacity with change orientation means recalibration comes before acceleration. This season helps prevent misdirected effort by forcing a cleaner re-read of what is actually worth carrying forward."
   },
   SOCIAL:{
-    DRV:"Full capacity with people orientation is the highest-fuel version of your relational function. Your social processing is running fast and clear. This is a season where connection can be both deep and wide.",
-    HRB:"Full capacity plus people orientation is a direct match for your COM wiring. Your relational capacity and your available energy are aligned. The primary risk is output with no recovery built in.",
-    TBZ:"Full capacity with change orientation means your social function is expanding its range. New people, new relational dynamics - your instinct to connect is meeting new contexts to practice in.",
-    BLD:"Steady capacity and output orientation creates conditions for your relational depth to compound. Trust-building happens through consistency, and this season provides the stability that consistency requires.",
-    EQZ:"Steady capacity with people orientation matches your COM function directly. Connection is present and not overloaded. This is the sustainable rhythm your relational wiring is built for.",
-    ENH:"Steady capacity with change orientation applied to a relational COM means you're refining how your social function works. Small adjustments to how you show up in connection will compound outward.",
-    BST:"Protected capacity with people orientation. Your relational function is still active, but total available energy is limited. The distinction right now is between connections that restore and connections that draw down.",
-    HVN:"Protected capacity with people orientation is recovery routed through relationship for a social-wired person. Safe connection is a legitimate recovery mechanism - not a delay of rest.",
-    REF:"Protected capacity with change orientation means your relational context is shifting alongside your internal recalibration. Some connections will realign; that's a function of the transition, not a problem."
+    DRV:"Full capacity with an output pull gives your relational function unusual momentum. You can create movement through people right now, not just connection. The risk is overextending because the available energy feels high.",
+    HRB:"Full capacity plus people orientation is the strongest seasonal match for your social wiring. Your relational capacity and available energy are aligned. This is a season where connection can be both deep and wide if you keep your boundaries intact.",
+    TBZ:"Full capacity with change orientation means your social function is expanding range. New people, new contexts, and new dynamics are feeding it. This season grows your relational world through movement, not stillness.",
+    BLD:"Steady capacity and output orientation create conditions for trust to compound through consistency. This is not the loudest season socially, but it can be one of the most stabilizing and quietly meaningful.",
+    EQZ:"Steady capacity with people orientation is a natural fit for your COM wiring. Connection is present without overload. This is the kind of season where relational steadiness becomes sustainable instead of costly.",
+    ENH:"Steady capacity with change orientation means you are refining how you relate rather than dramatically reinventing it. Small changes in presence, pacing, or boundaries can reshape connection more than they first appear to.",
+    BST:"Protected capacity with people orientation means your relational function is still active, but your total bandwidth is narrower. The key distinction now is between connection that restores and connection that drains.",
+    HVN:"Protected capacity with people orientation is recovery routed through safe relationship. For a socially wired person, trusted connection can be part of restoration rather than a distraction from it.",
+    REF:"Protected capacity with change orientation means your relational world may be re-sorting alongside your internal recalibration. Some connections will deepen, some will loosen. That is information, not failure."
   },
   CRAFT:{
-    DRV:"Full capacity with output orientation gives your quality function the fuel to produce at its standard, not just refine. Your internal bar and the energy to meet it are running together right now.",
-    HRB:"Full capacity with people orientation is pulling your craft function toward collaboration. A craft-wired person in a people season may find that external input surfaces something the internal process wouldn't reach alone.",
-    TBZ:"Full capacity with change orientation is asking your quality-focused function to experiment before refining. The discomfort of trying approaches before they're polished is the mechanism the season uses.",
-    BLD:"Steady capacity and output orientation is the natural environment for a craft-wired person. Depth of focus on a single target, with consistent energy, is where your quality standard produces best.",
-    EQZ:"Steady capacity with balanced orientation. Your craft is running consistently and the social load is manageable. A stable season for output that meets your standard without interference.",
-    ENH:"A refinement season with steady capacity is your most native combination. Your quality function works best when it can improve what exists - and this season gives you the stability to do that cleanly.",
-    BST:"Protected capacity with output orientation. Your quality standard is still active; the available energy is what's limited. Fewer targets at full standard is a more accurate description than reduced quality.",
-    HVN:"Protected capacity with people orientation. Your craft function is in a low-output state. Recovery for a quality-focused person can involve light creative engagement - that's still rest if the pressure is off.",
-    REF:"Protected capacity with change orientation. Your standards and methods are being questioned alongside your energy. That's appropriate - refinement of the craft framework itself is meaningful work."
+    DRV:"Full capacity with an output pull gives your quality function enough fuel to produce, not just refine. You can meet your internal bar and still move. This is a good season to ship work that usually stays in revision.",
+    HRB:"Full capacity with people orientation pulls your craft function toward collaboration, feedback, and audience-awareness. External input may sharpen the work right now in ways solitary refinement would not.",
+    TBZ:"Full capacity with change orientation asks your craft function to experiment before perfecting. That can feel less clean than your normal process, but this season gets signal through trying, not just polishing.",
+    BLD:"Steady capacity and output orientation are a natural environment for you. Focused attention on a real target, with enough consistency to stay with it, is exactly where your standard becomes an asset.",
+    EQZ:"Steady capacity with a balanced social field gives your craft room to develop without excess interruption. This is a good season for work that requires coherence, finish, and calm attention.",
+    ENH:"A refinement season with steady capacity is a strong fit for your wiring. Your quality function works best when it can improve what already exists without chaos around it. Quiet betterment is the point.",
+    BST:"Protected capacity with an output pull means your standard is still active even though your fuel is not at its peak. Fewer targets at full integrity is the smarter move than broad effort at diluted quality.",
+    HVN:"Protected capacity with people orientation means output may need to soften for a while. Light creative contact can still be restorative, but pressure-heavy production is likely to cost more than it returns.",
+    REF:"Protected capacity with change orientation means your methods, standards, or medium may be under review. This is not just low output. It can be a meaningful reset in how you work."
   },
   ADAPTIVE:{
-    DRV:"Full capacity with output orientation gives your navigation function both energy and a clear directional signal. Uncertain territory is easier to cover when you have fuel and a target.",
-    HRB:"Full capacity with people orientation means your adaptive function is tracking relational dynamics rather than environmental ones. Your stability provides a reliable reference point for the people around you.",
-    TBZ:"Full capacity with change orientation is a direct match for an adaptive COM. Your navigation instincts are engaged and well-fueled. This is a season for active exploration rather than consolidation.",
-    BLD:"Steady capacity with output orientation is asking your adaptive function to hold a consistent course rather than explore. The season is rewarding persistence on a defined path.",
-    EQZ:"Steady capacity with balanced orientation. Your adaptive function has enough context from the people around you and enough stability to function without pressure. Bandwidth is available.",
-    ENH:"Steady capacity with change orientation matches your adaptive instincts. Small course corrections applied consistently is exactly how your navigation function works best.",
-    BST:"Protected capacity with output orientation. Your situational reading is fully active - what's reduced is the fuel for broad response. Read clearly, act selectively. That's the appropriate mode.",
-    HVN:"Protected capacity with people orientation. Your adaptive function is using trusted relationships as the primary signal source during a period of low energy. That's a sound navigation strategy.",
-    REF:"Protected capacity with change orientation is familiar terrain for an adaptive person. Recalibration is not a disruption to your function - it's an expression of it."
+    DRV:"Full capacity with an output pull gives your navigation function both fuel and direction. You can cover uncertain terrain more confidently right now because the system has enough lift to respond in real time.",
+    HRB:"Full capacity with people orientation means your adaptive function is reading relational terrain more than environmental terrain. Your steadiness becomes a reference point other people organize around.",
+    TBZ:"Full capacity with change orientation is a direct fit for your adaptive wiring. Exploration, recalibration, and live response are all more available right now. This season rewards movement over overplanning.",
+    BLD:"Steady capacity with an output pull asks your adaptive function to hold a course rather than keep testing new ones. The skill here is not exploration. It is disciplined follow-through on what is already viable.",
+    EQZ:"Steady capacity with balanced relational context gives your adaptive function enough signal and enough calm. You can read the moment without being rushed by it. That makes judgment cleaner.",
+    ENH:"Steady capacity with change orientation fits your natural adjustment instincts. Small course corrections, applied consistently, are more powerful in this season than dramatic pivots.",
+    BST:"Protected capacity with an output pull means your situational reading is still active even if your fuel is narrower. Read clearly, act selectively. That is the intelligent form of adaptation right now.",
+    HVN:"Protected capacity with people orientation means your adaptive system is leaning more on trusted relationships and emotionally safe contexts for signal. That is not dependence. It is good navigation.",
+    REF:"Protected capacity with change orientation is familiar terrain for an adaptive COM. Recalibration is not interrupting your function. It is your function operating at its deepest level."
   }
 };
 // ─────────────────────────────────────────────────────────────────

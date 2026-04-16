@@ -865,9 +865,9 @@
   <div class="container">
     <h1>SOM Assessment</h1>
     <div class="brand-tag">Unified Typing Framework</div>
-    <p class="subtitle">Where your energy, focus, and priorities actually are right now.</p>
+    <p class="subtitle">Your current seasonal state. Where your capacity is, what your system is leaning toward, and what this season is asking from you right now.</p>
 
-    <p class="meta">About <strong>5 minutes</strong>. The fastest part of your UTF profile.</p>
+    <p class="meta">About <strong>5 minutes</strong>. This is the current-state layer of your UTF profile.</p>
 
     <div class="resume-row">
       <button class="pill-btn" id="resumeBtn" type="button" disabled>Resume saved answers</button>
@@ -902,7 +902,7 @@
       <div id="primaryType" class="primary-type"></div>
 
       <p class="result-subtitle">
-        This reflects the pattern your recent answers point to most strongly. It combines with your COM type to complete your full UTF profile.
+        This reflects the seasonal pattern your recent answers point to most strongly. It does not replace your COM. It shows the state your COM is operating inside right now.
       </p>
 
       <div class="blurb" id="somBlurb"></div>
@@ -916,12 +916,12 @@
         <div class="acc-panel" id="scorePanel">
           <div id="scoreGrid" class="score-grid"></div>
           <div class="cred-note">
-            <strong>Note:</strong> Each card shows how strongly that trait showed up across your answers.
+            <strong>Note:</strong> Each card shows how strongly that seasonal signal appeared across your recent answers.
           </div>
         </div>
       </div>
 
-      <p class="results-footer">Your SOM is saved. Head to synthesis to see the complete picture.</p>
+      <p class="results-footer">Your SOM is saved. Head to synthesis to see how this season is interacting with your COM.</p>
 
       <div class="bottom-actions" id="bottomActions">
         <a class="synth-link" id="synthLinkBottom" href="#" rel="noopener">See My Full Profile</a>
@@ -958,7 +958,7 @@
       </div>
       <div class="modal-body">
         <h4>1) Purpose</h4>
-        <p>The SOM assessment is an educational self-reflection tool designed to help you notice patterns in how you are showing up in your current season of life.</p>
+        <p>The SOM assessment is an educational self-reflection tool designed to help you notice patterns in your current seasonal state: how your capacity, focus, and directional pull are showing up right now.</p>
 
         <h4>2) Not therapy or diagnosis</h4>
         <p>This assessment is not medical or mental-health treatment, not therapy, and not a diagnostic tool. It does not provide clinical advice.</p>
@@ -1375,15 +1375,15 @@
     ];
 
     var SOM_MODE_DESC = {
-      DRV: "Full capacity, output focused. This is an execution season. You have real momentum and the fuel to sustain it. Point it at something worth building and keep recovery intentional so output stays clean.",
-      HRB: "Full capacity, people focused. Relationships, tone, and trust feel unusually important right now. You have the lift to stay genuinely present with people. Keep boundaries so connection stays nourishing, not draining.",
-      TBZ: "Full capacity, change focused. Novelty and movement feel genuinely energizing this season. You are learning fast through experience and iteration. Run experiments with limits, then keep the winners.",
-      BLD: "Steady capacity, output focused. This is a deep work season. Quiet momentum beats bursts right now. Reduce distractions, stay with what matters, and let the consistency compound.",
-      EQZ: "Steady capacity, people focused. Connection is present and sustainable, not intense. You do best with simple routines and steady relationships. Keep the pace warm and manageable.",
-      ENH: "Steady capacity, change focused. You are expanding through smart adjustments, not overhauls. Small improvements compound when you keep them realistic. Trust the process over the pace.",
-      BST: "Protected capacity, output focused. Fewer priorities and strong boundaries are your best move right now. Make progress through smaller, reliable steps. Protecting your stability is not retreat.",
-      HVN: "Protected capacity, people focused. Comfort, trust, and restoration are what this season is asking for. Lean into safe connection and reduced load. Give yourself permission to rebuild before pushing again.",
-      REF: "Protected capacity, change focused. You are recalibrating and updating direction. Progress can look uneven from the inside, but it is still progress. Keep changes small enough that your system can absorb them."
+      DRV: "A high-capacity, output-led season. Your system has usable fuel and wants movement. This is usually a good window for execution, visible progress, and carrying more weight than usual. The risk is not action itself. It is letting action outrun recovery and turning momentum into self-overextension.",
+      HRB: "A high-capacity, people-led season. You have the lift to stay more open, responsive, and relational than usual. Connection can feel genuinely energizing right now, not just draining or obligatory. The risk is becoming too available and slowly giving away more bandwidth than this season can sustain cleanly.",
+      TBZ: "A high-capacity, change-led season. Your system is energized by movement, novelty, and fresh direction. Experimentation is more available right now, and trying new angles can create real signal. The risk is scattering your focus by chasing newness faster than it can be integrated.",
+      BLD: "A steady-capacity, output-led season. This is less about surging and more about reliable build pace. You may not feel explosive, but there is enough steadiness here to make meaningful progress if you stay with what matters. The risk is waiting for bigger motivation when consistency is already the real advantage of this season.",
+      EQZ: "A steady-capacity, people-led season. Connection is present, but in a manageable way rather than an intense one. This often feels like warmer social steadiness, healthier rhythm, and enough room for people without everything becoming emotionally loud. The risk is underestimating how valuable simple stability actually is right now.",
+      ENH: "A steady-capacity, change-led season. Your system is open to improvement, adjustment, and smarter ways of doing things without needing a dramatic reset. This is often a season for meaningful upgrades rather than total reinvention. The risk is pushing change too hard when gradual integration is what gives this season its strength.",
+      BST: "A protected-capacity, output-led season. Part of you still wants progress, but your bandwidth is narrower and more selective than usual. This season tends to work best when you treat fewer priorities as the strategy rather than as evidence that you are falling behind. The risk is judging yourself by high-capacity standards your system is not actually in right now.",
+      HVN: "A protected-capacity, people-led season. Safety, trust, comfort, and emotionally easy connection matter more right now than expansion or intensity. This often feels quieter and softer from the inside, even if life around you is still loud. The risk is treating the need for restoration as weakness instead of recognizing it as real information about your season.",
+      REF: "A protected-capacity, change-led season. Something in your life or inner direction is shifting, but the shape of it may still be forming. This season often feels transitional: not fully settled, not fully clear, but no longer fitting the old pattern either. The risk is forcing clarity too early instead of letting smaller shifts show you what is actually changing."
     };
 
     function mulberry32(seed){
@@ -1693,31 +1693,31 @@
 
       var blendMap = {
         HIGH_OUT:
-          "Right now, your season looks action-heavy and forward-moving. Your capacity is available and pointing toward output. This usually feels like a push to build, execute, and make visible progress. The healthiest version of this season is sharp and productive, not frantic.",
+          "This looks like a high-capacity season with a strong output pull. There is real fuel in the system, and it wants movement. That usually means building, carrying, shipping, or pushing something forward feels more available than usual. The healthiest version of this season uses the momentum with intention instead of turning every open space into more pressure.",
 
         HIGH_PPL:
-          "Right now, your season looks warm, social, and outward-facing. Your capacity is available and oriented toward people. Connection is not just present, it matters. This usually feels like a season of check-ins, closeness, shared energy, and stronger relational focus. The healthiest version of this season stays open without becoming overextended.",
+          "This looks like a high-capacity season with a strong people pull. You have more room than usual for connection, responsiveness, and relational presence. That usually means people matter more right now, but in a way that can feel nourishing rather than draining. The healthiest version of this season stays open without becoming overavailable.",
 
         HIGH_CHG:
-          "Right now, your season looks energized by movement and newness. Your capacity is available and pointing toward movement. You can explore, test, and follow fresh ideas. This usually feels like a season of experimentation, variety, and curiosity. The healthiest version of this season keeps the momentum, but still gives the changes enough structure to become something real.",
+          "This looks like a high-capacity season with a strong change pull. Your system seems open to movement, experimentation, and fresh direction. That usually means trying, testing, and following what feels alive can create real momentum right now. The healthiest version of this season gives novelty enough structure to become signal rather than scatter.",
 
         STEADY_OUT:
-          "Right now, your season looks grounded and productive. You may not be in a huge surge, but there is enough steadiness here to build something meaningful over time. This usually feels like quiet momentum, consistency, and staying with what matters. The healthiest version of this season values rhythm over pressure.",
+          "This looks like a steady season with an output pull. You may not be in a huge surge, but there is enough usable steadiness here to build something meaningful if you stay consistent. That usually means rhythm matters more than hype right now. The healthiest version of this season trusts repetition to do the work.",
 
         STEADY_PPL:
-          "Right now, your season looks balanced and relational. People matter, but not in a chaotic or draining way. This usually feels like steady connection, calmer social energy, and wanting your relationships to feel solid and healthy. The healthiest version of this season keeps things warm, simple, and sustainable.",
+          "This looks like a steady season with a people pull. Relationships are present, but not in a chaotic or overloaded way. That usually means connection is workable, warmth is sustainable, and your social world can feel more balanced than intense. The healthiest version of this season lets simple steadiness count as a real strength.",
 
         STEADY_CHG:
-          "Right now, your season looks like gradual growth through adjustment. There is enough steadiness here to stay grounded, but also enough openness to keep improving what is not working. This usually feels like smart shifts, small upgrades, and trying better ways of doing things. The healthiest version of this season grows without forcing reinvention every five minutes.",
+          "This looks like a steady season with a change pull. Your system seems open to adjustment without needing a dramatic reset. That usually means smart shifts, cleaner systems, and gradual improvement fit better than extreme moves. The healthiest version of this season grows through integration rather than impatience.",
 
         LOW_OUT:
-          "Right now, your season looks protective but still purposeful. Part of you still wants progress, but your system also seems to want tighter boundaries and fewer moving pieces. This usually feels like simplifying, guarding your energy, and focusing only on what truly matters. The healthiest version of this season accepts smaller wins without treating them like failure.",
+          "This looks like a protected season that still carries an output pull. Part of you still wants movement, but the system is asking for tighter boundaries and narrower targets. That usually means progress works best when it is selective, reduced, and realistic. The healthiest version of this season stops measuring itself against a pace that no longer matches the current state.",
 
         LOW_PPL:
-          "Right now, your season looks softer, quieter, and more restorative. Connection still matters, but it likely needs to feel safe, easy, and low-pressure. This usually feels like wanting comfort, steadiness, and closeness without too much demand. The healthiest version of this season gives yourself permission to recover without disappearing from the people who matter.",
+          "This looks like a protected season with a people pull. Connection still matters, but it likely needs to feel safe, low-pressure, and emotionally clean. That usually means you want trust and comfort more than stimulation or expansion. The healthiest version of this season treats restoration as part of connection, not as its opposite.",
 
         LOW_CHG:
-          "Right now, your season looks transitional. Part of you seems ready for a shift, but your system may not want a huge push all at once. This usually feels like rethinking things, shedding what no longer fits, and testing change in smaller pieces. The healthiest version of this season lets the transition happen without forcing clarity too early."
+          "This looks like a protected season with a change pull. Something is shifting, but the system may not want a hard push all at once. That usually means recalibration is happening through smaller moves, partial clarity, and uneven but real reorientation. The healthiest version of this season lets the transition reveal itself instead of demanding total certainty too early."
       };
 
       el.innerHTML = "<strong>What this combination suggests:</strong> " + escapeHtml(blendMap[key] || "");
