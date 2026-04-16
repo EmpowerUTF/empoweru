@@ -183,6 +183,26 @@
     .retake-link{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.08);color:rgba(230,237,247,0.40);font-size:.8rem;font-weight:700;text-decoration:none;transition:all .2s;}
     .retake-link:hover{border-color:rgba(76,111,255,0.35);color:rgba(230,237,247,0.75);}
 
+    .retake-link.danger{border-color:rgba(239,68,68,0.18);color:rgba(252,165,165,0.78);}
+    .retake-link.danger:hover{border-color:rgba(239,68,68,0.42);color:rgba(254,202,202,0.95);background:rgba(239,68,68,0.06);}
+
+    /* ── CLEAR CONFIRM MODAL ── */
+    .confirm-backdrop{position:fixed;inset:0;z-index:5200;background:rgba(0,0,0,.62);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:18px;}
+    .confirm-backdrop.show{display:flex;}
+    .confirm-modal{width:min(560px,94vw);border-radius:20px;border:1px solid rgba(255,255,255,0.12);background:radial-gradient(900px 520px at 20% 10%,rgba(239,68,68,0.10),transparent 56%),radial-gradient(900px 520px at 80% 20%,rgba(59,130,246,0.08),transparent 60%),linear-gradient(180deg,rgba(9,12,22,0.99),rgba(6,9,16,0.99));box-shadow:0 28px 90px rgba(0,0,0,.75);overflow:hidden;}
+    .confirm-header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 18px;border-bottom:1px solid rgba(255,255,255,0.10);}
+    .confirm-title{font-weight:900;letter-spacing:.08em;text-transform:uppercase;font-size:.92rem;color:rgba(254,202,202,0.95);}
+    .confirm-close{border:1px solid rgba(255,255,255,0.18);background:rgba(255,255,255,0.04);color:rgba(230,237,247,0.9);border-radius:12px;padding:9px 12px;cursor:pointer;font-weight:900;touch-action:manipulation;transition:transform .15s ease,border-color .15s ease;}
+    .confirm-close:hover{transform:translateY(-1px);border-color:rgba(239,68,68,0.45);}
+    .confirm-body{padding:18px 20px 22px;color:rgba(229,231,235,.80);font-size:.92rem;line-height:1.7;}
+    .confirm-body strong{color:rgba(254,202,202,0.96);}
+    .confirm-actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:18px;}
+    .confirm-cancel,.confirm-clear{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 16px;border-radius:10px;font-size:.86rem;font-weight:800;text-decoration:none;cursor:pointer;touch-action:manipulation;transition:all .15s;}
+    .confirm-cancel{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.12);color:rgba(230,237,247,0.82);}
+    .confirm-cancel:hover{border-color:rgba(255,255,255,0.22);}
+    .confirm-clear{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.34);color:rgba(254,202,202,0.96);}
+    .confirm-clear:hover{background:rgba(239,68,68,0.18);border-color:rgba(239,68,68,0.48);}
+
     @keyframes fadeInUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
 
     
@@ -527,6 +547,10 @@
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.72"/></svg>
             Retake SOM
           </a>
+          <button class="retake-link danger" type="button" onclick="openClearConfirm()">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+            Clear answers
+          </button>
         </div>
       </div>
 
@@ -1590,30 +1614,106 @@ document.getElementById("btnCloseMenu").addEventListener("click", function(){
 document.getElementById("menuModal").addEventListener("click", function(e){
   if(e.target === this){ this.classList.remove("show"); this.setAttribute("aria-hidden","true"); document.body.style.overflow = ""; }
 });
-document.addEventListener("keydown", function(e){ if(e.key==="Escape"){ var m=document.getElementById("menuModal"); if(m){ m.classList.remove("show"); m.setAttribute("aria-hidden","true"); document.body.style.overflow=""; } closeAtlasAgreementModal(); }});
+document.addEventListener("keydown", function(e){ if(e.key==="Escape"){ var m=document.getElementById("menuModal"); if(m){ m.classList.remove("show"); m.setAttribute("aria-hidden","true"); document.body.style.overflow=""; } closeAtlasAgreementModal(); closeClearConfirm(); }});
 
-// ─────────────────────────────────────────────────────────────────
-// INIT
-// ─────────────────────────────────────────────────────────────────
-(function init(){
+
+function hideAllStates(){
+  ["stateNeither","stateCOMOnly","stateSOMOnly","resultBlock"].forEach(function(id){
+    var el = document.getElementById(id);
+    if(!el) return;
+    el.classList.remove("show");
+    if(id === "resultBlock") el.style.display = "none";
+  });
+}
+
+function resetTransientUI(){
+  _rating = 0;
+  _ratingDone = false;
+  _comType = "";
+  _somMode = "";
+  var chk = document.getElementById("atlasAgreeChk");
+  var gate = document.getElementById("ratingGate");
+  var comment = document.getElementById("ratingComment");
+  var ty = document.getElementById("ratingTy");
+  var copied = document.getElementById("copiedNote");
+  var btn = document.getElementById("copyBtn");
+  if(chk) chk.checked = false;
+  if(gate) gate.style.display = "none";
+  if(comment) comment.value = "";
+  if(ty) ty.classList.remove("show");
+  if(copied) copied.style.display = "none";
+  document.querySelectorAll(".rating-num").forEach(function(b){ b.classList.remove("sel"); });
+  if(btn){
+    btn.disabled = true;
+    btn.classList.remove("copied");
+    btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy your Atlas';
+  }
+}
+
+function syncFromStorage(){
   var comRaw = null, somRaw = null;
   try{ comRaw = JSON.parse(localStorage.getItem(COM_KEY) || "null"); } catch(e){}
   try{ somRaw = JSON.parse(localStorage.getItem(SOM_KEY) || "null"); } catch(e){}
-
   var hasCOM = !!(comRaw && comRaw.primaryType);
   var hasSOM = !!(somRaw && somRaw.primaryType);
+
+  hideAllStates();
+  resetTransientUI();
+
   if(hasCOM) _comType = comRaw.primaryType || "";
   if(hasSOM) _somMode = somRaw.primaryType || "";
 
   if(hasCOM && hasSOM){
     render(comRaw, somRaw);
+    var rb = document.getElementById("resultBlock");
+    if(rb){ rb.classList.add("show"); rb.style.display = "block"; }
   } else if(hasCOM && !hasSOM){
-    document.getElementById("stateCOMOnly").classList.add("show");
+    var a = document.getElementById("stateCOMOnly");
+    if(a) a.classList.add("show");
   } else if(!hasCOM && hasSOM){
-    document.getElementById("stateSOMOnly").classList.add("show");
+    var b = document.getElementById("stateSOMOnly");
+    if(b) b.classList.add("show");
   } else {
-    document.getElementById("stateNeither").classList.add("show");
+    var c = document.getElementById("stateNeither");
+    if(c) c.classList.add("show");
   }
+}
+
+function openClearConfirm(){
+  var m = document.getElementById("clearConfirmModal");
+  if(!m) return;
+  m.classList.add("show");
+  m.setAttribute("aria-hidden","false");
+  document.body.style.overflow = "hidden";
+}
+
+function closeClearConfirm(){
+  var m = document.getElementById("clearConfirmModal");
+  if(!m) return;
+  m.classList.remove("show");
+  m.setAttribute("aria-hidden","true");
+  document.body.style.overflow = "";
+}
+
+function clearAllAnswers(){
+  try{
+    localStorage.removeItem(COM_KEY);
+    localStorage.removeItem(SOM_KEY);
+  }catch(e){}
+  closeClearConfirm();
+  syncFromStorage();
+  showToast("Saved COM and SOM answers cleared from this device.");
+}
+
+window.addEventListener("pageshow", syncFromStorage);
+window.addEventListener("focus", syncFromStorage);
+
+
+// ─────────────────────────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────────────────────────
+(function init(){
+  syncFromStorage();
 })();
 </script>
 
@@ -1652,5 +1752,23 @@ document.addEventListener("keydown", function(e){ if(e.key==="Escape"){ var m=do
       </div>
     </div>
   </div>
+
+  <div class="confirm-backdrop" id="clearConfirmModal" aria-hidden="true" onclick="if(event.target===this)closeClearConfirm();">
+    <div class="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="clearConfirmTitle">
+      <div class="confirm-header">
+        <div class="confirm-title" id="clearConfirmTitle">Clear saved answers</div>
+        <button class="confirm-close" type="button" onclick="closeClearConfirm()">Close</button>
+      </div>
+      <div class="confirm-body">
+        <p><strong>This will remove your saved COM and SOM results from this device.</strong></p>
+        <p>After clearing, the synthesis page will no longer show your current profile. If only one assessment is completed later, this page will show the matching “Take COM” or “Take SOM” state until both are completed again.</p>
+        <div class="confirm-actions">
+          <button class="confirm-cancel" type="button" onclick="closeClearConfirm()">Cancel</button>
+          <button class="confirm-clear" type="button" onclick="clearAllAnswers()">Yes, clear everything</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
