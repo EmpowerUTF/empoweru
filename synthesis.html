@@ -539,15 +539,15 @@
           </span>
         </div>
         <div class="retake-row">
-          <a class="retake-link" href="com.html">
+          <button class="retake-link" type="button" onclick="openRetakeConfirm('com')">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.72"/></svg>
             Retake COM
-          </a>
-          <a class="retake-link" href="som.html">
+          </button>
+          <button class="retake-link" type="button" onclick="openRetakeConfirm('som')">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.72"/></svg>
             Retake SOM
-          </a>
-          <button class="retake-link danger" type="button" onclick="openClearConfirm()">
+          </button>
+          <button class="retake-link danger" type="button" onclick="openClearConfirm('all')">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
             Clear answers
           </button>
@@ -1529,6 +1529,7 @@ var _rating = 0;
 var _ratingDone = false;
 var _comType = "";
 var _somMode = "";
+var _pendingClearAction = "all";
 
 function setRating(v){
   _rating = v;
@@ -1679,12 +1680,39 @@ function syncFromStorage(){
   }
 }
 
-function openClearConfirm(){
+function openClearConfirm(kind){
+  _pendingClearAction = kind || "all";
+  var title = document.getElementById("clearConfirmTitle");
+  var lead = document.getElementById("clearConfirmLead");
+  var body = document.getElementById("clearConfirmBody");
+  var btn  = document.getElementById("clearConfirmActionBtn");
+
+  if(_pendingClearAction === "com"){
+    if(title) title.textContent = "Retake COM";
+    if(lead) lead.innerHTML = "<strong>This will remove your saved COM result from this device.</strong>";
+    if(body) body.textContent = "You will be sent back to the COM assessment and your current synthesis will fall back to the partial-state view until COM is completed again.";
+    if(btn) btn.textContent = "Yes, clear COM and continue";
+  } else if(_pendingClearAction === "som"){
+    if(title) title.textContent = "Retake SOM";
+    if(lead) lead.innerHTML = "<strong>This will remove your saved SOM result from this device.</strong>";
+    if(body) body.textContent = "You will be sent back to the SOM assessment and your current synthesis will fall back to the partial-state view until SOM is completed again.";
+    if(btn) btn.textContent = "Yes, clear SOM and continue";
+  } else {
+    if(title) title.textContent = "Clear saved answers";
+    if(lead) lead.innerHTML = "<strong>This will remove your saved COM and SOM results from this device.</strong>";
+    if(body) body.textContent = "After clearing, the synthesis page will no longer show your current profile. If only one assessment is completed later, this page will show the matching Take COM or Take SOM state until both are completed again.";
+    if(btn) btn.textContent = "Yes, clear everything";
+  }
+
   var m = document.getElementById("clearConfirmModal");
   if(!m) return;
   m.classList.add("show");
   m.setAttribute("aria-hidden","false");
   document.body.style.overflow = "hidden";
+}
+
+function openRetakeConfirm(kind){
+  openClearConfirm(kind);
 }
 
 function closeClearConfirm(){
@@ -1703,6 +1731,22 @@ function clearAllAnswers(){
   closeClearConfirm();
   syncFromStorage();
   showToast("Saved COM and SOM answers cleared from this device.");
+}
+
+function runPendingClearAction(){
+  if(_pendingClearAction === "com"){
+    try{ localStorage.removeItem(COM_KEY); }catch(e){}
+    closeClearConfirm();
+    window.location.href = "com.html";
+    return;
+  }
+  if(_pendingClearAction === "som"){
+    try{ localStorage.removeItem(SOM_KEY); }catch(e){}
+    closeClearConfirm();
+    window.location.href = "som.html";
+    return;
+  }
+  clearAllAnswers();
 }
 
 window.addEventListener("pageshow", syncFromStorage);
@@ -1760,11 +1804,11 @@ window.addEventListener("focus", syncFromStorage);
         <button class="confirm-close" type="button" onclick="closeClearConfirm()">Close</button>
       </div>
       <div class="confirm-body">
-        <p><strong>This will remove your saved COM and SOM results from this device.</strong></p>
-        <p>After clearing, the synthesis page will no longer show your current profile. If only one assessment is completed later, this page will show the matching “Take COM” or “Take SOM” state until both are completed again.</p>
+        <p id="clearConfirmLead"><strong>This will remove your saved COM and SOM results from this device.</strong></p>
+        <p id="clearConfirmBody">After clearing, the synthesis page will no longer show your current profile. If only one assessment is completed later, this page will show the matching “Take COM” or “Take SOM” state until both are completed again.</p>
         <div class="confirm-actions">
           <button class="confirm-cancel" type="button" onclick="closeClearConfirm()">Cancel</button>
-          <button class="confirm-clear" type="button" onclick="clearAllAnswers()">Yes, clear everything</button>
+          <button class="confirm-clear" id="clearConfirmActionBtn" type="button" onclick="runPendingClearAction()">Yes, clear everything</button>
         </div>
       </div>
     </div>
