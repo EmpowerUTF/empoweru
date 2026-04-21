@@ -251,6 +251,21 @@
       box-shadow:none;
     }
 
+    .lock-note{
+      display:none;
+      margin: 0 auto 16px;
+      max-width: 720px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(245,158,11,0.26);
+      background: rgba(245,158,11,0.08);
+      color: rgba(255,237,180,0.94);
+      font-size: 0.88rem;
+      line-height: 1.5;
+      text-align: center;
+    }
+    .lock-note.show{ display:block; }
+
     .instructions{
       background:radial-gradient(circle at top left,#111827,#020617);
       border-radius:14px;
@@ -874,6 +889,8 @@
       <button class="pill-btn" id="clearBtn" type="button" disabled>Clear saved answers</button>
     </div>
 
+    <div class="lock-note" id="lockNote">This SOM submission is locked on this device after results are shown. To change answers, use Clear saved answers and retake from the beginning.</div>
+
     <div class="instructions">
       <h3>How to answer</h3>
       <p>Each question has <strong>three statements</strong>. Pick the one that fits you best in the <strong>last few months</strong>, not how things usually are or how you want them to be.</p>
@@ -1044,6 +1061,7 @@
 
     var AUTOSAVE_KEY = "empoweru_utf2_som_v3_1_0_autosave";
     var RESULT_KEY   = "empoweru_utf2_som_latest";
+    var SOM_LOCK_KEY = "empoweru_utf2_som_lock_v3_1_0";
 
     var TIE_TRIGGER_POINTS = 1;
 
@@ -1663,6 +1681,8 @@
 
     function clearSavedAnswers(){
       try{ localStorage.removeItem(AUTOSAVE_KEY); } catch(e){}
+      try{ localStorage.removeItem(RESULT_KEY); } catch(e){}
+      clearSomLock();
     }
 
     function syncResumeControls(){
@@ -1671,6 +1691,99 @@
       var has = hasSavedAnswers();
       if (resumeBtn) resumeBtn.disabled = !has;
       if (clearBtn)  clearBtn.disabled  = !has;
+    }
+
+    function getSomLockData(){
+      try{
+        var raw = localStorage.getItem(SOM_LOCK_KEY);
+        if (!raw) return { locked:false };
+        var data = JSON.parse(raw);
+        if (!data) return { locked:false };
+        if (data.qbank !== SOM_QBANK_ID) return { locked:false };
+        return { locked:true, data:data };
+      } catch(e){ return { locked:false }; }
+    }
+
+    function setSomLock(payload){
+      try{
+        localStorage.setItem(SOM_LOCK_KEY, JSON.stringify({
+          locked: true,
+          som_v: SOM_VERSION,
+          som_math: SOM_MATH_VERSION,
+          qbank: SOM_QBANK_ID,
+          primaryType: payload && payload.primaryType ? payload.primaryType : null,
+          lockedAt: new Date().toISOString()
+        }));
+      } catch(e){}
+    }
+
+    function clearSomLock(){
+      try{ localStorage.removeItem(SOM_LOCK_KEY); } catch(e){}
+    }
+
+    function setAssessmentLocked(isLocked){
+      var radios = document.querySelectorAll('input[type="radio"]');
+      for (var i=0;i<radios.length;i++) radios[i].disabled = !!isLocked;
+
+      var agree = document.getElementById("agreeChk");
+      if (agree) agree.disabled = !!isLocked;
+
+      var submitBtn = document.getElementById("submitBtn");
+      if (submitBtn){
+        submitBtn.disabled = !!isLocked || !(agree && agree.checked);
+        submitBtn.textContent = isLocked ? "SOM already submitted on this device" : "Show My Results";
+      }
+
+      var resumeBtn = document.getElementById("resumeBtn");
+      if (resumeBtn && isLocked) resumeBtn.disabled = true;
+
+      var lockNote = document.getElementById("lockNote");
+      if (lockNote) lockNote.classList.toggle("show", !!isLocked);
+    }
+
+    function restoreLockedSessionIfPresent(){
+      var lock = getSomLockData();
+      if (!lock.locked) return false;
+
+      var saved = readAutosave();
+      if (!saved || !saved.answers || !saved.answers.some(function(x){ return x !== null && x !== undefined; })){
+        clearSomLock();
+        return false;
+      }
+
+      __seed = saved.seed >>> 0;
+      questions = buildQuestionsFromRaw(__seed);
+      generateForm();
+      clearAllSelections();
+
+      for (var i = 1; i <= questions.length; i++){
+        var v = saved.answers[i-1];
+        if (!v) continue;
+        var el = document.getElementById('q' + i + '_' + v);
+        if (el) el.checked = true;
+      }
+
+      updateProgress();
+
+      var stored = null;
+      try{ stored = JSON.parse(localStorage.getItem(RESULT_KEY) || 'null'); } catch(e){}
+      if (stored && stored.primaryType && stored.dimScores && stored.meta){
+        var provisional = {
+          answersABC: stored.answers && stored.answers.values ? stored.answers.values.slice(0) : saved.answers.slice(0),
+          dimScores: stored.dimScores,
+          modeScores: stored.modeScores || {},
+          ranked: stored.ranked || [],
+          top1: stored.meta.top1 || null,
+          top2: stored.meta.top2 || null,
+          gapPoints: stored.meta.gapPoints,
+          grid: stored.meta.grid || null
+        };
+        finalizeAndRender(stored.primaryType, provisional, stored.tieBreaker || { used:false, skipped:false, considered:false });
+      }
+
+      setAssessmentLocked(true);
+      syncResumeControls();
+      return true;
     }
 
     function renderSomBlurb(modeCode){
@@ -2084,6 +2197,8 @@
       };
 
       saveSomResultLocal(resultObj);
+      setSomLock({ primaryType: m.code });
+      setAssessmentLocked(true);
       setSynthesisLink(m.code, resultObj);
 
       storePayload({
@@ -2112,6 +2227,12 @@
     }
 
     function calculateResults(){
+      var lock = getSomLockData();
+      if (lock.locked){
+        showToast("This SOM submission is locked on this device. Clear saved answers to retake it.");
+        return;
+      }
+
       var agree = document.getElementById("agreeChk");
       if (!agree || !agree.checked){
         showToast("Please check the User Agreement box before calculating your mode.");
@@ -2269,6 +2390,7 @@
       setSubmitEnabled();
       syncResumeControls();
       syncActiveQuestion(0);
+      restoreLockedSessionIfPresent();
 
       var form = document.getElementById("somForm");
       form.addEventListener("change", function(e){
@@ -2325,15 +2447,23 @@
       });
 
       clearBtn && clearBtn.addEventListener("click", function(){
-        var ok = window.confirm("Clear saved SOM answers?\n\nThis cannot be undone.");
+        var ok = window.confirm("Clear saved SOM answers?\n\nThis will unlock the assessment on this device and remove the saved SOM result.");
         if (!ok) return;
 
         clearSavedAnswers();
         clearAllSelections();
         updateProgress();
+        var results = document.getElementById("results");
+        if (results) results.classList.remove("show");
+        var bottomActions = document.getElementById("bottomActions");
+        if (bottomActions) bottomActions.classList.remove("show");
+        var agree = document.getElementById("agreeChk");
+        if (agree) agree.checked = false;
+        setAssessmentLocked(false);
+        setSubmitEnabled();
         syncResumeControls();
         syncActiveQuestion(0);
-        showToast("Saved answers cleared.");
+        showToast("Saved SOM answers cleared. You can now retake the assessment from the beginning.");
       });
 
       var openA = document.getElementById("openAgreement");
@@ -2368,6 +2498,10 @@
           closeMenu();
           closeTieModal();
         }
+      });
+
+      window.addEventListener("pageshow", function(){
+        restoreLockedSessionIfPresent();
       });
 
       SOM_SCORE_INTEGRITY_CHECK();

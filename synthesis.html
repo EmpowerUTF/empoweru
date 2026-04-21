@@ -106,6 +106,38 @@
       border:1px solid rgba(255,255,255,0.10);
       box-shadow:0 2px 0 rgba(255,255,255,0.05) inset,0 20px 60px rgba(0,0,0,0.30);}
     .profile-card::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:rgba(255,255,255,0.18);}
+    .profile-reminder{
+      margin:0 0 18px;
+      padding:16px 18px;
+      border-radius:16px;
+      background:linear-gradient(135deg,rgba(59,130,246,0.08),rgba(20,184,166,0.07));
+      border:1px solid rgba(94,234,212,0.22);
+      box-shadow:0 12px 32px rgba(20,184,166,0.06);
+      text-align:center;
+    }
+    .profile-reminder-title{
+      display:flex;align-items:center;justify-content:center;gap:8px;
+      font-size:.86rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;
+      color:rgba(94,234,212,0.92);margin-bottom:6px;
+    }
+    .profile-reminder-body{
+      font-size:.88rem;line-height:1.62;color:rgba(230,237,247,0.74);
+      max-width:640px;margin:0 auto;
+    }
+    .profile-reminder-body strong{color:rgba(230,237,247,0.92);}
+    .profile-reminder-actions{
+      display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:12px;
+    }
+    .profile-reminder-chip{
+      display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;
+      background:rgba(255,255,255,0.03);border:1px solid rgba(148,163,184,0.16);
+      color:rgba(230,237,247,0.64);font-size:.78rem;font-weight:800;
+      cursor:pointer;text-decoration:none;transition:all .18s;
+    }
+    .profile-reminder-chip:hover{
+      border-color:rgba(94,234,212,0.26);color:rgba(230,237,247,0.90);background:rgba(20,184,166,0.05);
+    }
+
     .card-meta-label{font-size:.72rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:rgba(230,237,247,0.65);margin-bottom:4px;}
     .card-meta-sub{font-size:.78rem;color:rgba(230,237,247,0.52);margin-bottom:14px;line-height:1.45;}
     .card-type-name{font-size:2rem;font-weight:900;letter-spacing:-.03em;margin-bottom:12px;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1.05;display:block;}
@@ -147,9 +179,9 @@
     .acc-btn{width:100%;background:rgba(255,255,255,0.03);border:1px solid var(--line);border-radius:12px;padding:15px 20px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--text);font-size:.92rem;font-weight:700;text-align:left;transition:border-color .2s,background .2s;}
     .acc-btn:hover{border-color:rgba(76,111,255,0.4);background:rgba(76,111,255,0.05);}
     .acc-btn.open{border-radius:12px 12px 0 0;border-color:rgba(76,111,255,0.35);}
-    .acc-btn-featured{background:rgba(76,111,255,0.07);border-color:rgba(76,111,255,0.28);color:rgba(94,234,212,0.92);}
+    .acc-btn-featured{background:linear-gradient(135deg,rgba(59,130,246,0.09),rgba(20,184,166,0.08));border-color:rgba(94,234,212,0.26);color:rgba(230,237,247,0.92);box-shadow:0 10px 28px rgba(20,184,166,0.08);}
     .acc-btn-featured.open{border-color:rgba(94,234,212,0.38);}
-    .acc-btn-featured:hover{border-color:rgba(94,234,212,0.45);background:rgba(20,184,166,0.09);}
+    .acc-btn-featured:hover{border-color:rgba(94,234,212,0.45);background:linear-gradient(135deg,rgba(59,130,246,0.11),rgba(20,184,166,0.10));}
     .acc-chevron{color:var(--accent2);font-size:.85rem;transition:transform .25s;flex-shrink:0;}
     .acc-btn.open .acc-chevron{transform:rotate(180deg);}
     .acc-panel{max-height:0;overflow:hidden;transition:max-height .35s ease;}
@@ -159,6 +191,15 @@
     .acc-inner p:last-child{margin-bottom:0;}
     .acc-inner .label{font-size:.76rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--accent2);margin-bottom:6px;margin-top:14px;}
     .acc-inner .label:first-child{margin-top:0;}
+
+    /* ── PROMOTED TRAIT MAP ── */
+    .trait-map-intro{
+      font-size:.84rem;
+      color:rgba(230,237,247,0.56);
+      line-height:1.6;
+      margin:8px 0 16px;
+      text-align:center;
+    }
 
     /* ── D9 MODIFIER ── */
     .d9-modifier{padding:12px 14px;border-radius:10px;font-size:.875rem;line-height:1.6;border-left:3px solid;}
@@ -451,12 +492,46 @@
         </div>
       </div>
 
+      <div class="profile-reminder">
+        <div class="profile-reminder-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+          Don’t leave this as a static result
+        </div>
+        <div class="profile-reminder-body">
+          <strong>Your Trait Map is the structure.</strong> <strong>Atlas is what makes it usable.</strong> Review the map first, then copy your Atlas and paste it into AI to turn this profile into real, personalized insight.
+        </div>
+        <div class="profile-reminder-actions">
+          <button class="profile-reminder-chip" type="button" onclick="openAndScroll('dimsPanel',null)">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            Review Trait Map
+          </button>
+          <button class="profile-reminder-chip" type="button" onclick="scrollToAtlas()">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Copy Atlas for AI
+          </button>
+        </div>
+      </div>
+
+      <!-- PROMOTED TRAIT MAP -->
+      <div class="acc-section" style="margin-top:4px;margin-bottom:18px;">
+        <button class="acc-btn acc-btn-featured open" type="button" onclick="toggleAcc('dimsPanel',this)">
+          <span>Trait map</span>
+          <span class="acc-chevron">&#9660;</span>
+        </button>
+        <div class="acc-panel open" id="dimsPanel">
+          <div class="acc-inner">
+            <div class="trait-map-intro">Your trait map is one of the most important parts of the full review. It shows how your deeper structure is distributed across the dimensions, not just which label you landed on.</div>
+            <div id="dimsContent"></div>
+          </div>
+        </div>
+      </div>
+
       <!-- ATLAS: unified block -->
       <div class="atlas-wrap">
         <div class="atlas-copy-row">
           <div class="atlas-copy-left">
-            <div class="atlas-copy-title">Atlas</div>
-            <div class="atlas-copy-desc">Copy your profile and paste it into any AI chat. The AI reads your stable structure first, then your current season, forms a first mathematical interpretation, checks likely mismatch points, and adapts from something more precise than generic assumptions.</div>
+            <div class="atlas-copy-title">Atlas — use this with AI</div>
+            <div class="atlas-copy-desc">Copy your profile and paste it into any AI chat. Your Trait Map shows the structure. Atlas is what lets AI actually use it. The AI reads your stable structure first, then your current season, forms a first mathematical interpretation, checks likely mismatch points, and responds from something more precise than generic assumptions.</div>
           </div>
         </div>
         <div class="atlas-agreement">
@@ -507,11 +582,11 @@
 
       <!-- RIGHT NOW -->
       <div class="acc-section" style="margin-top:18px;">
-        <button class="acc-btn acc-btn-featured open" type="button" onclick="toggleAcc('nowPanel',this)">
+        <button class="acc-btn" type="button" onclick="toggleAcc('nowPanel',this)">
           <span>How your COM and SOM are interacting right now</span>
           <span class="acc-chevron">&#9660;</span>
         </button>
-        <div class="acc-panel open" id="nowPanel">
+        <div class="acc-panel" id="nowPanel">
           <div class="acc-inner">
             <div class="interaction-text" id="interactionText"></div>
             <div class="d9-modifier" id="d9Modifier" style="display:none;margin-top:12px;"></div>
@@ -519,12 +594,15 @@
         </div>
       </div>
 
-
-      <!-- EXPLORE CTA: above trait bars -->
+      <!-- EXPLORE CTA -->
       <div class="explore-cta">
-        <div class="explore-cta-title">There&rsquo;s more to explore</div>
-        <div class="explore-cta-sub">Your profile has more layers than the headline result. Open the sections below to see the interaction, the trait map, and how your communication style tends to land.</div>
+        <div class="explore-cta-title">Explore everything else</div>
+        <div class="explore-cta-sub">Open the sections below to read the current interaction between COM and SOM, and how your communication style tends to land.</div>
         <div class="explore-chips">
+          <span class="explore-chip" onclick="openAndScroll('dimsPanel',null)">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            Trait map
+          </span>
           <span class="explore-chip" onclick="openAndScroll('nowPanel',null)">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
             Right now
@@ -533,39 +611,8 @@
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
             Communication style
           </span>
-          <span class="explore-chip" onclick="openAndScroll('dimsPanel',null)">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-            Dimension snapshot
-          </span>
-        </div>
-        <div class="retake-row">
-          <button class="retake-link" type="button" onclick="openRetakeConfirm('com')">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.72"/></svg>
-            Retake COM
-          </button>
-          <button class="retake-link" type="button" onclick="openRetakeConfirm('som')">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.72"/></svg>
-            Retake SOM
-          </button>
-          <button class="retake-link danger" type="button" onclick="openClearConfirm('all')">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
-            Clear answers
-          </button>
         </div>
       </div>
-
-
-      <!-- DIMENSION SNAPSHOT -->
-      <div class="acc-section">
-        <button class="acc-btn" type="button" onclick="toggleAcc('dimsPanel',this)">
-          <span>Trait map</span>
-          <span class="acc-chevron">&#9660;</span>
-        </button>
-        <div class="acc-panel" id="dimsPanel">
-          <div class="acc-inner" id="dimsContent"></div>
-        </div>
-      </div>
-
 
       <!-- COMMUNICATION STYLE -->
       <div class="acc-section">
@@ -584,6 +631,21 @@
         Learn how UTF works
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:auto;"><polyline points="9 18 15 12 9 6"/></svg>
       </a>
+
+      <div class="retake-row" style="margin-top:22px;">
+        <button class="retake-link" type="button" onclick="openRetakeConfirm('com')">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.72"/></svg>
+          Retake COM
+        </button>
+        <button class="retake-link" type="button" onclick="openRetakeConfirm('som')">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.72"/></svg>
+          Retake SOM
+        </button>
+        <button class="retake-link danger" type="button" onclick="openClearConfirm('all')">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+          Clear answers
+        </button>
+      </div>
 
     </div>
 
@@ -1486,6 +1548,12 @@ function copyAtlas(){
     box.removeAttribute("aria-hidden");box.select();document.execCommand("copy");
     box.setAttribute("aria-hidden","true");onCopied();
   }
+}
+
+function scrollToAtlas(){
+  var atlas = document.querySelector(".atlas-wrap");
+  if(!atlas) return;
+  atlas.scrollIntoView({behavior:"smooth", block:"start"});
 }
 
 // ─────────────────────────────────────────────────────────────────
