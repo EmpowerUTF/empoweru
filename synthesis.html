@@ -106,38 +106,6 @@
       border:1px solid rgba(255,255,255,0.10);
       box-shadow:0 2px 0 rgba(255,255,255,0.05) inset,0 20px 60px rgba(0,0,0,0.30);}
     .profile-card::before{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:rgba(255,255,255,0.18);}
-    .profile-reminder{
-      margin:0 0 18px;
-      padding:16px 18px;
-      border-radius:16px;
-      background:linear-gradient(135deg,rgba(59,130,246,0.08),rgba(20,184,166,0.07));
-      border:1px solid rgba(94,234,212,0.22);
-      box-shadow:0 12px 32px rgba(20,184,166,0.06);
-      text-align:center;
-    }
-    .profile-reminder-title{
-      display:flex;align-items:center;justify-content:center;gap:8px;
-      font-size:.86rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;
-      color:rgba(94,234,212,0.92);margin-bottom:6px;
-    }
-    .profile-reminder-body{
-      font-size:.88rem;line-height:1.62;color:rgba(230,237,247,0.74);
-      max-width:640px;margin:0 auto;
-    }
-    .profile-reminder-body strong{color:rgba(230,237,247,0.92);}
-    .profile-reminder-actions{
-      display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:12px;
-    }
-    .profile-reminder-chip{
-      display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;
-      background:rgba(255,255,255,0.03);border:1px solid rgba(148,163,184,0.16);
-      color:rgba(230,237,247,0.64);font-size:.78rem;font-weight:800;
-      cursor:pointer;text-decoration:none;transition:all .18s;
-    }
-    .profile-reminder-chip:hover{
-      border-color:rgba(94,234,212,0.26);color:rgba(230,237,247,0.90);background:rgba(20,184,166,0.05);
-    }
-
     .card-meta-label{font-size:.72rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:rgba(230,237,247,0.65);margin-bottom:4px;}
     .card-meta-sub{font-size:.78rem;color:rgba(230,237,247,0.52);margin-bottom:14px;line-height:1.45;}
     .card-type-name{font-size:2rem;font-weight:900;letter-spacing:-.03em;margin-bottom:12px;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1.05;display:block;}
@@ -200,6 +168,23 @@
       margin:8px 0 16px;
       text-align:center;
     }
+
+    
+    /* ── ATLAS INFO MODAL ── */
+    .atlas-info-backdrop{position:fixed;inset:0;z-index:5200;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:18px;}
+    .atlas-info-backdrop.show{display:flex;}
+    .atlas-info-modal{width:min(560px,94vw);border-radius:20px;border:1px solid rgba(255,255,255,0.12);
+      background:linear-gradient(180deg,rgba(9,12,22,0.98),rgba(6,9,16,0.98));
+      box-shadow:0 28px 90px rgba(0,0,0,.75);overflow:hidden;}
+    .atlas-info-header{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;border-bottom:1px solid rgba(255,255,255,0.1);}
+    .atlas-info-title{font-weight:900;font-size:.95rem;letter-spacing:.08em;text-transform:uppercase;color:rgba(230,237,247,0.92);}
+    .atlas-info-close{cursor:pointer;border:1px solid rgba(255,255,255,0.18);padding:6px 10px;border-radius:10px;}
+    .atlas-info-body{padding:18px 20px;color:rgba(230,237,247,0.75);font-size:.9rem;line-height:1.7;}
+    .atlas-info-body strong{color:rgba(230,237,247,0.95);}
+    .atlas-info-list{margin-top:12px;padding-left:18px;}
+    .atlas-info-list li{margin-bottom:6px;}
+    .atlas-info-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:16px;}
+    .atlas-info-btn{padding:8px 14px;border-radius:10px;border:1px solid rgba(148,163,184,0.2);background:rgba(255,255,255,0.04);color:rgba(230,237,247,0.8);cursor:pointer;}
 
     /* ── D9 MODIFIER ── */
     .d9-modifier{padding:12px 14px;border-radius:10px;font-size:.875rem;line-height:1.6;border-left:3px solid;}
@@ -492,26 +477,6 @@
         </div>
       </div>
 
-      <div class="profile-reminder">
-        <div class="profile-reminder-title">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
-          Don’t leave this as a static result
-        </div>
-        <div class="profile-reminder-body">
-          <strong>Your Trait Map is the structure.</strong> <strong>Atlas is what makes it usable.</strong> Review the map first, then copy your Atlas and paste it into AI to turn this profile into real, personalized insight.
-        </div>
-        <div class="profile-reminder-actions">
-          <button class="profile-reminder-chip" type="button" onclick="openAndScroll('dimsPanel',null)">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-            Review Trait Map
-          </button>
-          <button class="profile-reminder-chip" type="button" onclick="scrollToAtlas()">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-            Copy Atlas for AI
-          </button>
-        </div>
-      </div>
-
       <!-- PROMOTED TRAIT MAP -->
       <div class="acc-section" style="margin-top:4px;margin-bottom:18px;">
         <button class="acc-btn acc-btn-featured open" type="button" onclick="toggleAcc('dimsPanel',this)">
@@ -530,8 +495,8 @@
       <div class="atlas-wrap">
         <div class="atlas-copy-row">
           <div class="atlas-copy-left">
-            <div class="atlas-copy-title">Atlas — use this with AI</div>
-            <div class="atlas-copy-desc">Copy your profile and paste it into any AI chat. Your Trait Map shows the structure. Atlas is what lets AI actually use it. The AI reads your stable structure first, then your current season, forms a first mathematical interpretation, checks likely mismatch points, and responds from something more precise than generic assumptions.</div>
+            <div class="atlas-copy-title">Atlas</div>
+            <div class="atlas-copy-desc">Copy your profile and paste it into any AI chat. The AI reads your stable structure first, then your current season, forms a first mathematical interpretation, checks likely mismatch points, and adapts from something more precise than generic assumptions.</div>
           </div>
         </div>
         <div class="atlas-agreement">
@@ -1550,10 +1515,12 @@ function copyAtlas(){
   }
 }
 
-function scrollToAtlas(){
-  var atlas = document.querySelector(".atlas-wrap");
-  if(!atlas) return;
-  atlas.scrollIntoView({behavior:"smooth", block:"start"});
+
+function openAtlasInfo(){
+  document.getElementById("atlasInfoModal").classList.add("show");
+}
+function closeAtlasInfo(){
+  document.getElementById("atlasInfoModal").classList.remove("show");
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -1881,6 +1848,28 @@ window.addEventListener("focus", syncFromStorage);
       </div>
     </div>
   </div>
+
+
+<div class="atlas-info-backdrop" id="atlasInfoModal" onclick="if(event.target===this)closeAtlasInfo();">
+  <div class="atlas-info-modal">
+    <div class="atlas-info-header">
+      <div class="atlas-info-title">Using Atlas with AI</div>
+      <div class="atlas-info-close" onclick="closeAtlasInfo()">Close</div>
+    </div>
+    <div class="atlas-info-body">
+      <strong>Atlas turns your profile into something usable.</strong>
+      <ul class="atlas-info-list">
+        <li>Paste it into ChatGPT, Claude, Gemini, or any AI chat</li>
+        <li>Get responses based on your actual cognitive structure</li>
+        <li>Use it for decisions, reflection, communication, and planning</li>
+        <li>Re-use it whenever your SOM changes</li>
+      </ul>
+      <div class="atlas-info-actions">
+        <button class="atlas-info-btn" onclick="closeAtlasInfo()">Got it</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
