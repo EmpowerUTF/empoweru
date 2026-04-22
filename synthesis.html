@@ -140,6 +140,62 @@
     .copy-btn:disabled{cursor:not-allowed;opacity:.40;transform:none !important;box-shadow:none;}
     .copy-btn.copied{background:linear-gradient(135deg,rgba(16,185,129,0.85),rgba(20,184,166,0.90));}
     .atlas-friendly-note{margin:12px 0 0;text-align:center;font-size:.84rem;color:rgba(230,237,247,0.62);line-height:1.6;padding:0 16px;}
+
+    .atlas-jump-callout{
+      margin: 0 0 18px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(94,234,212,0.20);
+      background: linear-gradient(135deg, rgba(20,184,166,0.06), rgba(59,130,246,0.05));
+      text-align: center;
+    }
+    .atlas-jump-title{
+      font-size: .86rem;
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: rgba(94,234,212,0.88);
+      margin-bottom: 6px;
+    }
+    .atlas-jump-text{
+      font-size: .88rem;
+      color: rgba(230,237,247,0.70);
+      line-height: 1.6;
+      max-width: 560px;
+      margin: 0 auto 12px;
+    }
+    .atlas-jump-or{
+      display:block;
+      font-size:.78rem;
+      font-weight:800;
+      letter-spacing:.10em;
+      text-transform:uppercase;
+      color:rgba(230,237,247,0.42);
+      margin:0 0 10px;
+    }
+    .atlas-jump-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding:10px 16px;
+      border-radius:999px;
+      border:1px solid rgba(94,234,212,0.28);
+      background:rgba(94,234,212,0.08);
+      color:rgba(94,234,212,0.92);
+      font-weight:900;
+      font-size:.86rem;
+      text-decoration:none;
+      cursor:pointer;
+      transition:transform .15s ease,border-color .15s ease,background .15s ease,box-shadow .15s ease;
+      touch-action:manipulation;
+    }
+    .atlas-jump-btn:hover{
+      transform:translateY(-1px);
+      border-color:rgba(94,234,212,0.42);
+      background:rgba(94,234,212,0.14);
+      box-shadow:0 14px 34px rgba(0,0,0,.22);
+    }
     .atlas-wrap{border-radius:16px;overflow:hidden;margin:20px 0 8px;}
 
     
@@ -497,7 +553,15 @@
         </div>
       </div>
 
-      
+
+      <div class="atlas-jump-callout">
+        <div class="atlas-jump-title">Use this with AI</div>
+        <div class="atlas-jump-text">Your trait map just below is the clearest part of your profile. Read that first, or jump to Atlas below to use your full result with AI more accurately.</div>
+        <span class="atlas-jump-or">or</span>
+        <button class="atlas-jump-btn" type="button" onclick="scrollToAtlas()">Copy Atlas now</button>
+      </div>
+
+
       <!-- PROMOTED TRAIT MAP -->
       <div class="acc-section" style="margin-top:4px;margin-bottom:18px;">
         <button class="acc-btn acc-btn-featured open" type="button" onclick="toggleAcc('dimsPanel',this)">
@@ -513,7 +577,7 @@
       </div>
 
       <!-- ATLAS: unified block -->
-      <div class="atlas-wrap">
+      <div class="atlas-wrap" id="atlasSection">
         <div class="atlas-copy-row">
           <div class="atlas-copy-left">
             <div class="atlas-copy-title">Atlas</div>
@@ -2029,6 +2093,13 @@ function openAndScroll(panelId, _unused){
     if(btn) btn.classList.add("open");
   }
   setTimeout(function(){ panel.parentElement.scrollIntoView({behavior:"smooth",block:"start"}); }, 80);
+}
+
+
+function scrollToAtlas(){
+  var target = document.getElementById("atlasSection");
+  if(!target) return;
+  setTimeout(function(){ target.scrollIntoView({behavior:"smooth", block:"start"}); }, 40);
 }
 
 // ─────────────────────────────────────────────────────────────────
