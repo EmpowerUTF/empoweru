@@ -2511,5 +2511,617 @@
       hardError("Setup error: " + (e && e.message ? e.message : String(e)));
     }
   </script>
+<script>
+/* Load this AFTER the existing som.html script, before </body>. */
+(function(){
+  try{
+    SOM_UI_VERSION = "1.0.2";
+    SOM_VERSION = "3.2.0";
+    SOM_MATH_VERSION = "3.2.0_balanced_recovery";
+  }catch(e){}
+
+
+  var SOM_MODE_NAMES = (function(){
+    var m = {};
+    try{
+      if (Array.isArray(SOM_MODES)) {
+        for (var i=0;i<SOM_MODES.length;i++){
+          if (SOM_MODES[i] && SOM_MODES[i].code) m[SOM_MODES[i].code] = SOM_MODES[i].name || SOM_MODES[i].code;
+        }
+      }
+    }catch(e){}
+    return m;
+  })();
+
+  var LEGACY_SOM_AUTOSAVE_KEY_HINTS = [
+    "empoweru_utf2_som_v1_0_1",
+    "empoweru_utf2_som_v1_0_1_autosave",
+    "empoweru_utf2_som_v3_1_0_autosave"
+  ];
+
+  var SOM_ENERGY_HIGH_THRESHOLD = 0.18;
+  var SOM_ENERGY_LOW_THRESHOLD = -0.18;
+  var SOM_ENERGY_TIE_EPS = 0.05;
+  var SOM_ORIENT_TIE_EPS = 0.08;
+  var SOM_MODE_GAP_TIE_EPS = 10;
+
+  function jp(raw){ try{ return JSON.parse(raw); } catch(e){ return null; } }
+  function keys(){ try{ return Object.keys(localStorage || {}); } catch(e){ return []; } }
+  function isSomLetter(v){ return v === null || v === undefined || v === "A" || v === "B" || v === "C"; }
+  function hasSomArray(arr){ return Array.isArray(arr) && arr.length === 27 && arr.every(isSomLetter); }
+
+  function normalizeSomAutosaveCandidate(obj){
+    if (!obj || typeof obj !== "object") return null;
+    var arr = null;
+    if (Array.isArray(obj.answers)) arr = obj.answers;
+    else if (Array.isArray(obj.responses)) arr = obj.responses;
+    else if (Array.isArray(obj.items)) arr = obj.items;
+    else if (obj.answers && Array.isArray(obj.answers.values)) arr = obj.answers.values;
+    if (!hasSomArray(arr)) return null;
+
+    var seed = (typeof obj.seed === "number") ? obj.seed :
+               (obj.meta && typeof obj.meta.seed === "number") ? obj.meta.seed : null;
+
+    return {
+      schema: "empoweru_som_autosave",
+      schema_v: 2,
+      ui_v: SOM_UI_VERSION,
+      som_v: SOM_VERSION,
+      som_math: SOM_MATH_VERSION,
+      qbank: SOM_QBANK_ID,
+      q_count: 27,
+      seed: (typeof seed === "number") ? (seed >>> 0) : null,
+      answers: arr.slice(0, 27),
+      updatedAt: obj.updatedAt || obj.createdAt || new Date().toISOString()
+    };
+  }
+
+  function validateSomResult(obj){
+    return !!(
+      obj &&
+      obj.primaryType &&
+      SOM_MODE_NAMES &&
+      SOM_MODE_NAMES[obj.primaryType] &&
+      obj.dimScores &&
+      typeof obj.dimScores === "object" &&
+      ["EP","EM","OUT","PPL","CHG"].every(function(k){ return typeof obj.dimScores[k] === "number" && isFinite(obj.dimScores[k]); })
+    );
+  }
+
+  function readSomResult(){
+    var obj = jp(localStorage.getItem(RESULT_KEY) || "null");
+    return validateSomResult(obj) ? obj : null;
+  }
+
+  function migrateLegacySomStorage(){
+    var migrated = false;
+
+    try{
+      var current = jp(localStorage.getItem(AUTOSAVE_KEY));
+      var currentOk = !!(
+        current &&
+        current.schema === "empoweru_som_autosave" &&
+        current.qbank === SOM_QBANK_ID &&
+        current.q_count === 27 &&
+        hasSomArray(current.answers)
+      );
+
+      if (!currentOk){
+        var best = null;
+        var allKeys = keys().filter(function(k){
+          return /^empoweru_utf2_som_v\d+(?:_\d+)+(?:_autosave)?(?:__bak)?$/.test(k);
+        });
+        LEGACY_SOM_AUTOSAVE_KEY_HINTS.forEach(function(k){
+          if (allKeys.indexOf(k) === -1) allKeys.push(k);
+        });
+
+        allKeys.forEach(function(k){
+          var norm = normalizeSomAutosaveCandidate(jp(localStorage.getItem(k)));
+          if (!norm) return;
+          var ts = new Date(norm.updatedAt || 0).getTime() || 0;
+          if (!best || ts > best.ts) best = { key:k, payload:norm, ts:ts };
+        });
+
+        if (!best){
+          var result = readSomResult();
+          if (result && result.answers && hasSomArray(result.answers.values)){
+            best = {
+              key: RESULT_KEY,
+              ts: new Date(result.createdAt || 0).getTime() || Date.now(),
+              payload: {
+                schema: "empoweru_som_autosave",
+                schema_v: 2,
+                ui_v: SOM_UI_VERSION,
+                som_v: SOM_VERSION,
+                som_math: SOM_MATH_VERSION,
+                qbank: SOM_QBANK_ID,
+                q_count: 27,
+                seed: (result.meta && typeof result.meta.seed === "number") ? (result.meta.seed >>> 0) : null,
+                answers: result.answers.values.slice(0, 27),
+                updatedAt: result.createdAt || new Date().toISOString()
+              }
+            };
+          }
+        }
+
+        if (best){
+          if (typeof best.payload.seed !== "number"){
+            best.payload.seed = ((Date.now() & 0xffffffff) >>> 0);
+          }
+          localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(best.payload));
+          migrated = true;
+        }
+      }
+
+      var currentLock = jp(localStorage.getItem(SOM_LOCK_KEY));
+      var lockOk = !!(currentLock && currentLock.qbank === SOM_QBANK_ID && (currentLock.locked || currentLock.primaryType));
+      if (!lockOk){
+        var lockKeys = keys().filter(function(k){ return /^empoweru_utf2_som_lock_v\d+(?:_\d+)+$/.test(k); });
+        var migratedLock = null;
+
+        for (var i=0;i<lockKeys.length;i++){
+          var lk = jp(localStorage.getItem(lockKeys[i]));
+          if (lk && (lk.locked || lk.primaryType)){
+            migratedLock = {
+              locked: true,
+              som_v: SOM_VERSION,
+              som_math: SOM_MATH_VERSION,
+              qbank: SOM_QBANK_ID,
+              primaryType: lk.primaryType || null,
+              lockedAt: lk.lockedAt || new Date().toISOString()
+            };
+            break;
+          }
+        }
+
+        if (!migratedLock){
+          var result2 = readSomResult();
+          if (result2 && result2.primaryType){
+            migratedLock = {
+              locked: true,
+              som_v: SOM_VERSION,
+              som_math: SOM_MATH_VERSION,
+              qbank: SOM_QBANK_ID,
+              primaryType: result2.primaryType || null,
+              lockedAt: result2.createdAt || new Date().toISOString()
+            };
+          }
+        }
+
+        if (migratedLock){
+          localStorage.setItem(SOM_LOCK_KEY, JSON.stringify(migratedLock));
+          migrated = true;
+        }
+      }
+    } catch(e){}
+
+    return migrated;
+  }
+
+  function deepClearSomStorage(){
+    try{ localStorage.removeItem(AUTOSAVE_KEY); } catch(e){}
+    try{ localStorage.removeItem(RESULT_KEY); } catch(e){}
+    try{ localStorage.removeItem(SOM_LOCK_KEY); } catch(e){}
+    try{
+      keys().forEach(function(k){
+        if (/^empoweru_utf2_som_v\d+(?:_\d+)+(?:_autosave)?(?:__bak)?$/.test(k)) localStorage.removeItem(k);
+        if (/^empoweru_utf2_som_lock_v\d+(?:_\d+)+$/.test(k)) localStorage.removeItem(k);
+      });
+    } catch(e){}
+  }
+
+  readAutosave = function(){
+    try{
+      migrateLegacySomStorage();
+      var raw = localStorage.getItem(AUTOSAVE_KEY);
+      if (!raw) return null;
+      var data = jp(raw);
+      if (!data || data.schema !== "empoweru_som_autosave") return null;
+      if (data.qbank !== SOM_QBANK_ID) return null;
+      if (data.q_count !== 27) return null;
+      if (!hasSomArray(data.answers)) return null;
+      if (typeof data.seed !== "number") data.seed = ((Date.now() & 0xffffffff) >>> 0);
+      return data;
+    } catch(e){ return null; }
+  };
+
+  hasSavedAnswers = function(){
+    var data = readAutosave();
+    if (data && hasSomArray(data.answers)) return data.answers.some(function(x){ return x !== null && x !== undefined; });
+    var result = readSomResult();
+    return !!(result && result.answers && hasSomArray(result.answers.values));
+  };
+
+  clearSavedAnswers = function(){
+    deepClearSomStorage();
+  };
+
+  syncResumeControls = function(){
+    var resumeBtn = document.getElementById("resumeBtn");
+    var clearBtn  = document.getElementById("clearBtn");
+    var has = hasSavedAnswers();
+    var hasResult = !!readSomResult();
+    var locked = getSomLockData().locked;
+    if (resumeBtn) resumeBtn.disabled = !(has || hasResult);
+    if (clearBtn)  clearBtn.disabled  = !(has || hasResult || locked);
+  };
+
+  getSomLockData = function(){
+    try{
+      migrateLegacySomStorage();
+      var raw = localStorage.getItem(SOM_LOCK_KEY);
+      if (!raw) return { locked:false };
+      var data = jp(raw);
+      if (!data) return { locked:false };
+      if (data.qbank !== SOM_QBANK_ID) return { locked:false };
+      return { locked:true, data:data };
+    } catch(e){ return { locked:false }; }
+  };
+
+  function restoreSomAnswersToUI(answerArr, seed){
+    __seed = (typeof seed === "number") ? (seed >>> 0) : ((Date.now() & 0xffffffff) >>> 0);
+    questions = buildQuestionsFromRaw(__seed);
+    generateForm();
+    clearAllSelections();
+
+    for (var i = 1; i <= questions.length; i++){
+      var v = answerArr[i-1];
+      if (!v) continue;
+      var el = document.getElementById("q" + i + "_" + v);
+      if (el) el.checked = true;
+    }
+
+    updateProgress();
+  }
+
+  restoreLockedSessionIfPresent = function(){
+    var lock = getSomLockData();
+    if (!lock.locked) return false;
+
+    var saved = readAutosave();
+    var stored = readSomResult();
+
+    var answers = null;
+    var seed = null;
+
+    if (saved && hasSomArray(saved.answers) && saved.answers.some(function(x){ return x !== null && x !== undefined; })){
+      answers = saved.answers.slice(0);
+      seed = saved.seed;
+    } else if (stored && stored.answers && hasSomArray(stored.answers.values)){
+      answers = stored.answers.values.slice(0);
+      seed = stored.meta && typeof stored.meta.seed === "number" ? stored.meta.seed : null;
+      try{
+        localStorage.setItem(AUTOSAVE_KEY, JSON.stringify({
+          schema: "empoweru_som_autosave",
+          schema_v: 2,
+          ui_v: SOM_UI_VERSION,
+          som_v: SOM_VERSION,
+          som_math: SOM_MATH_VERSION,
+          qbank: SOM_QBANK_ID,
+          q_count: 27,
+          seed: (typeof seed === "number") ? (seed >>> 0) : ((Date.now() & 0xffffffff) >>> 0),
+          answers: answers.slice(0,27),
+          updatedAt: stored.createdAt || new Date().toISOString()
+        }));
+      } catch(e){}
+    }
+
+    if (!answers){
+      clearSomLock();
+      return false;
+    }
+
+    restoreSomAnswersToUI(answers, seed);
+
+    if (stored && stored.primaryType && stored.dimScores && stored.meta){
+      var provisional = {
+        answersABC: stored.answers && stored.answers.values ? stored.answers.values.slice(0) : answers.slice(0),
+        dimScores: stored.dimScores,
+        modeScores: stored.modeScores || {},
+        ranked: stored.ranked || [],
+        top1: stored.meta.top1 || null,
+        top2: stored.meta.top2 || null,
+        gapPoints: stored.meta.gapPoints,
+        grid: stored.meta.grid || null
+      };
+      finalizeAndRender(stored.primaryType, provisional, stored.tieBreaker || { used:false, skipped:false, considered:false });
+    }
+
+    setAssessmentLocked(true);
+    syncResumeControls();
+    return true;
+  };
+
+  function somNormalizeDimScores(dimScores){
+    function rate(code){
+      var denom = (DIM_MAX && DIM_MAX[code]) ? DIM_MAX[code] : 1;
+      return denom ? ((dimScores[code] || 0) / denom) : 0;
+    }
+    return {
+      EP: rate("EP"),
+      EM: rate("EM"),
+      OUT: rate("OUT"),
+      PPL: rate("PPL"),
+      CHG: rate("CHG")
+    };
+  }
+
+  function somOrientForMode(code){
+    if (code === "DRV" || code === "BLD" || code === "BST") return "OUT";
+    if (code === "HRB" || code === "EQZ" || code === "HVN") return "PPL";
+    return "CHG";
+  }
+
+  function somTierCenterForMode(code){
+    if (code === "DRV" || code === "HRB" || code === "TBZ") return 0.32;
+    if (code === "BST" || code === "HVN" || code === "REF") return -0.32;
+    return 0.00;
+  }
+
+  computeGridPrimary = function(dimScores){
+    var rates = somNormalizeDimScores(dimScores);
+    var netNorm = rates.EP - rates.EM;
+
+    var tier = "STEADY";
+    if (netNorm >= SOM_ENERGY_HIGH_THRESHOLD) tier = "HIGH";
+    else if (netNorm <= SOM_ENERGY_LOW_THRESHOLD) tier = "LOW";
+
+    var orientRates = [
+      { code:"OUT", rate: rates.OUT },
+      { code:"PPL", rate: rates.PPL },
+      { code:"CHG", rate: rates.CHG }
+    ].sort(function(a,b){
+      if (b.rate !== a.rate) return b.rate - a.rate;
+      return (a.code < b.code) ? -1 : 1;
+    });
+
+    var orient = orientRates[0].code;
+    var orientGap = orientRates[0].rate - orientRates[1].rate;
+
+    var primary = null;
+    if (tier === "HIGH"   && orient === "OUT") primary = "DRV";
+    if (tier === "HIGH"   && orient === "PPL") primary = "HRB";
+    if (tier === "HIGH"   && orient === "CHG") primary = "TBZ";
+    if (tier === "STEADY" && orient === "OUT") primary = "BLD";
+    if (tier === "STEADY" && orient === "PPL") primary = "EQZ";
+    if (tier === "STEADY" && orient === "CHG") primary = "ENH";
+    if (tier === "LOW"    && orient === "OUT") primary = "BST";
+    if (tier === "LOW"    && orient === "PPL") primary = "HVN";
+    if (tier === "LOW"    && orient === "CHG") primary = "REF";
+
+    return {
+      tier: tier,
+      orient: orient,
+      net: (dimScores.EP || 0) - (dimScores.EM || 0),
+      netNorm: netNorm,
+      rates: rates,
+      orientGap: orientGap,
+      orientRates: orientRates,
+      primary: primary
+    };
+  };
+
+  computeModeScores = function(dimScores){
+    var grid = computeGridPrimary(dimScores);
+    var rates = grid.rates || somNormalizeDimScores(dimScores);
+    var netNorm = grid.netNorm || 0;
+
+    var modeScores = {};
+    for (var i=0;i<SOM_MODES.length;i++){
+      var code = SOM_MODES[i].code;
+      var orientRate = rates[somOrientForMode(code)] || 0;
+      var tierCenter = somTierCenterForMode(code);
+      var energyDistance = Math.abs(netNorm - tierCenter);
+      var energyScore = 1 - Math.min(1, energyDistance / 0.50);
+      modeScores[code] = (orientRate * 100) + (energyScore * 40);
+    }
+    return modeScores;
+  };
+
+  calculateProvisional = function(){
+    var answersABC = getAnsweredLetters();
+    var dimScores = computeDimScoresFromAnswers(answersABC);
+    var grid = computeGridPrimary(dimScores);
+    var modeScores = computeModeScores(dimScores);
+    var ranked = rankModes(modeScores);
+
+    var primaryCode = grid && grid.primary ? grid.primary : (ranked[0] ? ranked[0].code : null);
+    var top1 = null, top2 = null;
+    for (var i=0;i<ranked.length;i++){
+      if (!top1 && ranked[i].code === primaryCode) { top1 = ranked[i]; continue; }
+    }
+    if (!top1 && primaryCode){
+      top1 = { code: primaryCode, name: (SOM_MODE_NAMES[primaryCode] || primaryCode), score: modeScores[primaryCode] || 0 };
+    }
+    for (var j=0;j<ranked.length;j++){
+      if (ranked[j].code !== primaryCode){
+        top2 = ranked[j];
+        break;
+      }
+    }
+
+    var gapPoints = (top1 && top2) ? (top1.score - top2.score) : 999;
+
+    return {
+      answersABC: answersABC,
+      dimScores: dimScores,
+      modeScores: modeScores,
+      ranked: ranked,
+      top1: top1,
+      top2: top2,
+      gapPoints: gapPoints,
+      grid: grid
+    };
+  };
+
+  function somShouldTie(provisional){
+    if (!provisional || !provisional.top1 || !provisional.top2 || !provisional.grid) return false;
+
+    var g = provisional.grid;
+    var netNorm = (typeof g.netNorm === "number") ? g.netNorm : 0;
+    var energyNear =
+      Math.abs(Math.abs(netNorm) - SOM_ENERGY_HIGH_THRESHOLD) <= SOM_ENERGY_TIE_EPS ||
+      Math.abs(netNorm) <= SOM_ENERGY_TIE_EPS;
+
+    var orientNear = (typeof g.orientGap === "number") ? (g.orientGap <= SOM_ORIENT_TIE_EPS) : false;
+    var scoreNear = provisional.gapPoints <= SOM_MODE_GAP_TIE_EPS;
+
+    return scoreNear && (energyNear || orientNear);
+  }
+
+  calculateResults = function(){
+    var lock = getSomLockData();
+    if (lock.locked){
+      showToast("This SOM submission is locked on this device. Clear saved answers to retake it.");
+      restoreLockedSessionIfPresent();
+      return;
+    }
+
+    var agree = document.getElementById("agreeChk");
+    if (!agree || !agree.checked){
+      showToast("Please check the User Agreement box before calculating your mode.");
+      var box = document.getElementById("agreementBox");
+      box && box.scrollIntoView && box.scrollIntoView({behavior:"smooth", block:"center"});
+      return;
+    }
+
+    if (!requireAllAnsweredOrWarn()) return;
+
+    var provisional = calculateProvisional();
+    var basePrimary = provisional.grid && provisional.grid.primary ? provisional.grid.primary : (provisional.top1 ? provisional.top1.code : null);
+
+    if (somShouldTie(provisional)){
+      try{
+        var _stored = jp(localStorage.getItem(RESULT_KEY) || "null");
+        if (_stored && _stored.primaryType && _stored.tieBreaker &&
+            _stored.tieBreaker.considered &&
+            _stored.tieBreaker.topA === provisional.top1.code &&
+            _stored.tieBreaker.topB === provisional.top2.code){
+          finalizeAndRender(_stored.primaryType, provisional, _stored.tieBreaker);
+          return;
+        }
+      } catch(e){}
+
+      __pending = {
+        provisional: provisional,
+        basePrimary: basePrimary,
+        topA: provisional.top1.code,
+        topB: provisional.top2.code,
+        tieItems: null
+      };
+
+      var intro = document.getElementById("tieIntro");
+      if (intro){
+        intro.textContent =
+          "Your results are close between " + provisional.top1.code + " and " + provisional.top2.code +
+          ". Pick the best-fit statement in each item.";
+      }
+
+      var tieItems = buildTieItems(provisional.top1.code, provisional.top2.code);
+      __pending.tieItems = tieItems;
+      renderTieForm(tieItems);
+      openTieModal();
+      return;
+    }
+
+    finalizeAndRender(basePrimary, provisional, { used:false, skipped:false, considered:false });
+  };
+
+  window.SOM_BIAS_AUDIT = function(rounds){
+    rounds = (typeof rounds === "number" && rounds > 0) ? Math.floor(rounds) : 10000;
+    var counts = {};
+    SOM_MODES.forEach(function(m){ counts[m.code] = 0; });
+
+    for (var r=0;r<rounds;r++){
+      var answers = [];
+      for (var i=0;i<questions.length;i++){
+        var opts = ["A","B","C"];
+        answers.push(opts[Math.floor(Math.random()*3)]);
+      }
+      var dimScores = computeDimScoresFromAnswers(answers);
+      var grid = computeGridPrimary(dimScores);
+      if (grid && grid.primary && counts.hasOwnProperty(grid.primary)) counts[grid.primary] += 1;
+    }
+
+    var rows = SOM_MODES.map(function(m){
+      return {
+        mode: m.code,
+        name: m.name,
+        count: counts[m.code],
+        pct: ((counts[m.code] / rounds) * 100).toFixed(2) + "%"
+      };
+    });
+
+    console.table(rows);
+    return { rounds: rounds, counts: counts, rows: rows };
+  };
+
+  window.SOM_LIST_TOOLS = function(){
+    var tools = ["SOM_SCORE_INTEGRITY_CHECK()", "SOM_BIAS_AUDIT(rounds)", "SOM_LIST_TOOLS()"];
+    console.log("[SOM TOOLS]", tools);
+    return tools;
+  };
+
+  var _origIntegrity = window.SOM_SCORE_INTEGRITY_CHECK;
+  window.SOM_SCORE_INTEGRITY_CHECK = function(){
+    var base = (typeof _origIntegrity === "function") ? _origIntegrity() : { ok:true, issues:[] };
+    try{
+      var dimMax = (typeof DIM_MAX === "object" && DIM_MAX) ? DIM_MAX : {};
+      base.normalization = {
+        using_normalized_grid: true,
+        thresholds: {
+          high: SOM_ENERGY_HIGH_THRESHOLD,
+          low: SOM_ENERGY_LOW_THRESHOLD
+        },
+        dimMax: dimMax
+      };
+      console.log("[SOM_SCORE_INTEGRITY_CHECK] normalized grid active", base.normalization);
+    } catch(e){}
+    return base;
+  };
+
+  try{
+    migrateLegacySomStorage();
+    syncResumeControls();
+    if (!restoreLockedSessionIfPresent()){
+      var stored = readSomResult();
+      if (stored && stored.primaryType && stored.answers && hasSomArray(stored.answers.values)){
+        try{
+          localStorage.setItem(SOM_LOCK_KEY, JSON.stringify({
+            locked: true,
+            som_v: SOM_VERSION,
+            som_math: SOM_MATH_VERSION,
+            qbank: SOM_QBANK_ID,
+            primaryType: stored.primaryType || null,
+            lockedAt: stored.createdAt || new Date().toISOString()
+          }));
+        } catch(e){}
+        restoreLockedSessionIfPresent();
+      }
+    }
+  } catch(e){}
+})();
+
+
+</script>
+<script>
+/* v3.2.1 small behavior polish */
+(function(){
+  try{
+    var closeTie = document.getElementById("closeTie");
+    var tieModal = document.getElementById("tieModal");
+    if (closeTie) closeTie.onclick = function(e){ if(e){ e.preventDefault(); } if (typeof handleTieSkip === "function") handleTieSkip(); else if (typeof closeTieModal === "function") closeTieModal(); };
+    if (tieModal){
+      tieModal.addEventListener("click", function(e){
+        if (e.target === tieModal){
+          if (typeof handleTieSkip === "function") handleTieSkip();
+          else if (typeof closeTieModal === "function") closeTieModal();
+        }
+      }, true);
+    }
+  } catch(e){}
+})();
+
+</script>
 </body>
 </html>

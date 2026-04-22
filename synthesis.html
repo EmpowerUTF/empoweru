@@ -750,8 +750,25 @@ function validateComResult(obj){
 function validateSomResult(obj){
   if(!obj || typeof obj !== "object") return false;
   if(!obj.primaryType || !SOM_MODE_NAMES[obj.primaryType]) return false;
-  if(!obj.dimScores || typeof obj.dimScores !== "object") return false;
-  return ["EP","EM","OUT","PPL","CHG"].every(function(k){ return numOk(obj.dimScores[k]); });
+  if(obj.dimScores && typeof obj.dimScores === "object"){
+    var okDims = ["EP","EM","OUT","PPL","CHG"].every(function(k){ return numOk(obj.dimScores[k]); });
+    if(okDims) return true;
+  }
+  return true;
+}
+function hydrateSomResult(obj){
+  if(!obj || typeof obj !== "object") return null;
+  if(!obj.primaryType || !SOM_MODE_NAMES[obj.primaryType]) return null;
+  if(!obj.dimScores || typeof obj.dimScores !== "object") obj.dimScores = { EP:0, EM:0, OUT:0, PPL:0, CHG:0 };
+  ["EP","EM","OUT","PPL","CHG"].forEach(function(k){ if(!numOk(obj.dimScores[k])) obj.dimScores[k] = 0; });
+  if(!obj.meta || typeof obj.meta !== "object") obj.meta = {};
+  if(!obj.meta.grid || typeof obj.meta.grid !== "object"){
+    var code = obj.primaryType;
+    var tier = (/^(DRV|HRB|TBZ)$/.test(code)) ? "HIGH" : (/^(BST|HVN|REF)$/.test(code) ? "LOW" : "STEADY");
+    var orient = (/^(DRV|BLD|BST)$/.test(code)) ? "OUT" : (/^(HRB|EQZ|HVN)$/.test(code) ? "PPL" : "CHG");
+    obj.meta.grid = { tier:tier, orient:orient, net:0 };
+  }
+  return obj;
 }
 function readJSONKey(key, validator){
   try{
@@ -793,7 +810,7 @@ function getComState(){
   return { result: result, hasAutosave: hasAutosave, hasLock: hasLock, canResume: !!(hasAutosave || hasLock), ok: !!result };
 }
 function getSomState(){
-  var result = readJSONKey(SOM_KEY, validateSomResult);
+  var result = hydrateSomResult(readJSONKey(SOM_KEY, validateSomResult));
   var hasAutosave = hasSomAutosaveArtifact();
   var hasLock = hasSomLockArtifact();
   return { result: result, hasAutosave: hasAutosave, hasLock: hasLock, canResume: !!(hasAutosave || hasLock || result), ok: !!result };
@@ -1875,9 +1892,10 @@ function resetTransientUI(){
 
 function syncFromStorage(){
   var comRaw = readJSONKey(COM_KEY, validateComResult);
-  var somRaw = readJSONKey(SOM_KEY, validateSomResult);
+  var somRaw = hydrateSomResult(readJSONKey(SOM_KEY, validateSomResult));
   var hasCOM = !!(comRaw && comRaw.primaryType);
   var hasSOM = !!(somRaw && somRaw.primaryType);
+  // fallback: if a SOM lock/autosave exists but result object is stale or partial, prefer Resume SOM over a false clean slate
 
   hideAllStates();
   resetTransientUI();
@@ -1885,7 +1903,8 @@ function syncFromStorage(){
   if(hasCOM) _comType = comRaw.primaryType || "";
   if(hasSOM) _somMode = somRaw.primaryType || "";
 
-  setStatePrimaryCTA("stateCOMOnly", "som.html", "Take SOM now");
+  var somState = getSomState();
+  setStatePrimaryCTA("stateCOMOnly", "som.html", somState.canResume ? "Resume SOM" : "Take SOM now");
   setStatePrimaryCTA("stateSOMOnly", "com.html", "Take COM now");
   setStatePrimaryCTA("stateNeither", "com.html", "Take COM first");
 
