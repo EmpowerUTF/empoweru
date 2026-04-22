@@ -1929,6 +1929,38 @@
       }
     }
 
+
+    function readComResultForNav(){
+      try{ return JSON.parse(localStorage.getItem("empoweru_utf2_last_com_result") || "null"); } catch(e){ return null; }
+    }
+
+    function readComAutosaveForNav(){
+      try{
+        var keys = ["empoweru_utf2_com_v1_3_0", "empoweru_utf2_com_v1_3_0__bak"];
+        for (var i=0;i<keys.length;i++){
+          var raw = localStorage.getItem(keys[i]);
+          if (!raw) continue;
+          var data = JSON.parse(raw);
+          if (data && Array.isArray(data.answers)) return data;
+        }
+      } catch(e){}
+      return null;
+    }
+
+    function getComNavState(){
+      var result = readComResultForNav();
+      var lock = null;
+      try{ lock = JSON.parse(localStorage.getItem("empoweru_utf2_com_lock_v1_3_0") || "null"); } catch(e){}
+      var autosave = readComAutosaveForNav();
+
+      var complete = !!((result && result.primaryType) || (lock && lock.locked));
+      var resumable = false;
+      if (!complete && autosave && Array.isArray(autosave.answers)){
+        resumable = autosave.answers.some(function(v){ return v !== null && v !== undefined; });
+      }
+      return { complete: complete, resumable: resumable };
+    }
+
     function setSynthesisLink(primaryCode, meta){
       var bottom = document.getElementById("synthLinkBottom");
       if (!bottom) return;
@@ -1940,23 +1972,39 @@
 
       try{
         var current = new URL(window.location.href);
-        var u = new URL(EMPOWERU_COMSOM_URL, window.location.href);
+        var profileUrl = new URL(EMPOWERU_COMSOM_URL, window.location.href);
 
         current.searchParams.forEach(function(v,k){
-          u.searchParams.set(k, v);
+          profileUrl.searchParams.set(k, v);
         });
 
-        if (primaryCode) u.searchParams.set("som", primaryCode);
+        if (primaryCode) profileUrl.searchParams.set("som", primaryCode);
 
-        u.searchParams.set("som_source", "som.html");
-        u.searchParams.set("som_v", SOM_VERSION);
-        u.searchParams.set("som_math", SOM_MATH_VERSION);
-        u.searchParams.set("som_qbank", SOM_QBANK_ID);
-        u.searchParams.set("som_tb_used", meta && meta.tieBreaker ? (meta.tieBreaker.used ? "1" : "0") : "0");
+        profileUrl.searchParams.set("som_source", "som.html");
+        profileUrl.searchParams.set("som_v", SOM_VERSION);
+        profileUrl.searchParams.set("som_math", SOM_MATH_VERSION);
+        profileUrl.searchParams.set("som_qbank", SOM_QBANK_ID);
+        profileUrl.searchParams.set("som_tb_used", meta && meta.tieBreaker ? (meta.tieBreaker.used ? "1" : "0") : "0");
 
-        bottom.href = u.toString();
+        var comUrl = new URL("com.html", window.location.href);
+        current.searchParams.forEach(function(v,k){
+          comUrl.searchParams.set(k, v);
+        });
+
+        var comState = getComNavState();
+        if (comState.complete){
+          bottom.href = profileUrl.toString();
+          bottom.textContent = "Go to UTF Profile";
+        } else if (comState.resumable){
+          bottom.href = comUrl.toString();
+          bottom.textContent = "Resume COM Assessment";
+        } else {
+          bottom.href = comUrl.toString();
+          bottom.textContent = "Go to COM Assessment";
+        }
       } catch(e){
         bottom.href = EMPOWERU_COMSOM_URL;
+        bottom.textContent = "Go to UTF Profile";
       }
     }
 

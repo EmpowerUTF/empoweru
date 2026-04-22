@@ -3387,6 +3387,65 @@ const TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
       Operator:    "linear-gradient(135deg,#7dd3fc 0%,#64748b 100%)"
     };
 
+
+    function getSomNavState(){
+      var result = null, lock = null, autosave = null;
+      try{ result = safeParseJSON(localStorage.getItem("empoweru_utf2_som_latest") || "null"); } catch(e){}
+      try{ lock = safeParseJSON(localStorage.getItem("empoweru_utf2_som_lock_v3_1_0") || "null"); } catch(e){}
+      try{ autosave = safeParseJSON(localStorage.getItem("empoweru_utf2_som_v3_1_0_autosave") || "null"); } catch(e){}
+
+      var complete = !!((result && result.primaryType) || (lock && lock.locked));
+      var resumable = false;
+      if (!complete && autosave && Array.isArray(autosave.answers)){
+        resumable = autosave.answers.some(function(v){ return v !== null && v !== undefined; });
+      }
+      return { complete: complete, resumable: resumable };
+    }
+
+    function buildComFollowupHref(finalType, avgDims, tieData){
+      var carry = getPassthroughParams();
+      var somHref = EMPOWERU_SOM_URL;
+      if (EMPOWERU_PASS_COM_TO_SOM_URL){
+        somHref = buildUrlWithParams(somHref, mergeParams(carry, {
+          com: finalType,
+          com_source: "utf2_com",
+          com_v: "3.5.2",
+          com_math: "com_math_9_final_hardening",
+          com_qbank: QUESTION_BANK_ID,
+          com_undertone_v: UNDERTONE_VERSION,
+          com_tb_used: (tieData && tieData.used) ? "1" : "0",
+          com_d9: (avgDims && typeof avgDims.D9 === "number") ? avgDims.D9.toFixed(3) : ""
+        }));
+      }
+      return {
+        somHref: somHref,
+        synthHref: buildUrlWithParams(EMPOWERU_SYNTHESIS_URL, carry)
+      };
+    }
+
+    function updateComBottomAction(finalType, avgDims, tieData){
+      var somLink = document.getElementById("somLink");
+      if (!somLink) return;
+
+      var hrefs = buildComFollowupHref(finalType, avgDims, tieData);
+      var somState = getSomNavState();
+
+      if (somState.complete){
+        somLink.href = hrefs.synthHref;
+        somLink.textContent = "Go to UTF Profile";
+      } else if (somState.resumable){
+        somLink.href = hrefs.somHref;
+        somLink.textContent = "Resume SOM Assessment";
+      } else {
+        somLink.href = hrefs.somHref;
+        somLink.textContent = "Go to SOM Assessment";
+      }
+
+      var bottom = document.getElementById("bottomActions");
+      if (bottom) bottom.classList.add("show");
+    }
+
+
     function finalizeAndRender(pending, finalType, tieData){
       if (!pending) return;
 
@@ -3448,28 +3507,10 @@ const TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
       setComLock({ primaryType: finalType });
       setAssessmentLocked(true);
 
-      var somHref = EMPOWERU_SOM_URL;
-      if (EMPOWERU_PASS_COM_TO_SOM_URL){
-        var carry2 = getPassthroughParams();
-        somHref = buildUrlWithParams(somHref, mergeParams(carry2, {
-          com: finalType,
-          com_source: "utf2_com",
-          com_v: "3.5.2",
-          com_math: "com_math_9_final_hardening",
-          com_qbank: QUESTION_BANK_ID,
-          com_undertone_v: UNDERTONE_VERSION,
-          com_tb_used: (tieData && tieData.used) ? "1" : "0",
-          com_d9: (avgDims && typeof avgDims.D9 === "number") ? avgDims.D9.toFixed(3) : ""
-        }));
-      }
-      var somLink = document.getElementById("somLink");
-      if (somLink) somLink.href = somHref;
+      updateComBottomAction(finalType, avgDims, tieData);
 
       var results = document.getElementById("results");
       if (results) results.classList.add("show");
-
-      var bottom = document.getElementById("bottomActions");
-      bottom && bottom.classList.add("show");
 
       results.scrollIntoView({behavior:"smooth", block:"start"});
     }
