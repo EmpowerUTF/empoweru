@@ -645,6 +645,175 @@ var COM_CODES = {
 };
 var TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
 
+var COM_TYPE_COPY = {
+      Nexus: {
+        desc: "You map relationships across systems faster than most people can see the parts.",
+        how: "Your mind tends to build the whole structure first. You often register patterns, dependencies, and downstream effects before other people have even agreed on what the problem is. That gives you unusual structural clarity, but it also creates a translation gap. What feels obvious to you can feel like a leap to everyone else.\n\nThe distortion is not that you think too broadly. It is that you can move from insight to conclusion faster than other people can follow, then lose patience with the explanation step. That can make you look detached, overly self-directed, or hard to track when the real issue is pace mismatch.\n\nAt your best, you do more than see the system. You make it legible. Once you translate what you see instead of assuming other people can already see it, your thinking changes the level of the conversation entirely."
+      },
+      Harmonizer: {
+        desc: "You register strain, tone, and relational misalignment early and feel a natural pull to respond to it.",
+        how: "Your attention goes naturally to what is happening between people. You tend to notice pressure, distance, awkwardness, and emotional imbalance quickly, and you often start adjusting in response before you have consciously decided to. This is less about broad social performance and more about carrying the emotional load of the room from the inside.\n\nThe distortion is over-carrying. Because you read the emotional field so fast, you can start managing what belongs to everyone else as if it belongs to you. That can delay honesty, blur boundaries, and make your own internal state harder to hear.\n\nAt your best, you are not just keeping the peace. You are making real honesty possible. You help people say what is actually true without turning the room into a battlefield."
+      },
+      Architect: {
+        desc: "You turn complexity into order, sequence, and structures that can actually hold.",
+        how: "You naturally think in systems of execution. You tend to see what has to come first, what depends on what, where things will bottleneck, and what kind of structure will make the whole process cleaner. That makes you reliable in situations where other people have ideas but no build path.\n\nThe distortion is over-loyalty to the framework. When your plan gets too rigid, you can start protecting the structure even after the goal has shifted. Good input may get filtered out simply because it arrived from outside the system you already built.\n\nAt your best, you do not build structure for its own sake. You build the kind that frees good work to happen repeatedly. That is why people trust you when something real needs to be built."
+      },
+      Visionary: {
+        desc: "You orient toward direction, possibility, and what something could become before it fully exists.",
+        how: "Your mind tends to move ahead of the present. You often feel the pull of what is emerging more strongly than the weight of what is already settled, and that gives you unusual strength in direction-setting, meaning-making, and future framing. You are often tracking where something leads while others are still describing what is there.\n\nThe distortion is drift without lock-in. Because possibility stays alive in your mind for a long time, commitment can feel like a narrowing that costs too much too early. That can leave strong vision under-executed.\n\nAt your best, you do not just imagine the future. You give people a direction they can feel. When your vision is grounded enough to be carried forward, it gives structure to meaning, not just motion."
+      },
+      Sage: {
+        desc: "You keep pressure-testing an idea until the reasoning actually holds on its own.",
+        how: "You are not satisfied by fast coherence. Your mind tends to pressure-test ideas, look for weak joints, and keep following the question until it becomes structurally trustworthy. This is usually a private form of rigor first. You are trying to make the reasoning stand up, not to make it socially smooth.\n\nThe distortion is delayed expression. Because you can still feel what has not been resolved yet, you may hold back conclusions that are already useful, or look hesitant when you are actually still refining for truth rather than comfort.\n\nAt your best, you bring intellectual integrity into the room. You do not just know more. You know where the argument actually stands, and that changes the quality of decisions around you."
+      },
+      Pathfinder: {
+        desc: "You gain clarity through movement, contact, and real-world adjustment rather than static certainty.",
+        how: "Your intelligence is active, not waiting. You tend to understand by testing, entering the terrain, and learning from what reality gives back. That makes you adaptable in live situations and unusually good at finding workable direction before everything is fully mapped.\n\nThe distortion is premature drift. Because beginnings carry energy for you, the next path can become attractive before the current one has finished compounding. That can leave value scattered across many starts.\n\nAt your best, you are not random. You are field-calibrated. You move into the unknown faster than most people can, then come back with understanding that could not have been reached from a distance."
+      },
+      Navigator: {
+        desc: "You read people from the inside and help them find clarity one person at a time without taking over.",
+        how: "You tend to notice what someone means beneath what they say, where they are stuck, and what kind of response will actually meet them where they are. That makes your insight relationally precise. Unlike broader harmony-management, your strength is often in direct orientation: helping one person see what is true and what comes next.\n\nThe distortion is over-identification. When you are this attuned to someone else's movement, it can become easy to carry their confusion as if it were yours, or to feel subtly responsible for getting them unstuck.\n\nAt your best, you do not control people. You orient them. You help them see their own next step more clearly, which is why your impact tends to stay with people long after the conversation ends."
+      },
+      Composer: {
+        desc: "You are calibrated to coherence, finish, and the difference between acceptable and fully right.",
+        how: "Your eye goes naturally to what still does not align. That may be detail, tone, craft, wording, proportion, or quality of finish, but the deeper pattern is the same: you can feel when something is close without yet being resolved. That makes your work carry integrity that rushed work usually lacks.\n\nThe distortion is over-holding. Because you can still see the gap between good and right, release can become difficult, and work can stay in your hands longer than usefulness requires.\n\nAt your best, you create outputs that feel internally complete. People may not always be able to name what is different, but they can feel the difference between something merely finished and something genuinely composed."
+      },
+      Luminary: {
+        desc: "Your visible energy organizes attention and gets people moving.",
+        how: "You do not just express. You activate. When you are engaged and aligned, other people often become more focused, more energized, or more willing to move because your presence changes the atmosphere of the room. That gives you influence that is relational and kinetic at the same time. It is less about inclusion or logistics and more about visible lift.\n\nThe distortion is hidden depletion. Because you can generate momentum so visibly, both you and others may overestimate how sustainable that output is, especially when people keep taking energy from what you naturally produce.\n\nAt your best, you create more than attention. You create lift. You make movement easier for the people around you, which is why the right environment can magnify your effect so strongly."
+      },
+      Pioneer: {
+        desc: "You are built for first movement, new ground, and acting before certainty arrives.",
+        how: "You tend to feel more alive where the map runs out. What attracts you is not chaos for its own sake, but the chance to enter territory that has not yet been proved, named, or stabilized. That gives you courage under uncertainty and a natural relationship with beginnings.\n\nThe distortion is weakened maintenance. Once the frontier feeling disappears and the path becomes routine, your attention may start moving toward the next threshold before the current one has fully matured.\n\nAt your best, you create beginnings that would not exist without you. You open territory other people later refine, scale, or protect, but the first movement still had to come from someone willing to go there."
+      },
+      Catalyst: {
+        desc: "You sense when a situation has reached the point where movement matters more than more discussion.",
+        how: "You tend to know when the room has enough and when continued deliberation is turning into inertia. That gives you decisive force. You can cut through drift, commit faster than most people, and generate momentum in places where everyone else is still circling.\n\nThe distortion is outrunning the update. Because you move quickly, you can miss small but meaningful changes that emerge after your direction is already set, or treat pivoting like weakness when it is actually accuracy.\n\nAt your best, you are not just fast. You are catalytic in the real sense: you change the state of the situation. You turn stalled energy into actual movement."
+      },
+      Coordinator: {
+        desc: "You align people, timing, and responsibilities so execution keeps moving in real conditions.",
+        how: "Your attention tends to go toward flow management. You notice who needs what, where a process may break, what needs sequencing, and how multiple people can stay coordinated without everything becoming chaotic. This is not just empathy and not just structure. It is social execution: keeping the human system and the work system moving together.\n\nThe distortion is quiet overextension. Because you are good at holding the threads, it becomes easy to become the default holder of too many threads at once, with your own bandwidth getting treated as infinite.\n\nAt your best, you make complexity workable. People often experience that as things mysteriously coming together, when in reality you were the one holding the operational center."
+      },
+      Executive: {
+        desc: "You are comfortable carrying decision weight and moving responsibility forward under pressure.",
+        how: "You tend to orient quickly around what has to happen, who must act, and what the real priority is. That gives you firmness and command in situations where hesitation costs too much. You are often willing to make calls that other people would rather leave hanging.\n\nThe distortion is relational compression. When outcome pressure is high, people can start registering as variables inside the decision rather than as people who still need to feel the human shape of what is happening.\n\nAt your best, your strength does not flatten the room. It steadies it. You combine direction with actual responsibility, which is why people look to you when the stakes stop being theoretical."
+      },
+      Sentinel: {
+        desc: "You protect stability by noticing risk, weak points, and what people are depending on to hold.",
+        how: "Your mind tends to move toward reliability. You often notice where standards are slipping, what could fail later, and where something is being built on a foundation that cannot safely carry the load. That makes you deeply valuable wherever continuity matters more than novelty.\n\nThe distortion is defensive over-holding. Because change often first appears to you as risk, necessary adaptation can initially feel like a threat to stability rather than a way of preserving what matters.\n\nAt your best, you preserve what deserves to last. You do not just resist breakage. You maintain the conditions that allow trust, continuity, and real reliability to exist in the first place."
+      },
+      Anchor: {
+        desc: "You bring steadiness, perspective, and calm structure into unstable situations.",
+        how: "You tend not to get swept up by the emotional size of the moment. That gives you groundedness when other people speed up, overreact, or lose perspective. You are often the person whose pace stabilizes the room rather than escalating it.\n\nThe distortion is under-response. Because you are less reactive than many people, urgency from others can sometimes register as noise when part of it is actually valid signal that deserves movement.\n\nAt your best, your steadiness becomes usable security for other people. You help the room slow down enough to think clearly without collapsing into passivity."
+      },
+      Mechanist: {
+        desc: "You are drawn to mechanism, root cause, and how systems actually function under the surface.",
+        how: "Your mind wants the real operating logic, not the appearance of understanding. You tend to look beneath symptoms toward causes, structure, and the exact reason something works or fails. That gives you technical clarity and precision that many people never cultivate deeply.\n\nThe distortion is human underweighting. Because people systems are noisier than mechanical ones, they can feel less satisfying to work with, which may narrow your engagement toward cleaner problems and away from messier but still important realities.\n\nAt your best, you do not patch. You solve. You find the level where correction actually matters, which is why your work often lasts longer than quicker fixes."
+      },
+      Artisan: {
+        desc: "You come alive through shaping, crafting, and bringing something into form with full attention.",
+        how: "You tend to have a close relationship with process itself. The making is not just a route to the result. It is part of the meaning. That gives your work tactility, feel, and craft integrity that cannot be faked by speed alone.\n\nThe distortion is pressure collapse under over-formatting. When the process becomes too packaged, rushed, or externally controlled, the part of you that makes the work alive can start withdrawing.\n\nAt your best, you produce things that carry the mark of real contact. People can feel when something was merely produced and when it was actually crafted, even if they do not have the language for why."
+      },
+      Synthesist: {
+        desc: "You integrate multiple truths into one coherent whole without flattening the important differences.",
+        how: "You tend to see how competing perspectives belong to a larger structure before most people do. That gives you unusual power in complexity, because you can hold nuance without immediately collapsing it into false simplicity. Your strength is primarily integrative thinking: showing how different truths fit together, not simply smoothing people over.\n\nThe distortion is costly compression. Because you can still see everything that would be lost by oversimplifying, naming the main point can feel like a kind of betrayal, which can delay useful clarity.\n\nAt your best, you give people integration without distortion. You are not just balancing views. You are showing how they fit into a more complete truth."
+      },
+      Innovator: {
+        desc: "You improve existing systems in practical ways that survive contact with reality.",
+        how: "Your mind tends toward usable upgrades. You often notice where a system is inefficient, awkward, outdated, or under-optimized, and you naturally think in terms of improvements that can actually be implemented rather than merely admired. Your strength is usually less about managing people and more about tightening the system itself.\n\nThe distortion is local optimization inside a flawed frame. Because you are good at improving what exists, you may sometimes keep refining a structure that really needed a more fundamental rethink.\n\nAt your best, you create progress that sticks. While other people chase reinvention, you make meaningful improvements that survive contact with reality and keep compounding over time."
+      },
+      Bridge: {
+        desc: "You create social openness quickly and help different people feel included with very little friction.",
+        how: "Your attention tends to move toward warmth, welcome, and the conditions that help different people feel comfortable with each other. That gives you connective force. You often make spaces feel more human simply by how you show up inside them, and you do it in a visible, outward way rather than by privately carrying everyone's emotional weight.\n\nThe distortion is self-erasure through generosity. Because creating belonging comes naturally, your own center can get under-protected while you keep stabilizing the atmosphere for everyone else.\n\nAt your best, you do more than connect people superficially. You create the conditions where real belonging becomes possible, and that changes group dynamics more than most people realize."
+      },
+      Operator: {
+        desc: "You prefer concrete scope, proven methods, and consistent output over reinvention or noise.",
+        how: "You tend to prefer clear scope, tangible work, and methods that actually deliver. That gives you grounded execution strength. You do not need novelty, abstraction, or heavy performance around the work to stay engaged. You need the work to be real, measurable, and worth doing properly.\n\nThe distortion is method inertia. Because you trust proven process, approaches that once served well can keep being protected after the environment has shifted enough to require adaptation.\n\nAt your best, you become the person others can depend on without having to wonder. You turn consistency into trust, and that is one of the most underrated strengths in any real system."
+      }
+    };
+
+
+function safeJSONParse(raw){ try{ return JSON.parse(raw); } catch(e){ return null; } }
+function lsKeys(){ try{ return Object.keys(localStorage || {}); } catch(e){ return []; } }
+function hasAnsweredArray(arr){ return Array.isArray(arr) && arr.some(function(v){ return v !== null && v !== undefined; }); }
+function keysByRegex(rx){ return lsKeys().filter(function(k){ return rx.test(k); }); }
+function removeKeysByRegex(rx){
+  keysByRegex(rx).forEach(function(k){ try{ localStorage.removeItem(k); }catch(e){} });
+}
+function numOk(v){ return typeof v === "number" && isFinite(v); }
+function validateComResult(obj){
+  if(!obj || typeof obj !== "object") return false;
+  if(!obj.primaryType || !COM_CODES[obj.primaryType]) return false;
+  if(!obj.avgDims || typeof obj.avgDims !== "object") return false;
+  return ["D1","D2","D3","D4","D5","D6","D7","D8","D9","E"].every(function(k){ return numOk(obj.avgDims[k]); });
+}
+function validateSomResult(obj){
+  if(!obj || typeof obj !== "object") return false;
+  if(!obj.primaryType || !SOM_MODE_NAMES[obj.primaryType]) return false;
+  if(!obj.dimScores || typeof obj.dimScores !== "object") return false;
+  return ["EP","EM","OUT","PPL","CHG"].every(function(k){ return numOk(obj.dimScores[k]); });
+}
+function readJSONKey(key, validator){
+  try{
+    var raw = localStorage.getItem(key);
+    if(!raw) return null;
+    var obj = safeJSONParse(raw);
+    if(!validator || validator(obj)) return obj;
+  }catch(e){}
+  return null;
+}
+function hasComAutosaveArtifact(){
+  return keysByRegex(/^empoweru_utf2_com_v\d+(?:_\d+)+(?:__bak)?$/).some(function(k){
+    var obj = readJSONKey(k, null);
+    return !!(obj && hasAnsweredArray(obj.answers));
+  });
+}
+function hasComLockArtifact(){
+  return keysByRegex(/^empoweru_utf2_com_lock_v\d+(?:_\d+)+$/).some(function(k){
+    var obj = readJSONKey(k, null);
+    return !!(obj && (obj.locked || obj.primaryType || obj.lockedAt));
+  });
+}
+function hasSomAutosaveArtifact(){
+  return keysByRegex(/^empoweru_utf2_som_v\d+(?:_\d+)+(?:__bak)?$/).some(function(k){
+    var obj = readJSONKey(k, null);
+    return !!(obj && (hasAnsweredArray(obj.answers) || hasAnsweredArray(obj.responses) || hasAnsweredArray(obj.items)));
+  });
+}
+function getComState(){
+  var result = readJSONKey(COM_KEY, validateComResult);
+  var artifacts = hasComAutosaveArtifact() || hasComLockArtifact();
+  return { result: result, artifacts: artifacts, ok: !!(result && artifacts) };
+}
+function getSomState(){
+  var result = readJSONKey(SOM_KEY, validateSomResult);
+  var artifacts = hasSomAutosaveArtifact();
+  return { result: result, artifacts: artifacts, ok: !!(result && artifacts) };
+}
+function clearComStorageDeep(){
+  try{ localStorage.removeItem(COM_KEY); }catch(e){}
+  removeKeysByRegex(/^empoweru_utf2_com_v\d+(?:_\d+)+(?:__bak)?$/);
+  removeKeysByRegex(/^empoweru_utf2_com_lock_v\d+(?:_\d+)+$/);
+}
+function clearSomStorageDeep(){
+  try{ localStorage.removeItem(SOM_KEY); }catch(e){}
+  removeKeysByRegex(/^empoweru_utf2_som_v\d+(?:_\d+)+(?:__bak)?$/);
+}
+function getComTypeCopy(type){ return (COM_TYPE_COPY && COM_TYPE_COPY[type]) ? COM_TYPE_COPY[type] : null; }
+function getComCardHeadline(type){
+  var copy = getComTypeCopy(type);
+  if(copy && copy.desc) return copy.desc;
+  var fallback = COM_TYPE_DESCS[type] || {};
+  return fallback.h || "";
+}
+function getComCardBody(type){
+  var copy = getComTypeCopy(type);
+  if(copy && copy.how) return copy.how.split("\n\n")[0] || copy.how;
+  var fallback = COM_TYPE_DESCS[type] || {};
+  return fallback.b || "";
+}
+
+
 var COM_HOW_TEXTS = {
   Nexus:"Your mind doesn't process things one at a time. It maps them. Relationships between ideas, people, systems, and problems reveal themselves to you in layers that take time to walk others through. You've probably always been this way, seeing the architecture underneath situations while others are responding to what's visible. This means you often feel out of step. Not because you're wrong, but because what's obvious to you isn't visible to others yet. That gap can create a sense of distance in shared understanding, especially when translation isn't happening. It can surface as impatience, withdrawal, or just doing it yourself because explaining takes longer than finishing. The people closest to you sometimes need you to translate, not because you don't care, but because what's obvious to you genuinely isn't visible to everyone else yet. When you slow down enough to bring someone into your world, when you translate instead of just executing, the things you build don't just work. They change how people understand the problem entirely. That's the difference between insight that stays internal and insight that actually changes things.",
   Harmonizer:"You pick up on emotional undercurrents the way some people hear music, not by trying, just by being present. You know when something's off before the conversation even starts. You sense when someone's holding back, when two people are subtly out of sync, when the energy in a room has shifted. This isn't a skill you learned. It's just how you experience the world. The weight of that is real. You absorb things that aren't yours to carry, and because you're so attuned to everyone else's state, checking in on your own can feel like an afterthought. You might put off the honest conversation because you know exactly how much it'll cost everyone emotionally. That knowing makes it harder, not easier, to start it. But the spaces you create, where people feel genuinely safe to be honest without being judged, those are rare. That kind of space is genuinely rare. You give people the thing they didn't know they were missing: the feeling that someone actually understands what's going on inside them. That changes relationships, families, and teams in ways that nothing else can.",
@@ -1019,7 +1188,8 @@ function buildAtlasPayload(comResult, somResult, interactionText, commStyle){
 
   var comDescObj = COM_TYPE_DESCS[comType] || {};
   var somDescObj = SOM_MODE_DESCS[somType] || {};
-  var comHow = (typeof COM_HOW_TEXTS !== "undefined" && COM_HOW_TEXTS[comType]) ? COM_HOW_TEXTS[comType] : "";
+  var comCopy = getComTypeCopy(comType) || null;
+  var comHow = (comCopy && comCopy.how) ? comCopy.how : ((typeof COM_HOW_TEXTS !== "undefined" && COM_HOW_TEXTS[comType]) ? COM_HOW_TEXTS[comType] : "");
   var somFull = (typeof SOM_FULL_DESCS !== "undefined" && SOM_FULL_DESCS[somType]) ? SOM_FULL_DESCS[somType] : "";
 
   function addAmb(arr, code, priority, reason, question){
@@ -1178,7 +1348,7 @@ function buildAtlasPayload(comResult, somResult, interactionText, commStyle){
   p.push("wording_precision = the direction may be right while the intensity or breadth is overstated.");
   p.push("");
 
-  p.push("[COM] " + comType + " | " + (comDescObj.h || ""));
+  p.push("[COM] " + comType + " | " + ((comCopy && comCopy.desc) || comDescObj.h || ""));
   if(comHow) p.push("DEPTH: " + comHow);
   if(uList.length) p.push("UNDERTONE: " + uList.join(", "));
   p.push("D1_pattern="   + tl(avgDims.D1)+"("+tv(avgDims.D1)+")  // extracts patterns and structure from complexity");
@@ -1319,8 +1489,8 @@ function render(comResult, somResult){
   comNameEl.style.webkitBackgroundClip = "text";
   comNameEl.style.backgroundClip = "text";
   comNameEl.style.webkitTextFillColor = "transparent";
-  document.getElementById("comTypeHeadline").textContent = comData.h || "";
-  document.getElementById("comTypeBody").textContent = comData.b || "";
+  document.getElementById("comTypeHeadline").textContent = getComCardHeadline(comType);
+  document.getElementById("comTypeBody").textContent = getComCardBody(comType);
   // (group, undertones visible in dimension snapshot accordion)
 
   // SOM card: "Name - CODE"
@@ -1687,26 +1857,30 @@ function resetTransientUI(){
 }
 
 function syncFromStorage(){
-  var comRaw = null, somRaw = null;
-  try{ comRaw = JSON.parse(localStorage.getItem(COM_KEY) || "null"); } catch(e){}
-  try{ somRaw = JSON.parse(localStorage.getItem(SOM_KEY) || "null"); } catch(e){}
-  var hasCOM = !!(comRaw && comRaw.primaryType);
-  var hasSOM = !!(somRaw && somRaw.primaryType);
+  var comState = getComState();
+  var somState = getSomState();
+
+  if(!comState.ok && comState.result && !comState.artifacts){
+    try{ localStorage.removeItem(COM_KEY); }catch(e){}
+  }
+  if(!somState.ok && somState.result && !somState.artifacts){
+    try{ localStorage.removeItem(SOM_KEY); }catch(e){}
+  }
 
   hideAllStates();
   resetTransientUI();
 
-  if(hasCOM) _comType = comRaw.primaryType || "";
-  if(hasSOM) _somMode = somRaw.primaryType || "";
+  if(comState.ok) _comType = comState.result.primaryType || "";
+  if(somState.ok) _somMode = somState.result.primaryType || "";
 
-  if(hasCOM && hasSOM){
-    render(comRaw, somRaw);
+  if(comState.ok && somState.ok){
+    render(comState.result, somState.result);
     var rb = document.getElementById("resultBlock");
     if(rb){ rb.classList.add("show"); rb.style.display = "block"; }
-  } else if(hasCOM && !hasSOM){
+  } else if(comState.ok && !somState.ok){
     var a = document.getElementById("stateCOMOnly");
     if(a) a.classList.add("show");
-  } else if(!hasCOM && hasSOM){
+  } else if(!comState.ok && somState.ok){
     var b = document.getElementById("stateSOMOnly");
     if(b) b.classList.add("show");
   } else {
@@ -1759,10 +1933,8 @@ function closeClearConfirm(){
 }
 
 function clearAllAnswers(){
-  try{
-    localStorage.removeItem(COM_KEY);
-    localStorage.removeItem(SOM_KEY);
-  }catch(e){}
+  clearComStorageDeep();
+  clearSomStorageDeep();
   closeClearConfirm();
   syncFromStorage();
   showToast("Saved COM and SOM answers cleared from this device.");
@@ -1770,13 +1942,13 @@ function clearAllAnswers(){
 
 function runPendingClearAction(){
   if(_pendingClearAction === "com"){
-    try{ localStorage.removeItem(COM_KEY); }catch(e){}
+    clearComStorageDeep();
     closeClearConfirm();
     window.location.href = "com.html";
     return;
   }
   if(_pendingClearAction === "som"){
-    try{ localStorage.removeItem(SOM_KEY); }catch(e){}
+    clearSomStorageDeep();
     closeClearConfirm();
     window.location.href = "som.html";
     return;
@@ -1786,6 +1958,7 @@ function runPendingClearAction(){
 
 window.addEventListener("pageshow", syncFromStorage);
 window.addEventListener("focus", syncFromStorage);
+window.addEventListener("storage", syncFromStorage);
 
 
 // ─────────────────────────────────────────────────────────────────
