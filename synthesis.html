@@ -482,6 +482,22 @@
         </div>
       </div>
 
+
+      <!-- RIGHT NOW -->
+      <div class="acc-section" style="margin-top:6px;margin-bottom:18px;">
+        <button class="acc-btn" type="button" onclick="toggleAcc('nowPanel',this)">
+          <span>How your COM and SOM are interacting right now</span>
+          <span class="acc-chevron">&#9660;</span>
+        </button>
+        <div class="acc-panel" id="nowPanel">
+          <div class="acc-inner">
+            <div class="interaction-text" id="interactionText"></div>
+            <div class="d9-modifier" id="d9Modifier" style="display:none;margin-top:12px;"></div>
+          </div>
+        </div>
+      </div>
+
+      
       <!-- PROMOTED TRAIT MAP -->
       <div class="acc-section" style="margin-top:4px;margin-bottom:18px;">
         <button class="acc-btn acc-btn-featured open" type="button" onclick="toggleAcc('dimsPanel',this)">
@@ -549,23 +565,7 @@
       </div>
       <div id="copiedNote" style="display:none;text-align:center;margin-top:10px;font-size:.88rem;color:rgba(52,211,153,.9);font-weight:800;">Copied. Paste into any AI chat to get started.</div>
       <div class="atlas-friendly-note">Paste this into any AI chat to skip the generic first twenty questions and start from a profile that already knows how you think and what season you are in.</div>
-      <textarea id="atlasBox" style="position:fixed;opacity:0;pointer-events:none;width:1px;height:1px;top:-100px;" aria-hidden="true" tabindex="-1"></textarea>
-
-      <!-- RIGHT NOW -->
-      <div class="acc-section" style="margin-top:18px;">
-        <button class="acc-btn" type="button" onclick="toggleAcc('nowPanel',this)">
-          <span>How your COM and SOM are interacting right now</span>
-          <span class="acc-chevron">&#9660;</span>
-        </button>
-        <div class="acc-panel" id="nowPanel">
-          <div class="acc-inner">
-            <div class="interaction-text" id="interactionText"></div>
-            <div class="d9-modifier" id="d9Modifier" style="display:none;margin-top:12px;"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- WHAT IS UTF: standalone bottom CTA -->
+      <textarea id="atlasBox" style="position:fixed;opacity:0;pointer-events:none;width:1px;height:1px;top:-100px;" aria-hidden="true" tabindex="-1"></textarea><!-- WHAT IS UTF: standalone bottom CTA -->
       <a class="utf-cta-btn" href="explain.html">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
         Learn how UTF works

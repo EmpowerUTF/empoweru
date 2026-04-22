@@ -1778,7 +1778,7 @@
           gapPoints: stored.meta.gapPoints,
           grid: stored.meta.grid || null
         };
-        finalizeAndRender(stored.primaryType, provisional, stored.tieBreaker || { used:false, skipped:false, considered:false });
+        finalizeAndRender(stored.primaryType, provisional, stored.tieBreaker || { used:false, skipped:false, considered:false }, { skipEndpoint:true, restored:true });
       }
 
       setAssessmentLocked(true);
@@ -2201,15 +2201,42 @@
       };
     }
 
-    function finalizeAndRender(primaryCode, provisional, tieMeta){
+
+    function getSomSubmissionFingerprint(primaryCode, provisional, tieMeta){
+      try{
+        var answers = (provisional && provisional.answersABC && Array.isArray(provisional.answersABC)) ? provisional.answersABC.join("") : "";
+        var tieSig = "";
+        if (tieMeta && typeof tieMeta === "object"){
+          if (tieMeta.winner) tieSig = String(tieMeta.winner);
+          else if (tieMeta.topA || tieMeta.topB) tieSig = String(tieMeta.topA || "") + "|" + String(tieMeta.topB || "");
+        }
+        return [
+          SOM_QBANK_ID || "",
+          primaryCode || "",
+          answers,
+          tieSig
+        ].join("::");
+      } catch(e){
+        return String(primaryCode || "");
+      }
+    }
+
+    function finalizeAndRender(primaryCode, provisional, tieMeta, opts){
+      opts = opts || {};
       var m = SOM_MODES.filter(function(x){ return x.code === primaryCode; })[0] || { code: primaryCode, name: primaryCode };
+      var submissionFingerprint = getSomSubmissionFingerprint(primaryCode, provisional, tieMeta);
+
+      var existingResult = null;
+      try{ existingResult = readSomResult(); } catch(e){}
+      var sameSubmission = !!(existingResult && existingResult.submissionFingerprint === submissionFingerprint);
+      var endpointSent = !!(sameSubmission && existingResult.endpointSent);
 
       document.getElementById("primaryType").textContent = m.code + " - " + m.name;
       renderSomBlurb(m.code);
       renderSeasonBlend(provisional.grid);
       renderDimBars(provisional.dimScores);
 
-      var createdAt = new Date().toISOString();
+      var createdAt = (sameSubmission && existingResult && existingResult.createdAt) ? existingResult.createdAt : new Date().toISOString();
       var resultObj = {
         schema: "empoweru_utf2_som_result",
         schema_v: 5,
@@ -2241,6 +2268,8 @@
           format: "ABC_forced_choice",
           values: provisional.answersABC.slice(0)
         },
+        endpointSent: endpointSent,
+        submissionFingerprint: submissionFingerprint,
         createdAt: createdAt
       };
 
@@ -2249,19 +2278,24 @@
       setAssessmentLocked(true);
       setSynthesisLink(m.code, resultObj);
 
-      storePayload({
-        assessment: "UTF-II_SOM",
-        primaryType: m.code,
-        primaryName: m.name,
-        ranked: provisional.ranked,
-        dimScores: provisional.dimScores,
-        modeScores: provisional.modeScores,
-        meta: resultObj.meta,
-        tieBreaker: resultObj.tieBreaker,
-        createdAt: createdAt,
-        v: SOM_VERSION,
-        qbank: SOM_QBANK_ID
-      });
+      if (!opts.skipEndpoint && !endpointSent){
+        storePayload({
+          assessment: "UTF-II_SOM",
+          primaryType: m.code,
+          primaryName: m.name,
+          ranked: provisional.ranked,
+          dimScores: provisional.dimScores,
+          modeScores: provisional.modeScores,
+          meta: resultObj.meta,
+          tieBreaker: resultObj.tieBreaker,
+          createdAt: createdAt,
+          v: SOM_VERSION,
+          qbank: SOM_QBANK_ID
+        });
+        endpointSent = true;
+        resultObj.endpointSent = true;
+        saveSomResultLocal(resultObj);
+      }
 
       var results = document.getElementById("results");
       results.classList.add("show");
@@ -2919,7 +2953,7 @@
     }
 
     if (provisional && chosenPrimary){
-      finalizeAndRender(chosenPrimary, provisional, stored && stored.tieBreaker ? stored.tieBreaker : { used:false, skipped:false, considered:false });
+      finalizeAndRender(chosenPrimary, provisional, stored && stored.tieBreaker ? stored.tieBreaker : { used:false, skipped:false, considered:false }, { skipEndpoint:true, restored:true });
       scrollSomResultsIntoView();
     }
 

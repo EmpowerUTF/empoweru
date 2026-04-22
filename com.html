@@ -2451,7 +2451,7 @@
           avgDims: derived.avgDims,
           picked: picked,
           undertones: undertones
-        }, derived.primaryType, tieData);
+        }, derived.primaryType, tieData, { skipEndpoint:true, restored:true });
       }
 
       setAssessmentLocked(true);
@@ -3332,6 +3332,8 @@ const TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
           undertones: (result && result.undertones) ? result.undertones : null,
           avgDims: (result && result.avgDims) ? result.avgDims : null,
           tieBreaker: (result && result.tieBreaker) ? result.tieBreaker : { used:false },
+          endpointSent: !!(result && result.endpointSent),
+          submissionFingerprint: (result && result.submissionFingerprint) ? result.submissionFingerprint : null,
           createdAt: (result && result.createdAt) ? result.createdAt : new Date().toISOString()
         };
         localStorage.setItem(DERIVED_RESULT_KEY, JSON.stringify(payload));
@@ -3446,13 +3448,40 @@ const TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
     }
 
 
-    function finalizeAndRender(pending, finalType, tieData){
+
+    function getComSubmissionFingerprint(answers, finalType, tieData){
+      try{
+        var tieSig = "";
+        if (tieData && typeof tieData === "object"){
+          if (Array.isArray(tieData.pair)) tieSig = tieData.pair.join("|");
+          else if (tieData.typeA || tieData.typeB) tieSig = String(tieData.typeA || "") + "|" + String(tieData.typeB || "");
+          else if (tieData.winner) tieSig = String(tieData.winner);
+        }
+        return [
+          QUESTION_BANK_ID || "",
+          finalType || "",
+          Array.isArray(answers) ? answers.join("") : "",
+          tieSig
+        ].join("::");
+      } catch(e){
+        return String(finalType || "") + "::" + (Array.isArray(answers) ? answers.join("") : "");
+      }
+    }
+
+    function finalizeAndRender(pending, finalType, tieData, opts){
       if (!pending) return;
+      opts = opts || {};
 
       var answers = pending.answers;
       var avgDims = pending.avgDims;
       var undertones = pending.undertones;
       var picked = pending.picked;
+      var submissionFingerprint = getComSubmissionFingerprint(answers, finalType, tieData);
+
+      var existingDerived = null;
+      try{ existingDerived = safeParseJSON(localStorage.getItem(DERIVED_RESULT_KEY) || "null"); } catch(e){}
+      var sameSubmission = !!(existingDerived && existingDerived.submissionFingerprint === submissionFingerprint);
+      var endpointSent = !!(sameSubmission && existingDerived.endpointSent);
 
       picked.primaryType = finalType;
 
@@ -3496,13 +3525,19 @@ const TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
 
       renderSnapshot(avgDims);
 
-      storePayload(getComExportObject(answers, avgDims, picked, undertones, tieData));
+      if (!opts.skipEndpoint && !endpointSent){
+        storePayload(getComExportObject(answers, avgDims, picked, undertones, tieData));
+        endpointSent = true;
+      }
+
       storeDerivedResultLocal({
         primaryType: finalType,
         undertones: undertones,
         avgDims: avgDims,
         tieBreaker: tieData,
-        createdAt: new Date().toISOString()
+        endpointSent: endpointSent,
+        submissionFingerprint: submissionFingerprint,
+        createdAt: (sameSubmission && existingDerived && existingDerived.createdAt) ? existingDerived.createdAt : new Date().toISOString()
       });
       setComLock({ primaryType: finalType });
       setAssessmentLocked(true);
