@@ -142,59 +142,53 @@
     .atlas-friendly-note{margin:12px 0 0;text-align:center;font-size:.84rem;color:rgba(230,237,247,0.62);line-height:1.6;padding:0 16px;}
 
     .atlas-jump-callout{
-      margin: 0 0 18px;
-      padding: 14px 16px;
-      border-radius: 14px;
-      border: 1px solid rgba(94,234,212,0.20);
-      background: linear-gradient(135deg, rgba(20,184,166,0.06), rgba(59,130,246,0.05));
-      text-align: center;
-    }
-    .atlas-jump-title{
-      font-size: .86rem;
-      font-weight: 900;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      color: rgba(94,234,212,0.88);
-      margin-bottom: 6px;
+      margin: 2px 0 14px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(94,234,212,0.14);
+      background: rgba(255,255,255,0.025);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      flex-wrap:wrap;
+      text-align:center;
     }
     .atlas-jump-text{
-      font-size: .88rem;
-      color: rgba(230,237,247,0.70);
-      line-height: 1.6;
-      max-width: 560px;
-      margin: 0 auto 12px;
+      font-size: .83rem;
+      color: rgba(230,237,247,0.62);
+      line-height: 1.55;
     }
     .atlas-jump-or{
-      display:block;
-      font-size:.78rem;
+      font-size:.74rem;
       font-weight:800;
       letter-spacing:.10em;
       text-transform:uppercase;
-      color:rgba(230,237,247,0.42);
-      margin:0 0 10px;
+      color:rgba(230,237,247,0.38);
     }
     .atlas-jump-btn{
       display:inline-flex;
       align-items:center;
       justify-content:center;
       gap:8px;
-      padding:10px 16px;
+      padding:8px 14px;
       border-radius:999px;
-      border:1px solid rgba(94,234,212,0.28);
-      background:rgba(94,234,212,0.08);
-      color:rgba(94,234,212,0.92);
+      border:1px solid rgba(94,234,212,0.22);
+      background:rgba(94,234,212,0.06);
+      color:rgba(94,234,212,0.88);
       font-weight:900;
-      font-size:.86rem;
+      font-size:.82rem;
       text-decoration:none;
       cursor:pointer;
       transition:transform .15s ease,border-color .15s ease,background .15s ease,box-shadow .15s ease;
       touch-action:manipulation;
+      white-space:nowrap;
     }
     .atlas-jump-btn:hover{
       transform:translateY(-1px);
-      border-color:rgba(94,234,212,0.42);
-      background:rgba(94,234,212,0.14);
-      box-shadow:0 14px 34px rgba(0,0,0,.22);
+      border-color:rgba(94,234,212,0.34);
+      background:rgba(94,234,212,0.11);
+      box-shadow:0 12px 28px rgba(0,0,0,.18);
     }
     .atlas-wrap{border-radius:16px;overflow:hidden;margin:20px 0 8px;}
 
@@ -538,25 +532,8 @@
         </div>
       </div>
 
-
-      <!-- RIGHT NOW -->
-      <div class="acc-section" style="margin-top:6px;margin-bottom:18px;">
-        <button class="acc-btn" type="button" onclick="toggleAcc('nowPanel',this)">
-          <span>How your COM and SOM are interacting right now</span>
-          <span class="acc-chevron">&#9660;</span>
-        </button>
-        <div class="acc-panel" id="nowPanel">
-          <div class="acc-inner">
-            <div class="interaction-text" id="interactionText"></div>
-            <div class="d9-modifier" id="d9Modifier" style="display:none;margin-top:12px;"></div>
-          </div>
-        </div>
-      </div>
-
-
       <div class="atlas-jump-callout">
-        <div class="atlas-jump-title">Use this with AI</div>
-        <div class="atlas-jump-text">Your trait map just below is the clearest part of your profile. Read that first, or jump to Atlas below to use your full result with AI more accurately.</div>
+        <div class="atlas-jump-text">Your trait map just below is the clearest part of your profile.</div>
         <span class="atlas-jump-or">or</span>
         <button class="atlas-jump-btn" type="button" onclick="scrollToAtlas()">Copy Atlas now</button>
       </div>
@@ -1896,11 +1873,12 @@ function render(comResult, somResult){
     ? INTERACTION[group][somType]
     : "Your current season is shaping how your natural strengths show up. The combination of your cognitive wiring and seasonal state creates a specific window worth paying attention to.";
 
-  document.getElementById("interactionText").textContent = baseInteraction;
+  var interactionTextEl = document.getElementById("interactionText");
+  if(interactionTextEl) interactionTextEl.textContent = baseInteraction;
 
   // D9 modifier
   var d9Mod = document.getElementById("d9Modifier");
-  if(d9Val !== null){
+  if(d9Mod && d9Val !== null){
     var modText = null;
     if(d9Val >= TH.H && D9_STABLE[tier]){
       modText = D9_STABLE[tier];
