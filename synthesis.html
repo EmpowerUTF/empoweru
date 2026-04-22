@@ -775,20 +775,28 @@ function hasComLockArtifact(){
   });
 }
 function hasSomAutosaveArtifact(){
-  return keysByRegex(/^empoweru_utf2_som_v\d+(?:_\d+)+(?:__bak)?$/).some(function(k){
+  return keysByRegex(/^empoweru_utf2_som_v\d+(?:_\d+)+(?:_autosave)?(?:__bak)?$/).some(function(k){
     var obj = readJSONKey(k, null);
-    return !!(obj && (hasAnsweredArray(obj.answers) || hasAnsweredArray(obj.responses) || hasAnsweredArray(obj.items)));
+    return !!(obj && (hasAnsweredArray(obj.answers) || hasAnsweredArray(obj.responses) || hasAnsweredArray(obj.items) || (obj.answers && hasAnsweredArray(obj.answers.values))));
+  });
+}
+function hasSomLockArtifact(){
+  return keysByRegex(/^empoweru_utf2_som_lock_v\d+(?:_\d+)+$/).some(function(k){
+    var obj = readJSONKey(k, null);
+    return !!(obj && (obj.locked || obj.primaryType || obj.lockedAt));
   });
 }
 function getComState(){
   var result = readJSONKey(COM_KEY, validateComResult);
-  var artifacts = hasComAutosaveArtifact() || hasComLockArtifact();
-  return { result: result, artifacts: artifacts, ok: !!(result && artifacts) };
+  var hasAutosave = hasComAutosaveArtifact();
+  var hasLock = hasComLockArtifact();
+  return { result: result, hasAutosave: hasAutosave, hasLock: hasLock, canResume: !!(hasAutosave || hasLock), ok: !!result };
 }
 function getSomState(){
   var result = readJSONKey(SOM_KEY, validateSomResult);
-  var artifacts = hasSomAutosaveArtifact();
-  return { result: result, artifacts: artifacts, ok: !!(result && artifacts) };
+  var hasAutosave = hasSomAutosaveArtifact();
+  var hasLock = hasSomLockArtifact();
+  return { result: result, hasAutosave: hasAutosave, hasLock: hasLock, canResume: !!(hasAutosave || hasLock || result), ok: !!result };
 }
 function clearComStorageDeep(){
   try{ localStorage.removeItem(COM_KEY); }catch(e){}
@@ -797,7 +805,16 @@ function clearComStorageDeep(){
 }
 function clearSomStorageDeep(){
   try{ localStorage.removeItem(SOM_KEY); }catch(e){}
-  removeKeysByRegex(/^empoweru_utf2_som_v\d+(?:_\d+)+(?:__bak)?$/);
+  removeKeysByRegex(/^empoweru_utf2_som_v\d+(?:_\d+)+(?:_autosave)?(?:__bak)?$/);
+  removeKeysByRegex(/^empoweru_utf2_som_lock_v\d+(?:_\d+)+$/);
+}
+function setStatePrimaryCTA(stateId, href, label){
+  var host = document.getElementById(stateId);
+  if(!host) return;
+  var btn = host.querySelector('.cta-primary');
+  if(!btn) return;
+  if(href) btn.setAttribute('href', href);
+  if(label) btn.textContent = label;
 }
 function getComTypeCopy(type){ return (COM_TYPE_COPY && COM_TYPE_COPY[type]) ? COM_TYPE_COPY[type] : null; }
 function getComCardHeadline(type){
@@ -1860,13 +1877,6 @@ function syncFromStorage(){
   var comState = getComState();
   var somState = getSomState();
 
-  if(!comState.ok && comState.result && !comState.artifacts){
-    try{ localStorage.removeItem(COM_KEY); }catch(e){}
-  }
-  if(!somState.ok && somState.result && !somState.artifacts){
-    try{ localStorage.removeItem(SOM_KEY); }catch(e){}
-  }
-
   hideAllStates();
   resetTransientUI();
 
@@ -1878,12 +1888,23 @@ function syncFromStorage(){
     var rb = document.getElementById("resultBlock");
     if(rb){ rb.classList.add("show"); rb.style.display = "block"; }
   } else if(comState.ok && !somState.ok){
+    setStatePrimaryCTA("stateCOMOnly", "som.html", somState.canResume ? "Resume SOM" : "Take SOM now");
     var a = document.getElementById("stateCOMOnly");
     if(a) a.classList.add("show");
   } else if(!comState.ok && somState.ok){
+    setStatePrimaryCTA("stateSOMOnly", "com.html", comState.canResume ? "Resume COM" : "Take COM now");
     var b = document.getElementById("stateSOMOnly");
     if(b) b.classList.add("show");
   } else {
+    if(comState.canResume && !somState.canResume){
+      setStatePrimaryCTA("stateNeither", "com.html", "Resume COM");
+    } else if(!comState.canResume && somState.canResume){
+      setStatePrimaryCTA("stateNeither", "som.html", "Resume SOM");
+    } else if(comState.canResume && somState.canResume){
+      setStatePrimaryCTA("stateNeither", "com.html", "Resume COM");
+    } else {
+      setStatePrimaryCTA("stateNeither", "com.html", "Take COM first");
+    }
     var c = document.getElementById("stateNeither");
     if(c) c.classList.add("show");
   }

@@ -1927,6 +1927,115 @@
     var EMPOWERU_PASS_COM_TO_SOM_URL = true;
     var EMPOWERU_DEBUG_AUDIT     = false;
 
+    const LEGACY_COM_AUTOSAVE_KEY_HINTS = [
+      "empoweru_utf2_com_v1_7_0",
+      "empoweru_utf2_com_v1_7_0__bak",
+      "empoweru_utf2_com_v1_6_0",
+      "empoweru_utf2_com_v1_6_0__bak",
+      "empoweru_utf2_com_v1_5_0",
+      "empoweru_utf2_com_v1_5_0__bak",
+      "empoweru_utf2_com_v1_4_0",
+      "empoweru_utf2_com_v1_4_0__bak",
+      "empoweru_utf2_com_v1_3_0",
+      "empoweru_utf2_com_v1_3_0__bak",
+      "empoweru_utf2_com_v1_2_7",
+      "empoweru_utf2_com_v1_2_7__bak"
+    ];
+
+    function isPlausibleAnswerValue(v){
+      return v === null || v === undefined || (Number.isInteger(v) && v >= 1 && v <= 5);
+    }
+
+    function isPlausibleAnswerArray(arr){
+      if (!Array.isArray(arr) || arr.length !== questions.length) return false;
+      for (var i=0;i<arr.length;i++){
+        if (!isPlausibleAnswerValue(arr[i])) return false;
+      }
+      return true;
+    }
+
+    function normalizeLegacyAutosavePayload(obj){
+      var arr = obj && (obj.answers || obj.responses || obj.items);
+      if (!obj || !isPlausibleAnswerArray(arr)) return null;
+      return {
+        schema: AUTOSAVE_SCHEMA,
+        bankId: QUESTION_BANK_ID,
+        qCount: questions.length,
+        answers: arr.slice(0),
+        updatedAt: obj.updatedAt || obj.createdAt || new Date().toISOString()
+      };
+    }
+
+    function getLegacyAutosaveCandidates(){
+      var keys = [];
+      try{
+        Object.keys(localStorage).forEach(function(k){
+          if (/^empoweru_utf2_com_v1_\d+_\d+(?:__bak)?$/.test(k)) keys.push(k);
+        });
+      } catch(e){}
+      LEGACY_COM_AUTOSAVE_KEY_HINTS.forEach(function(k){
+        if (keys.indexOf(k) === -1) keys.push(k);
+      });
+      return keys.filter(function(k){ return k !== AUTOSAVE_KEY && k !== AUTOSAVE_KEY_BAK; });
+    }
+
+    function migrateLegacyComStorage(){
+      if (!EMPOWERU_AUTOSAVE_LOCAL) return false;
+      var migrated = false;
+      try{
+        var currentRaw = localStorage.getItem(AUTOSAVE_KEY) || localStorage.getItem(AUTOSAVE_KEY_BAK);
+        var currentObj = currentRaw ? safeParseJSON(currentRaw) : null;
+        var currentOk = !!(currentObj && currentObj.schema === AUTOSAVE_SCHEMA && currentObj.bankId === QUESTION_BANK_ID && currentObj.qCount === questions.length && isPlausibleAnswerArray(currentObj.answers));
+
+        if (!currentOk){
+          var best = null;
+          var candidates = getLegacyAutosaveCandidates();
+          for (var i=0;i<candidates.length;i++){
+            var key = candidates[i];
+            var raw = null;
+            try { raw = localStorage.getItem(key); } catch(e1){}
+            if (!raw) continue;
+            var obj = safeParseJSON(raw);
+            var normalized = normalizeLegacyAutosavePayload(obj);
+            if (!normalized) continue;
+            var ts = new Date(normalized.updatedAt || 0).getTime();
+            if (!best || ts > best.ts){
+              best = { key:key, payload:normalized, ts:ts };
+            }
+          }
+          if (best){
+            var s = JSON.stringify(best.payload);
+            localStorage.setItem(AUTOSAVE_KEY, s);
+            try { localStorage.setItem(AUTOSAVE_KEY_BAK, s); } catch(e2){}
+            migrated = true;
+          }
+        }
+
+        var hasCurrentLock = !!localStorage.getItem(COM_LOCK_KEY);
+        if (!hasCurrentLock){
+          var lockKeys = [];
+          Object.keys(localStorage).forEach(function(k){
+            if (/^empoweru_utf2_com_lock_v1_\d+_\d+$/.test(k) && k !== COM_LOCK_KEY) lockKeys.push(k);
+          });
+          for (var j=0;j<lockKeys.length;j++){
+            var lockRaw = localStorage.getItem(lockKeys[j]);
+            var lockObj = lockRaw ? safeParseJSON(lockRaw) : null;
+            if (!lockObj || !lockObj.locked) continue;
+            localStorage.setItem(COM_LOCK_KEY, JSON.stringify({
+              schema: AUTOSAVE_SCHEMA,
+              bankId: QUESTION_BANK_ID,
+              locked: true,
+              lockedAt: lockObj.lockedAt || new Date().toISOString(),
+              primaryType: lockObj.primaryType || null
+            }));
+            migrated = true;
+            break;
+          }
+        }
+      } catch(e){}
+      return migrated;
+    }
+
     function showToast(mes){
       var t = document.getElementById('toast');
       if (!t) { alert(mes); return; }
@@ -2160,6 +2269,10 @@
     function getSavedAnswerData(){
       if (!EMPOWERU_AUTOSAVE_LOCAL) return { found:false };
       var data = _readSavedRaw(AUTOSAVE_KEY) || _readSavedRaw(AUTOSAVE_KEY_BAK);
+      if (!data){
+        migrateLegacyComStorage();
+        data = _readSavedRaw(AUTOSAVE_KEY) || _readSavedRaw(AUTOSAVE_KEY_BAK);
+      }
       if (!data) return { found:false };
 
       var qCount = questions.length;
@@ -2238,6 +2351,12 @@
       try{ localStorage.removeItem(AUTOSAVE_KEY); } catch(e){}
       try{ localStorage.removeItem(AUTOSAVE_KEY_BAK); } catch(e){}
       try{ localStorage.removeItem(DERIVED_RESULT_KEY); } catch(e){}
+      try{
+        Object.keys(localStorage).forEach(function(k){
+          if (/^empoweru_utf2_com_v1_\d+_\d+(?:__bak)?$/.test(k)) localStorage.removeItem(k);
+          if (/^empoweru_utf2_com_lock_v1_\d+_\d+$/.test(k)) localStorage.removeItem(k);
+        });
+      } catch(e){}
       clearComLock();
     }
 
@@ -2246,9 +2365,12 @@
       var clearBtn  = document.getElementById("clearBtn");
 
       var data = getSavedAnswerData();
+      var hasDerived = false;
+      try{ hasDerived = !!safeParseJSON(localStorage.getItem(DERIVED_RESULT_KEY) || 'null'); } catch(e){}
+      var hasLock = getComLockData().locked;
 
       var canResume = !!(data && data.found && data.valid && data.anyAnswered);
-      var canClear  = !!(data && data.found);
+      var canClear  = !!(data && data.found) || hasDerived || hasLock;
 
       if (resumeBtn) resumeBtn.disabled = !canResume;
       if (clearBtn)  clearBtn.disabled  = !canClear;
@@ -2256,6 +2378,7 @@
 
     function getComLockData(){
       try{
+        migrateLegacyComStorage();
         var raw = localStorage.getItem(COM_LOCK_KEY);
         if (!raw) return { locked:false };
         var data = safeParseJSON(raw);
@@ -3200,7 +3323,7 @@ const TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
     function storeDerivedResultLocal(result){
       try{
         var payload = {
-          v: "3.4.0",
+          v: "3.5.2",
           math_v: "com_math_9_final_hardening",
           qbank: QUESTION_BANK_ID,
           undertone_v: UNDERTONE_VERSION,
@@ -3219,7 +3342,7 @@ const TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
       return {
         contract: {
           assessment: "UTF-II_COM",
-          ui_v: "3.5.1",
+          ui_v: "3.5.2",
           math_v: "com_math_9_final_hardening",
           qbank: QUESTION_BANK_ID,
           undertone_v: UNDERTONE_VERSION,
@@ -3331,7 +3454,7 @@ const TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
         somHref = buildUrlWithParams(somHref, mergeParams(carry2, {
           com: finalType,
           com_source: "utf2_com",
-          com_v: "3.5.1",
+          com_v: "3.5.2",
           com_math: "com_math_9_final_hardening",
           com_qbank: QUESTION_BANK_ID,
           com_undertone_v: UNDERTONE_VERSION,
@@ -3652,10 +3775,12 @@ const TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
     document.addEventListener("DOMContentLoaded", function(){
       applyNavPassthrough();
       generateForm();
+      var migratedLegacy = migrateLegacyComStorage();
       updateProgress();
       syncResumeControls();
       setSubmitEnabled();
       restoreLockedSessionIfPresent();
+      if (migratedLegacy) showToast("Recovered saved COM answers from an older build.");
 
       var form = document.getElementById("assessmentForm");
       if (form){
