@@ -1874,37 +1874,32 @@ function resetTransientUI(){
 }
 
 function syncFromStorage(){
-  var comState = getComState();
-  var somState = getSomState();
+  var comRaw = readJSONKey(COM_KEY, validateComResult);
+  var somRaw = readJSONKey(SOM_KEY, validateSomResult);
+  var hasCOM = !!(comRaw && comRaw.primaryType);
+  var hasSOM = !!(somRaw && somRaw.primaryType);
 
   hideAllStates();
   resetTransientUI();
 
-  if(comState.ok) _comType = comState.result.primaryType || "";
-  if(somState.ok) _somMode = somState.result.primaryType || "";
+  if(hasCOM) _comType = comRaw.primaryType || "";
+  if(hasSOM) _somMode = somRaw.primaryType || "";
 
-  if(comState.ok && somState.ok){
-    render(comState.result, somState.result);
+  setStatePrimaryCTA("stateCOMOnly", "som.html", "Take SOM now");
+  setStatePrimaryCTA("stateSOMOnly", "com.html", "Take COM now");
+  setStatePrimaryCTA("stateNeither", "com.html", "Take COM first");
+
+  if(hasCOM && hasSOM){
+    render(comRaw, somRaw);
     var rb = document.getElementById("resultBlock");
     if(rb){ rb.classList.add("show"); rb.style.display = "block"; }
-  } else if(comState.ok && !somState.ok){
-    setStatePrimaryCTA("stateCOMOnly", "som.html", somState.canResume ? "Resume SOM" : "Take SOM now");
+  } else if(hasCOM && !hasSOM){
     var a = document.getElementById("stateCOMOnly");
     if(a) a.classList.add("show");
-  } else if(!comState.ok && somState.ok){
-    setStatePrimaryCTA("stateSOMOnly", "com.html", comState.canResume ? "Resume COM" : "Take COM now");
+  } else if(!hasCOM && hasSOM){
     var b = document.getElementById("stateSOMOnly");
     if(b) b.classList.add("show");
   } else {
-    if(comState.canResume && !somState.canResume){
-      setStatePrimaryCTA("stateNeither", "com.html", "Resume COM");
-    } else if(!comState.canResume && somState.canResume){
-      setStatePrimaryCTA("stateNeither", "som.html", "Resume SOM");
-    } else if(comState.canResume && somState.canResume){
-      setStatePrimaryCTA("stateNeither", "com.html", "Resume COM");
-    } else {
-      setStatePrimaryCTA("stateNeither", "com.html", "Take COM first");
-    }
     var c = document.getElementById("stateNeither");
     if(c) c.classList.add("show");
   }
