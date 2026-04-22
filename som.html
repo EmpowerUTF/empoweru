@@ -2822,6 +2822,44 @@
     updateProgress();
   }
 
+
+  function buildSomProvisionalFromAnswers(answerArr){
+    var answersABC = Array.isArray(answerArr) ? answerArr.slice(0) : [];
+    var dimScores = computeDimScoresFromAnswers(answersABC);
+    var grid = computeGridPrimary(dimScores);
+    var modeScores = computeModeScores(dimScores);
+    var ranked = rankModes(modeScores);
+    var primaryCode = grid && grid.primary ? grid.primary : (ranked[0] ? ranked[0].code : null);
+    var top1 = null, top2 = null;
+    for (var i=0;i<ranked.length;i++){
+      if (!top1 && ranked[i].code === primaryCode){ top1 = ranked[i]; continue; }
+    }
+    if (!top1 && primaryCode){
+      top1 = { code: primaryCode, name: (SOM_MODE_NAMES[primaryCode] || primaryCode), score: modeScores[primaryCode] || 0 };
+    }
+    for (var j=0;j<ranked.length;j++){
+      if (ranked[j].code !== primaryCode){ top2 = ranked[j]; break; }
+    }
+    var gapPoints = (top1 && top2) ? (top1.score - top2.score) : 999;
+    return {
+      answersABC: answersABC,
+      dimScores: dimScores,
+      modeScores: modeScores,
+      ranked: ranked,
+      top1: top1,
+      top2: top2,
+      gapPoints: gapPoints,
+      grid: grid
+    };
+  }
+
+  function scrollSomResultsIntoView(){
+    var results = document.getElementById('results');
+    if (results && results.classList.contains('show') && results.scrollIntoView){
+      setTimeout(function(){ results.scrollIntoView({behavior:'smooth', block:'start'}); }, 90);
+    }
+  }
+
   restoreLockedSessionIfPresent = function(){
     var lock = getSomLockData();
     if (!lock.locked) return false;
@@ -2861,8 +2899,10 @@
 
     restoreSomAnswersToUI(answers, seed);
 
+    var provisional = null;
+    var chosenPrimary = null;
     if (stored && stored.primaryType && stored.dimScores && stored.meta){
-      var provisional = {
+      provisional = {
         answersABC: stored.answers && stored.answers.values ? stored.answers.values.slice(0) : answers.slice(0),
         dimScores: stored.dimScores,
         modeScores: stored.modeScores || {},
@@ -2872,7 +2912,15 @@
         gapPoints: stored.meta.gapPoints,
         grid: stored.meta.grid || null
       };
-      finalizeAndRender(stored.primaryType, provisional, stored.tieBreaker || { used:false, skipped:false, considered:false });
+      chosenPrimary = stored.primaryType;
+    } else {
+      provisional = buildSomProvisionalFromAnswers(answers);
+      chosenPrimary = (stored && stored.primaryType) || (lock.data && lock.data.primaryType) || (provisional.grid && provisional.grid.primary) || (provisional.top1 && provisional.top1.code) || null;
+    }
+
+    if (provisional && chosenPrimary){
+      finalizeAndRender(chosenPrimary, provisional, stored && stored.tieBreaker ? stored.tieBreaker : { used:false, skipped:false, considered:false });
+      scrollSomResultsIntoView();
     }
 
     setAssessmentLocked(true);

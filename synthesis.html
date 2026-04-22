@@ -139,6 +139,7 @@
     .copy-btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:inset 0 1px 1px rgba(255,255,255,0.25),0 0 32px rgba(59,130,246,0.24),0 22px 56px rgba(20,184,166,0.28),0 20px 44px rgba(59,130,246,0.22);}
     .copy-btn:disabled{cursor:not-allowed;opacity:.40;transform:none !important;box-shadow:none;}
     .copy-btn.copied{background:linear-gradient(135deg,rgba(16,185,129,0.85),rgba(20,184,166,0.90));}
+    .atlas-friendly-note{margin:12px 0 0;text-align:center;font-size:.84rem;color:rgba(230,237,247,0.62);line-height:1.6;padding:0 16px;}
     .atlas-wrap{border-radius:16px;overflow:hidden;margin:20px 0 8px;}
 
     
@@ -547,6 +548,7 @@
         </button>
       </div>
       <div id="copiedNote" style="display:none;text-align:center;margin-top:10px;font-size:.88rem;color:rgba(52,211,153,.9);font-weight:800;">Copied. Paste into any AI chat to get started.</div>
+      <div class="atlas-friendly-note">Paste this into any AI chat to skip the generic first twenty questions and start from a profile that already knows how you think and what season you are in.</div>
       <textarea id="atlasBox" style="position:fixed;opacity:0;pointer-events:none;width:1px;height:1px;top:-100px;" aria-hidden="true" tabindex="-1"></textarea>
 
       <!-- RIGHT NOW -->
@@ -560,37 +562,6 @@
             <div class="interaction-text" id="interactionText"></div>
             <div class="d9-modifier" id="d9Modifier" style="display:none;margin-top:12px;"></div>
           </div>
-        </div>
-      </div>
-
-      <!-- EXPLORE CTA -->
-      <div class="explore-cta">
-        <div class="explore-cta-title">Explore everything else</div>
-        <div class="explore-cta-sub">Open the sections below to read the current interaction between COM and SOM, and how your communication style tends to land.</div>
-        <div class="explore-chips">
-          <span class="explore-chip" onclick="openAndScroll('dimsPanel',null)">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-            Trait map
-          </span>
-          <span class="explore-chip" onclick="openAndScroll('nowPanel',null)">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            Right now
-          </span>
-          <span class="explore-chip" onclick="openAndScroll('commPanel',null)">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-            Communication style
-          </span>
-        </div>
-      </div>
-
-      <!-- COMMUNICATION STYLE -->
-      <div class="acc-section">
-        <button class="acc-btn" type="button" onclick="toggleAcc('commPanel',this)">
-          <span>How you communicate and connect</span>
-          <span class="acc-chevron">&#9660;</span>
-        </button>
-        <div class="acc-panel" id="commPanel">
-          <div class="acc-inner" id="commContent"></div>
         </div>
       </div>
 
@@ -816,9 +787,13 @@ function getComState(){
   return { result: result, hasAutosave: hasAutosave, hasLock: hasLock, canResume: !!(hasAutosave || hasLock), ok: !!result };
 }
 function getSomState(){
-  var result = hydrateSomResult(readJSONKey(SOM_KEY, validateSomResult));
+  var rawResult = readJSONKey(SOM_KEY, validateSomResult);
   var directAuto = directSomAutosave();
   var directLock = directSomLock();
+  var result = hydrateSomResult(rawResult);
+  if ((!result || !somHasMeaningfulDimScores(result)) && (directAuto || directLock)){
+    result = rebuildSomResultFromArtifacts(result, directAuto, directLock);
+  }
   if(!result && directLock && directLock.primaryType){
     result = hydrateSomResult(synthesizeSomResultFromLock(directLock));
   }
@@ -884,6 +859,259 @@ function inferSomGridFromCode(code){
   var orient = (/^(DRV|BLD|BST)$/.test(code)) ? "OUT" : (/^(HRB|EQZ|HVN)$/.test(code) ? "PPL" : "CHG");
   return { tier:tier, orient:orient, net:0 };
 }
+
+
+function Wdim(dim){ return { dim: dim, delta: 1 }; }
+
+  var SOM_REBUILD_QUESTIONS_RAW = [
+      { prompt:"Most days lately, your default pace feels like…",
+        A:{t:"I have a lot of usable energy, even after a full day.", w:Wdim("EP")},
+        B:{t:"I naturally move toward work, tasks, or steady progress.", w:Wdim("OUT")},
+        C:{t:"I need to keep things lighter so I do not run myself down.", w:Wdim("EM")}
+      },
+      { prompt:"When a free window actually appeared in the last few weeks, what happened most?",
+        A:{t:"I used it to get ahead on something or close a task.", w:Wdim("OUT")},
+        B:{t:"I slowed down and let myself genuinely rest.", w:Wdim("EM")},
+        C:{t:"I reached out to someone or ended up spending time with people.", w:Wdim("PPL")}
+      },
+      { prompt:"In the past few weeks, the days that actually went well tended to start with…",
+        A:{t:"waking up with real energy and feeling ready to go.", w:Wdim("EP")},
+        B:{t:"having something specific to build or finish lined up.", w:Wdim("OUT")},
+        C:{t:"a conversation or connection that felt easy and natural.", w:Wdim("PPL")}
+      },
+      { prompt:"When life gets busy, you are most likely to protect…",
+        A:{t:"your downtime and recovery time.", w:Wdim("EM")},
+        B:{t:"your key relationships and the tone between people.", w:Wdim("PPL")},
+        C:{t:"your ability to keep producing and finishing.", w:Wdim("OUT")}
+      },
+      { prompt:"If something feels off lately, your first instinct is…",
+        A:{t:"take a break or lower the load so you can reset.", w:Wdim("EM")},
+        B:{t:"switch it up and see if a fresh angle helps.", w:Wdim("CHG")},
+        C:{t:"get one useful thing done so the day feels back on track.", w:Wdim("OUT")}
+      },
+      { prompt:"Over the last few weeks, what has actually been competing most for your attention?",
+        A:{t:"People, conversations, or relationship dynamics.", w:Wdim("PPL")},
+        B:{t:"My energy level and whether I can keep up with what is on my plate.", w:Wdim("EP")},
+        C:{t:"Ideas, options, or possible changes I keep circling back to.", w:Wdim("CHG")}
+      },
+      { prompt:"In conversation lately, you tend to…",
+        A:{t:"enjoy it, and it often gives you more energy.", w:Wdim("PPL")},
+        B:{t:"keep it brief if you need your battery for other things.", w:Wdim("EM")},
+        C:{t:"turn it toward solving something or moving something forward.", w:Wdim("OUT")}
+      },
+      { prompt:"When you start your day, you most often notice…",
+        A:{t:"I feel charged up and ready to go.", w:Wdim("EP")},
+        B:{t:"I want to pace myself so I do not overdo it.", w:Wdim("EM")},
+        C:{t:"I want at least one thing in the day to feel new or different.", w:Wdim("CHG")}
+      },
+      { prompt:"If a plan falls apart, you are most likely to…",
+        A:{t:"adapt quickly and test a different route.", w:Wdim("CHG")},
+        B:{t:"focus on what still matters and rebuild from there.", w:Wdim("OUT")},
+        C:{t:"reduce the pressure and keep the day manageable.", w:Wdim("EM")}
+      },
+      { prompt:"In the past few weeks, the days you actually felt solid usually had…",
+        A:{t:"enough fuel that things felt doable instead of forced.", w:Wdim("EP")},
+        B:{t:"a clear task that I made real progress on.", w:Wdim("OUT")},
+        C:{t:"some room to switch gears or try a different approach.", w:Wdim("CHG")}
+      },
+      { prompt:"Thinking about your energy lately, it most honestly looks like…",
+        A:{t:"I have been running at a noticeably lower level than I want to.", w:Wdim("EM")},
+        B:{t:"I have had real fuel available, and it shows in what I can do.", w:Wdim("EP")},
+        C:{t:"I have been pushing things forward regardless of how my energy feels.", w:Wdim("OUT")}
+      },
+      { prompt:"When you hit a wall lately, it is usually because…",
+        A:{t:"my system needs recovery more than I want to admit.", w:Wdim("EM")},
+        B:{t:"things feel too repetitive and I need a change.", w:Wdim("CHG")},
+        C:{t:"too many people demands stack up at once.", w:Wdim("PPL")}
+      },
+      { prompt:"When motivation actually showed up lately, where did it go?",
+        A:{t:"Into producing something or getting ahead on work.", w:Wdim("OUT")},
+        B:{t:"Into connecting with someone or investing in a relationship.", w:Wdim("PPL")},
+        C:{t:"Into trying something different or exploring a new direction.", w:Wdim("CHG")}
+      },
+      { prompt:"Your relationship to effort lately feels most like…",
+        A:{t:"I can put in a lot and still have gas left.", w:Wdim("EP")},
+        B:{t:"I can put in effort, but recovery has to be part of the picture.", w:Wdim("EM")},
+        C:{t:"Even on a normal day, I can stay with one thing and make progress.", w:Wdim("OUT")}
+      },
+      { prompt:"Lately, the thing that has been taking up most of your head space is…",
+        A:{t:"How much I have to do and whether I have the energy to do it.", w:Wdim("EP")},
+        B:{t:"A specific project or outcome I am trying to move forward.", w:Wdim("OUT")},
+        C:{t:"A relationship or group dynamic that needs attention.", w:Wdim("PPL")}
+      },
+      { prompt:"Your better nights lately usually include…",
+        A:{t:"quiet recovery, lower stimulation, and a clean reset.", w:Wdim("EM")},
+        B:{t:"meaningful connection with someone or a good group.", w:Wdim("PPL")},
+        C:{t:"progress on something you care about.", w:Wdim("OUT")}
+      },
+      { prompt:"When something new came up in the last few weeks, your first actual response was usually…",
+        A:{t:"Checking whether I had bandwidth before getting interested.", w:Wdim("EM")},
+        B:{t:"Thinking about whether it moved something important forward.", w:Wdim("OUT")},
+        C:{t:"Feeling pulled toward it and wanting to explore.", w:Wdim("CHG")}
+      },
+      { prompt:"Your current season runs best when…",
+        A:{t:"your energy is high and you can handle more.", w:Wdim("EP")},
+        B:{t:"your commitments stay light enough that you recover well.", w:Wdim("EM")},
+        C:{t:"your life includes a bit of novelty and movement.", w:Wdim("CHG")}
+      },
+      { prompt:"Your week lately tends to lean most toward…",
+        A:{t:"Build.", w:Wdim("OUT")},
+        B:{t:"Connect.", w:Wdim("PPL")},
+        C:{t:"Explore.", w:Wdim("CHG")}
+      },
+      { prompt:"When your schedule is full, what keeps you from burning out is usually…",
+        A:{t:"enough downtime and recovery built in.", w:Wdim("EM")},
+        B:{t:"supportive people and good connection.", w:Wdim("PPL")},
+        C:{t:"having enough energy to stay ahead of it.", w:Wdim("EP")}
+      },
+      { prompt:"After a full day lately, what most often made it feel like a good one?",
+        A:{t:"Getting through it without running out of gas.", w:Wdim("EP")},
+        B:{t:"Having something real to show for the time.", w:Wdim("OUT")},
+        C:{t:"Spending meaningful time with people I care about.", w:Wdim("PPL")}
+      },
+      { prompt:"When you decide what to say yes to lately, you most often ask…",
+        A:{t:"Will this drain me, or can I recover from it?", w:Wdim("EM")},
+        B:{t:"Will this move something forward in a real way?", w:Wdim("OUT")},
+        C:{t:"Will this bring in some variety or open a new door?", w:Wdim("CHG")}
+      },
+      { prompt:"In day-to-day life lately, your system acts more like it needs…",
+        A:{t:"more energy and momentum.", w:Wdim("EP")},
+        B:{t:"more rest and simplicity.", w:Wdim("EM")},
+        C:{t:"more variety and movement.", w:Wdim("CHG")}
+      },
+      { prompt:"When you think about people lately, it feels most like…",
+        A:{t:"I want more connection and better alignment.", w:Wdim("PPL")},
+        B:{t:"I need more space from social noise.", w:Wdim("EM")},
+        C:{t:"I like people, but output is what my days keep centering on.", w:Wdim("OUT")}
+      },
+      { prompt:"When you are energized lately, you usually…",
+        A:{t:"take on more and feel capable doing it.", w:Wdim("EP")},
+        B:{t:"produce more and get ahead.", w:Wdim("OUT")},
+        C:{t:"explore more and chase novelty.", w:Wdim("CHG")}
+      },
+      { prompt:"When you are tired lately, you usually…",
+        A:{t:"simplify and protect recovery time.", w:Wdim("EM")},
+        B:{t:"pull toward people you trust for steadiness.", w:Wdim("PPL")},
+        C:{t:"switch tasks, scenery, or approach.", w:Wdim("CHG")}
+      },
+      { prompt:"Looking at the past few weeks, the weeks that actually went well had…",
+        A:{t:"enough energy that I was not operating on fumes.", w:Wdim("EP")},
+        B:{t:"solid time with people who actually matter to me.", w:Wdim("PPL")},
+        C:{t:"space to build or finish something that mattered.", w:Wdim("OUT")}
+      }
+  ];
+
+function somHasMeaningfulDimScores(obj){
+  if(!obj || !obj.dimScores || typeof obj.dimScores !== "object") return false;
+  return ["EP","EM","OUT","PPL","CHG"].some(function(k){ return numOk(obj.dimScores[k]) && obj.dimScores[k] > 0; });
+}
+function mulberry32(seed){
+  return function(){
+    var t = seed += 0x6D2B79F5;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function shuffleWithRng(arr, rng){
+  for (var i=arr.length-1;i>0;i--){
+    var j = Math.floor(rng()*(i+1));
+    var tmp = arr[i]; arr[i]=arr[j]; arr[j]=tmp;
+  }
+  return arr;
+}
+function buildSomQuestionsFromRaw(seed){
+  var rng = mulberry32((typeof seed === "number" ? seed : 0) >>> 0);
+  var out = [];
+  for (var i=0;i<SOM_REBUILD_QUESTIONS_RAW.length;i++){
+    var q = SOM_REBUILD_QUESTIONS_RAW[i];
+    var order = ["A","B","C"];
+    shuffleWithRng(order, rng);
+    var q2 = { prompt:q.prompt };
+    q2.A = q[order[0]];
+    q2.B = q[order[1]];
+    q2.C = q[order[2]];
+    out.push(q2);
+  }
+  return out;
+}
+function computeSomDimScoresFromAnswers(answerArr, seed){
+  var questions = buildSomQuestionsFromRaw(seed);
+  var scores = { EP:0, EM:0, OUT:0, PPL:0, CHG:0 };
+  for (var i=0;i<questions.length;i++){
+    var choice = answerArr[i];
+    var stmt = questions[i] && questions[i][choice];
+    if (!stmt || !stmt.w || !stmt.w.dim) continue;
+    if (scores.hasOwnProperty(stmt.w.dim)) scores[stmt.w.dim] += (typeof stmt.w.delta === "number" ? stmt.w.delta : 1);
+  }
+  return scores;
+}
+function computeSomDimMax(){
+  var max = { EP:0, EM:0, OUT:0, PPL:0, CHG:0 };
+  for (var i=0;i<SOM_REBUILD_QUESTIONS_RAW.length;i++){
+    ["A","B","C"].forEach(function(L){
+      var s = SOM_REBUILD_QUESTIONS_RAW[i][L];
+      if (s && s.w && s.w.dim && max.hasOwnProperty(s.w.dim)) max[s.w.dim] += 1;
+    });
+  }
+  return max;
+}
+var SOM_REBUILD_DIM_MAX = computeSomDimMax();
+function computeSomGridFromDims(dimScores){
+  function rate(code){
+    var denom = SOM_REBUILD_DIM_MAX[code] || 1;
+    return denom ? ((dimScores[code] || 0) / denom) : 0;
+  }
+  var rates = { EP:rate("EP"), EM:rate("EM"), OUT:rate("OUT"), PPL:rate("PPL"), CHG:rate("CHG") };
+  var netNorm = rates.EP - rates.EM;
+  var tier = "STEADY";
+  if (netNorm >= 0.18) tier = "HIGH";
+  else if (netNorm <= -0.18) tier = "LOW";
+  var orient = "OUT";
+  if (rates.PPL > rates.OUT && rates.PPL >= rates.CHG) orient = "PPL";
+  else if (rates.CHG > rates.OUT && rates.CHG > rates.PPL) orient = "CHG";
+  var primary = null;
+  if (tier === "HIGH" && orient === "OUT") primary = "DRV";
+  if (tier === "HIGH" && orient === "PPL") primary = "HRB";
+  if (tier === "HIGH" && orient === "CHG") primary = "TBZ";
+  if (tier === "STEADY" && orient === "OUT") primary = "BLD";
+  if (tier === "STEADY" && orient === "PPL") primary = "EQZ";
+  if (tier === "STEADY" && orient === "CHG") primary = "ENH";
+  if (tier === "LOW" && orient === "OUT") primary = "BST";
+  if (tier === "LOW" && orient === "PPL") primary = "HVN";
+  if (tier === "LOW" && orient === "CHG") primary = "REF";
+  return { tier:tier, orient:orient, net:(dimScores.EP||0)-(dimScores.EM||0), netNorm:netNorm, rates:rates, primary:primary };
+}
+function rebuildSomResultFromArtifacts(existingResult, autosave, lockObj){
+  var sourceAnswers = null;
+  var seed = null;
+  if (existingResult && existingResult.answers && Array.isArray(existingResult.answers.values)){
+    sourceAnswers = existingResult.answers.values.slice(0);
+    if (existingResult.meta && typeof existingResult.meta.seed === "number") seed = existingResult.meta.seed;
+  }
+  if ((!sourceAnswers || !sourceAnswers.some(function(v){ return v; })) && autosave && Array.isArray(autosave.answers)){
+    sourceAnswers = autosave.answers.slice(0);
+    seed = typeof autosave.seed === "number" ? autosave.seed : seed;
+  }
+  var base = existingResult ? JSON.parse(JSON.stringify(existingResult)) : null;
+  if ((!sourceAnswers || !sourceAnswers.some(function(v){ return v; })) && lockObj && lockObj.primaryType){
+    return hydrateSomResult(synthesizeSomResultFromLock(lockObj));
+  }
+  if (!sourceAnswers || !sourceAnswers.some(function(v){ return v; })) return hydrateSomResult(base);
+  var dimScores = computeSomDimScoresFromAnswers(sourceAnswers, seed);
+  var grid = computeSomGridFromDims(dimScores);
+  var primary = (base && base.primaryType) || (lockObj && lockObj.primaryType) || grid.primary;
+  var out = hydrateSomResult(base || { primaryType: primary });
+  out.primaryType = primary;
+  out.primaryName = SOM_MODE_NAMES[primary] || primary;
+  out.dimScores = dimScores;
+  if (!out.meta || typeof out.meta !== "object") out.meta = {};
+  out.meta.grid = grid;
+  if (typeof seed === "number") out.meta.seed = seed;
+  if (!out.answers || !Array.isArray(out.answers.values)) out.answers = { format:"ABC_forced_choice", values: sourceAnswers.slice(0) };
+  return out;
+}
+
 function synthesizeSomResultFromLock(lockObj){
   if(!lockObj || typeof lockObj !== "object") return null;
   if(!lockObj.primaryType || !SOM_MODE_NAMES[lockObj.primaryType]) return null;
@@ -1623,13 +1851,7 @@ function render(comResult, somResult){
     }
   }
 
-  // Communication style
   var comm = getCommStyle(avgDims);
-  var commEl = document.getElementById("commContent");
-  commEl.innerHTML =
-    "<div class='label'>Style</div><p><strong>" + comm.label + "</strong></p>" +
-    "<div class='label'>How you process</div><p>" + comm.processing + "</p>" +
-    "<div class='label'>How you land</div><p>" + comm.landing + "</p>";
 
   // Dimension snapshot: trait bars
   var dimsEl = document.getElementById("dimsContent");
