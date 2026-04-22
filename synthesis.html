@@ -435,7 +435,9 @@
       <div class="state-title">One more layer</div>
       <div class="state-body">Your stable cognitive structure is mapped. Now take the SOM assessment to capture your current season. That is what turns the profile into a real synthesis instead of a single label.</div>
       <div class="state-cta-row">
-        <a class="cta-primary" href="som.html">Take SOM now</a>
+        <a class="cta-primary" id="stateCOMOnlyPrimary" href="som.html">Take SOM now</a>
+        <a class="cta-secondary" id="stateCOMOnlyView" href="com.html">Go to COM page</a>
+        <button class="cta-secondary" id="stateCOMOnlyClear" type="button" style="display:none;" onclick="openClearConfirm('som')">Clear SOM answers</button>
       </div>
     </div>
 
@@ -448,7 +450,9 @@
       <div class="state-title">Almost there</div>
       <div class="state-body">Your current season is mapped. Take the COM assessment to add the deeper structural layer underneath it. That is what makes the synthesis meaningful.</div>
       <div class="state-cta-row">
-        <a class="cta-primary" href="com.html">Take COM now</a>
+        <a class="cta-primary" id="stateSOMOnlyPrimary" href="com.html">Take COM now</a>
+        <a class="cta-secondary" id="stateSOMOnlyView" href="som.html">Go to SOM page</a>
+        <button class="cta-secondary" id="stateSOMOnlyClear" type="button" style="display:none;" onclick="openClearConfirm('com')">Clear COM answers</button>
       </div>
     </div>
 
@@ -805,14 +809,21 @@ function hasSomLockArtifact(){
 }
 function getComState(){
   var result = readJSONKey(COM_KEY, validateComResult);
-  var hasAutosave = hasComAutosaveArtifact();
-  var hasLock = hasComLockArtifact();
+  var directAuto = directComAutosave();
+  var directLock = directComLock();
+  var hasAutosave = !!directAuto || hasComAutosaveArtifact();
+  var hasLock = !!directLock || hasComLockArtifact();
   return { result: result, hasAutosave: hasAutosave, hasLock: hasLock, canResume: !!(hasAutosave || hasLock), ok: !!result };
 }
 function getSomState(){
   var result = hydrateSomResult(readJSONKey(SOM_KEY, validateSomResult));
-  var hasAutosave = hasSomAutosaveArtifact();
-  var hasLock = hasSomLockArtifact();
+  var directAuto = directSomAutosave();
+  var directLock = directSomLock();
+  if(!result && directLock && directLock.primaryType){
+    result = hydrateSomResult(synthesizeSomResultFromLock(directLock));
+  }
+  var hasAutosave = !!directAuto || hasSomAutosaveArtifact();
+  var hasLock = !!directLock || hasSomLockArtifact();
   return { result: result, hasAutosave: hasAutosave, hasLock: hasLock, canResume: !!(hasAutosave || hasLock || result), ok: !!result };
 }
 function clearComStorageDeep(){
@@ -832,6 +843,56 @@ function setStatePrimaryCTA(stateId, href, label){
   if(!btn) return;
   if(href) btn.setAttribute('href', href);
   if(label) btn.textContent = label;
+}
+function setPartialStateActions(comState, somState){
+  var comPrimary = document.getElementById("stateCOMOnlyPrimary");
+  var comView = document.getElementById("stateCOMOnlyView");
+  var comClear = document.getElementById("stateCOMOnlyClear");
+  var somPrimary = document.getElementById("stateSOMOnlyPrimary");
+  var somView = document.getElementById("stateSOMOnlyView");
+  var somClear = document.getElementById("stateSOMOnlyClear");
+
+  if(comPrimary){
+    comPrimary.textContent = somState.ok ? "Go to UTF Profile" : (somState.canResume ? "Resume SOM" : "Take SOM now");
+    comPrimary.setAttribute("href", somState.ok ? "synthesis.html" : "som.html");
+  }
+  if(comView) comView.setAttribute("href","com.html");
+  if(comClear) comClear.style.display = somState.canResume ? "inline-flex" : "none";
+
+  if(somPrimary){
+    somPrimary.textContent = comState.ok ? "Go to UTF Profile" : (comState.canResume ? "Resume COM" : "Take COM now");
+    somPrimary.setAttribute("href", comState.ok ? "synthesis.html" : "com.html");
+  }
+  if(somView) somView.setAttribute("href","som.html");
+  if(somClear) somClear.style.display = comState.canResume ? "inline-flex" : "none";
+}
+function directSomAutosave(){
+  return readJSONKey("empoweru_utf2_som_v3_1_0_autosave", null);
+}
+function directSomLock(){
+  return readJSONKey("empoweru_utf2_som_lock_v3_1_0", null);
+}
+function directComAutosave(){
+  return readJSONKey("empoweru_utf2_com_v1_3_0", null) || readJSONKey("empoweru_utf2_com_v1_3_0__bak", null);
+}
+function directComLock(){
+  return readJSONKey("empoweru_utf2_com_lock_v1_3_0", null);
+}
+function inferSomGridFromCode(code){
+  if(!code || !SOM_MODE_NAMES[code]) return null;
+  var tier = (/^(DRV|HRB|TBZ)$/.test(code)) ? "HIGH" : (/^(BST|HVN|REF)$/.test(code) ? "LOW" : "STEADY");
+  var orient = (/^(DRV|BLD|BST)$/.test(code)) ? "OUT" : (/^(HRB|EQZ|HVN)$/.test(code) ? "PPL" : "CHG");
+  return { tier:tier, orient:orient, net:0 };
+}
+function synthesizeSomResultFromLock(lockObj){
+  if(!lockObj || typeof lockObj !== "object") return null;
+  if(!lockObj.primaryType || !SOM_MODE_NAMES[lockObj.primaryType]) return null;
+  return {
+    primaryType: lockObj.primaryType,
+    primaryName: SOM_MODE_NAMES[lockObj.primaryType] || lockObj.primaryType,
+    dimScores: { EP:0, EM:0, OUT:0, PPL:0, CHG:0 },
+    meta: { grid: inferSomGridFromCode(lockObj.primaryType) }
+  };
 }
 function getComTypeCopy(type){ return (COM_TYPE_COPY && COM_TYPE_COPY[type]) ? COM_TYPE_COPY[type] : null; }
 function getComCardHeadline(type){
@@ -1891,11 +1952,12 @@ function resetTransientUI(){
 }
 
 function syncFromStorage(){
-  var comRaw = readJSONKey(COM_KEY, validateComResult);
-  var somRaw = hydrateSomResult(readJSONKey(SOM_KEY, validateSomResult));
+  var comState = getComState();
+  var somState = getSomState();
+  var comRaw = comState.result;
+  var somRaw = somState.result;
   var hasCOM = !!(comRaw && comRaw.primaryType);
   var hasSOM = !!(somRaw && somRaw.primaryType);
-  // fallback: if a SOM lock/autosave exists but result object is stale or partial, prefer Resume SOM over a false clean slate
 
   hideAllStates();
   resetTransientUI();
@@ -1903,9 +1965,7 @@ function syncFromStorage(){
   if(hasCOM) _comType = comRaw.primaryType || "";
   if(hasSOM) _somMode = somRaw.primaryType || "";
 
-  var somState = getSomState();
-  setStatePrimaryCTA("stateCOMOnly", "som.html", somState.canResume ? "Resume SOM" : "Take SOM now");
-  setStatePrimaryCTA("stateSOMOnly", "com.html", "Take COM now");
+  setPartialStateActions(comState, somState);
   setStatePrimaryCTA("stateNeither", "com.html", "Take COM first");
 
   if(hasCOM && hasSOM){
