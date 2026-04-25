@@ -1016,7 +1016,7 @@
       </div>
       <div class="modal-body">
         <p id="tieIntro" style="margin-bottom:10px;">
-          Your results are close. Answer these 6 quick forced-choice items to confirm the best fit.
+          Your results are close. Answer these 3 quick forced-choice items to confirm the best fit.
         </p>
 
         <div id="tieForm"></div>
@@ -2082,9 +2082,6 @@
       var items = [];
       for (var i=0;i<3;i++){
         items.push({ ownerA:modeA, ownerB:modeB, A:a[i], B:b[i], C:"Both are partly true; I am mixed." });
-      }
-      for (var j=0;j<3;j++){
-        items.push({ ownerA:modeA, ownerB:modeB, A:a[j], B:b[j], C:"Hard to choose; it varies by day." });
       }
       shuffleInPlace(items);
       return items;

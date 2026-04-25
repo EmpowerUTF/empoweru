@@ -120,10 +120,10 @@
     .atlas-copy-left{flex:1;min-width:0;}
     .atlas-copy-title{font-size:.95rem;font-weight:800;color:rgba(94,234,212,0.92);margin-bottom:4px;letter-spacing:.01em;}
     .atlas-copy-desc{font-size:.90rem;color:rgba(255,255,255,0.94);line-height:1.6;}.atlas-copy-desc strong{color:#ffffff;font-weight:900;}
-    .atlas-agreement{padding:14px 22px;background:rgba(255,255,255,0.025);border-left:1px solid rgba(94,234,212,0.20);border-right:1px solid rgba(94,234,212,0.20);color:rgba(230,237,247,0.56);font-size:.80rem;line-height:1.55;}
-    .atlas-agreement label{display:flex;gap:12px;align-items:flex-start;cursor:pointer;user-select:none;}
+    .atlas-agreement{padding:10px 22px;background:rgba(255,255,255,0.018);border-left:1px solid rgba(94,234,212,0.20);border-right:1px solid rgba(94,234,212,0.20);color:rgba(230,237,247,0.44);font-size:.76rem;line-height:1.45;}
+    .atlas-agreement label{display:flex;gap:10px;align-items:flex-start;cursor:pointer;user-select:none;}
     .atlas-agreement input[type="checkbox"]{margin-top:3px;width:16px;height:16px;accent-color:#14b8a6;flex:0 0 auto;}
-    .atlas-agreement a{color:rgba(165,180,252,.95);text-decoration:none;border-bottom:1px dashed rgba(165,180,252,.55);font-weight:800;}
+    .atlas-agreement a{color:rgba(165,180,252,.92);text-decoration:none;border-bottom:1px dashed rgba(165,180,252,.50);font-weight:800;}
     .atlas-agreement a:hover{color:rgba(52,211,153,.95);border-bottom-color:rgba(52,211,153,.55);}
     .copy-btn{
       width:100%;padding:15px 16px;border:none;border-radius:0 0 16px 16px;cursor:pointer;
@@ -572,7 +572,7 @@
         <div class="atlas-agreement">
           <label>
             <input type="checkbox" id="atlasAgreeChk" onchange="setAtlasCopyEnabled()" />
-            <div>I understand that Atlas is a self-reflection tool, not professional advice. I take full responsibility for how I interpret and act on anything an AI tells me using this profile. I agree to the <a href="#" id="openAtlasAgreement" onclick="event.preventDefault();event.stopPropagation();openAtlasAgreementModal();">Atlas User Agreement</a>.</div>
+            <div><a href="#" id="openAtlasAgreement" onclick="event.preventDefault();event.stopPropagation();openAtlasAgreementModal();">I agree to the Atlas User Agreement</a>.</div>
           </label>
         </div>
 

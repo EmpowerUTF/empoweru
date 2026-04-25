@@ -275,6 +275,115 @@
     }
     .returning-btn:hover{border-color:rgba(94,234,212,.35);color:rgba(94,234,212,.9);}
 
+
+    /* ── RETURNING ACTIONS ── */
+    .returning-wrap{display:flex;flex-direction:column;gap:12px;}
+    .returning-actions{
+      display:none;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:10px;
+    }
+    .returning-actions.show{display:grid;}
+    @media(max-width:640px){.returning-actions{grid-template-columns:1fr;}}
+    .returning-box{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      padding:14px 16px;border-radius:14px;
+      background:rgba(255,255,255,.03);
+      border:1px solid rgba(255,255,255,.08);
+      color:rgba(230,237,247,.78);
+      font-size:.84rem;font-weight:800;
+      text-decoration:none;cursor:pointer;
+      transition:transform .15s ease,border-color .15s ease,background .15s ease;
+      touch-action:manipulation;
+    }
+    .returning-box:hover{
+      transform:translateY(-1px);
+      border-color:rgba(94,234,212,.32);
+      background:rgba(255,255,255,.045);
+    }
+    .returning-box svg{flex-shrink:0;color:rgba(94,234,212,.78);}
+    .returning-box.danger{
+      color:rgba(254,202,202,.92);
+      border-color:rgba(239,68,68,.18);
+    }
+    .returning-box.danger svg{color:rgba(252,165,165,.88);}
+    .returning-box.danger:hover{
+      border-color:rgba(239,68,68,.38);
+      background:rgba(239,68,68,.06);
+    }
+
+    /* ── TOAST ── */
+    .toast{
+      position:fixed;left:50%;bottom:14px;transform:translateX(-50%);
+      width:min(720px,calc(100% - 24px));z-index:4000;display:none;
+      padding:12px 14px;border-radius:14px;
+      background:rgba(251,191,36,.14);
+      border:1px solid rgba(251,191,36,.40);
+      color:rgba(255,237,180,.98);
+      font-size:.92rem;line-height:1.35;
+      box-shadow:0 18px 50px rgba(0,0,0,.45);
+      backdrop-filter:blur(10px);overflow-wrap:anywhere;
+    }
+    .toast.show{display:block;}
+
+    /* ── CONFIRM MODAL ── */
+    .confirm-backdrop{
+      position:fixed;inset:0;z-index:3600;
+      background:rgba(0,0,0,.60);backdrop-filter:blur(8px);
+      display:none;align-items:center;justify-content:center;padding:18px;
+    }
+    .confirm-backdrop.show{display:flex;}
+    .confirm-modal{
+      width:min(560px,94vw);border-radius:20px;
+      border:1px solid rgba(255,255,255,.12);
+      background:radial-gradient(900px 520px at 20% 10%,rgba(239,68,68,.10),transparent 56%),
+                 radial-gradient(900px 520px at 80% 20%,rgba(59,130,246,.08),transparent 60%),
+                 linear-gradient(180deg,rgba(9,12,22,.99),rgba(6,9,16,.99));
+      box-shadow:0 28px 90px rgba(0,0,0,.75);overflow:hidden;
+    }
+    .confirm-header{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.10);
+    }
+    .confirm-title{
+      font-weight:900;letter-spacing:.08em;text-transform:uppercase;
+      font-size:.92rem;color:rgba(254,202,202,.95);
+    }
+    .confirm-close{
+      border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.04);
+      color:rgba(230,237,247,.9);border-radius:12px;padding:9px 12px;cursor:pointer;
+      font-weight:900;touch-action:manipulation;transition:all .15s;
+    }
+    .confirm-close:hover{border-color:rgba(239,68,68,.45);transform:translateY(-1px);}
+    .confirm-body{
+      padding:18px 20px 22px;color:rgba(229,231,235,.80);
+      font-size:.92rem;line-height:1.7;
+    }
+    .confirm-body strong{color:rgba(254,202,202,.96);}
+    .confirm-actions{
+      display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:18px;
+    }
+    .confirm-cancel,.confirm-clear{
+      display:inline-flex;align-items:center;justify-content:center;gap:8px;
+      padding:11px 16px;border-radius:10px;font-size:.86rem;font-weight:800;
+      text-decoration:none;cursor:pointer;touch-action:manipulation;transition:all .15s;
+    }
+    .confirm-cancel{
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.12);
+      color:rgba(230,237,247,.82);
+    }
+    .confirm-cancel:hover{border-color:rgba(255,255,255,.22);}
+    .confirm-clear{
+      background:rgba(239,68,68,.12);
+      border:1px solid rgba(239,68,68,.34);
+      color:rgba(254,202,202,.96);
+    }
+    .confirm-clear:hover{
+      background:rgba(239,68,68,.18);
+      border-color:rgba(239,68,68,.48);
+    }
+
     /* ── LEGAL ── */
     .legal{
       margin-top:36px;padding-top:22px;
@@ -333,6 +442,8 @@
   </style>
 </head>
 <body>
+
+  <div class="toast" id="toast"></div>
 
   <header class="topbar" role="banner">
     <div class="topbar-inner">
@@ -496,12 +607,28 @@
     </div>
 
     <!-- RETURNING USERS -->
-    <div class="returning">
-      <p><strong>Already completed the assessments?</strong><br>Your results are saved on this device.</p>
-      <a class="returning-btn" href="synthesis.html">
-        View your UTF Profile
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-      </a>
+    <div class="returning-wrap">
+      <div class="returning" id="returningBlock">
+        <p id="returningText"><strong>Already completed the assessments?</strong><br>Your results are saved on this device.</p>
+        <a class="returning-btn" id="returningBtn" href="synthesis.html">
+          View your UTF Profile
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </a>
+      </div>
+      <div class="returning-actions" id="returningActions">
+        <button class="returning-box" type="button" onclick="openIndexConfirm('com')">
+          <span>Retake COM</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.72"/></svg>
+        </button>
+        <button class="returning-box" type="button" onclick="openIndexConfirm('som')">
+          <span>Retake SOM</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.72"/></svg>
+        </button>
+        <button class="returning-box danger" type="button" onclick="openIndexConfirm('all')">
+          <span>Clear results</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+        </button>
+      </div>
     </div>
 
     <!-- LEGAL -->
@@ -516,6 +643,24 @@
       <div class="legal-text" style="margin-top:5px;">&copy; <span id="yearNow"></span> Empower.U. Unified Typing Framework, COM, and SOM are proprietary to Empower.U.</div>
     </div>
 
+  </div>
+
+
+  <div class="confirm-backdrop" id="indexConfirmModal" aria-hidden="true" onclick="if(event.target===this)closeIndexConfirm();">
+    <div class="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="indexConfirmTitle">
+      <div class="confirm-header">
+        <div class="confirm-title" id="indexConfirmTitle">Clear saved results</div>
+        <button class="confirm-close" type="button" onclick="closeIndexConfirm()">Close</button>
+      </div>
+      <div class="confirm-body">
+        <p id="indexConfirmLead"><strong>This will remove your saved COM and SOM results from this device.</strong></p>
+        <p id="indexConfirmBody">After clearing, you can start again from the beginning.</p>
+        <div class="confirm-actions">
+          <button class="confirm-cancel" type="button" onclick="closeIndexConfirm()">Cancel</button>
+          <button class="confirm-clear" id="indexConfirmActionBtn" type="button" onclick="runIndexConfirmAction()">Yes, clear everything</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- MENU MODAL -->
@@ -542,6 +687,15 @@
     var yearEl = document.getElementById("yearNow");
     if(yearEl) yearEl.textContent = new Date().getFullYear();
 
+    var COM_KEY = "empoweru_utf2_last_com_result";
+    var SOM_KEY = "empoweru_utf2_som_latest";
+    var INDEX_PENDING_ACTION = "all";
+    var SOM_MODE_NAMES = {
+      DRV:"Driver", HRB:"Harbor", TBZ:"Trailblazer",
+      BLD:"Builder", EQZ:"Equalizer", ENH:"Enhancer",
+      BST:"Bastion", HVN:"Haven", REF:"Reformer"
+    };
+
     var menuModal = document.getElementById("menuModal");
     var btnMenu   = document.getElementById("btnMenu");
     var btnClose  = document.getElementById("btnCloseMenu");
@@ -558,10 +712,227 @@
       menuModal.setAttribute("aria-hidden","true");
       document.body.style.overflow="";
     }
+
+    function showToast(message){
+      var t = document.getElementById("toast");
+      if(!t){ alert(message); return; }
+      t.textContent = message;
+      t.classList.add("show");
+      clearTimeout(window.__indexToastTimer);
+      window.__indexToastTimer = setTimeout(function(){ t.classList.remove("show"); }, 5200);
+    }
+
+    function safeJSONParse(raw){ try{ return JSON.parse(raw); } catch(e){ return null; } }
+    function lsKeys(){ try{ return Object.keys(localStorage || {}); } catch(e){ return []; } }
+    function hasAnsweredArray(arr){ return Array.isArray(arr) && arr.some(function(v){ return v !== null && v !== undefined; }); }
+    function keysByRegex(rx){ return lsKeys().filter(function(k){ return rx.test(k); }); }
+    function removeKeysByRegex(rx){
+      keysByRegex(rx).forEach(function(k){ try{ localStorage.removeItem(k); } catch(e){} });
+    }
+    function numOk(v){ return typeof v === "number" && isFinite(v); }
+    function readJSONKey(key){
+      try{
+        var raw = localStorage.getItem(key);
+        if(!raw) return null;
+        return safeJSONParse(raw);
+      } catch(e){ return null; }
+    }
+    function validateComResult(obj){
+      if(!obj || typeof obj !== "object") return false;
+      if(!obj.primaryType) return false;
+      if(!obj.avgDims || typeof obj.avgDims !== "object") return false;
+      return ["D1","D2","D3","D4","D5","D6","D7","D8","D9","E"].every(function(k){ return numOk(obj.avgDims[k]); });
+    }
+    function validateSomResult(obj){
+      if(!obj || typeof obj !== "object") return false;
+      if(!obj.primaryType || !SOM_MODE_NAMES[obj.primaryType]) return false;
+      return true;
+    }
+
+    function getComState(){
+      var result = readJSONKey(COM_KEY);
+      var validResult = validateComResult(result) ? result : null;
+      var autosave = keysByRegex(/^empoweru_utf2_com_v\d+(?:_\d+)+(?:__bak)?$/).some(function(k){
+        var obj = readJSONKey(k);
+        return !!(obj && hasAnsweredArray(obj.answers));
+      });
+      var lock = keysByRegex(/^empoweru_utf2_com_lock_v\d+(?:_\d+)+$/).some(function(k){
+        var obj = readJSONKey(k);
+        return !!(obj && (obj.locked || obj.primaryType || obj.lockedAt));
+      });
+      return {
+        complete: !!validResult,
+        hasAutosave: autosave,
+        hasLock: lock,
+        any: !!validResult || autosave || lock
+      };
+    }
+
+    function getSomState(){
+      var result = readJSONKey(SOM_KEY);
+      var validResult = validateSomResult(result) ? result : null;
+      var autosave = keysByRegex(/^empoweru_utf2_som_v\d+(?:_\d+)+(?:_autosave)?(?:__bak)?$/).some(function(k){
+        var obj = readJSONKey(k);
+        return !!(obj && (hasAnsweredArray(obj.answers) || hasAnsweredArray(obj.responses) || hasAnsweredArray(obj.items) || (obj.answers && hasAnsweredArray(obj.answers.values))));
+      });
+      var lock = keysByRegex(/^empoweru_utf2_som_lock_v\d+(?:_\d+)+$/).some(function(k){
+        var obj = readJSONKey(k);
+        return !!(obj && (obj.locked || obj.primaryType || obj.lockedAt));
+      });
+      return {
+        complete: !!validResult,
+        hasAutosave: autosave,
+        hasLock: lock,
+        any: !!validResult || autosave || lock
+      };
+    }
+
+    function clearComStorageDeep(){
+      try{ localStorage.removeItem(COM_KEY); } catch(e){}
+      removeKeysByRegex(/^empoweru_utf2_com_v\d+(?:_\d+)+(?:__bak)?$/);
+      removeKeysByRegex(/^empoweru_utf2_com_lock_v\d+(?:_\d+)+$/);
+    }
+    function clearSomStorageDeep(){
+      try{ localStorage.removeItem(SOM_KEY); } catch(e){}
+      removeKeysByRegex(/^empoweru_utf2_som_v\d+(?:_\d+)+(?:_autosave)?(?:__bak)?$/);
+      removeKeysByRegex(/^empoweru_utf2_som_lock_v\d+(?:_\d+)+$/);
+    }
+
+    function syncReturningArea(){
+      var com = getComState();
+      var som = getSomState();
+      var returningText = document.getElementById("returningText");
+      var returningBtn = document.getElementById("returningBtn");
+      var returningActions = document.getElementById("returningActions");
+      var anySaved = com.any || som.any;
+
+      if(returningActions){
+        returningActions.classList.toggle("show", anySaved);
+      }
+
+      if(com.complete && som.complete){
+        if(returningText) returningText.innerHTML = "<strong>Already got your results?</strong><br>Your full UTF profile is saved on this device.";
+        if(returningBtn){
+          returningBtn.href = "synthesis.html";
+          returningBtn.innerHTML = 'View your UTF Profile <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>';
+        }
+        return;
+      }
+
+      if(com.complete && !som.complete){
+        if(returningText) returningText.innerHTML = "<strong>COM is already finished on this device.</strong><br>Take SOM to complete your UTF profile, or manage your saved results below.";
+        if(returningBtn){
+          returningBtn.href = "som.html";
+          returningBtn.innerHTML = 'Continue with SOM <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>';
+        }
+        return;
+      }
+
+      if(!com.complete && som.complete){
+        if(returningText) returningText.innerHTML = "<strong>SOM is already finished on this device.</strong><br>Take COM to complete your UTF profile, or manage your saved results below.";
+        if(returningBtn){
+          returningBtn.href = "com.html";
+          returningBtn.innerHTML = 'Continue with COM <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>';
+        }
+        return;
+      }
+
+      if(anySaved){
+        var resumeHref = com.any ? "com.html" : "som.html";
+        var resumeLabel = com.any ? "Resume COM" : "Resume SOM";
+        if(returningText) returningText.innerHTML = "<strong>Saved progress found on this device.</strong><br>You can pick up where you left off or clear the saved results below.";
+        if(returningBtn){
+          returningBtn.href = resumeHref;
+          returningBtn.innerHTML = resumeLabel + ' <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>';
+        }
+        return;
+      }
+
+      if(returningText) returningText.innerHTML = "<strong>Already completed the assessments?</strong><br>Your results are saved on this device.";
+      if(returningBtn){
+        returningBtn.href = "synthesis.html";
+        returningBtn.innerHTML = 'View your UTF Profile <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>';
+      }
+    }
+
+    function openIndexConfirm(kind){
+      INDEX_PENDING_ACTION = kind || "all";
+      var title = document.getElementById("indexConfirmTitle");
+      var lead = document.getElementById("indexConfirmLead");
+      var body = document.getElementById("indexConfirmBody");
+      var btn = document.getElementById("indexConfirmActionBtn");
+
+      if(INDEX_PENDING_ACTION === "com"){
+        if(title) title.textContent = "Retake COM";
+        if(lead) lead.innerHTML = "<strong>This will remove your saved COM result from this device.</strong>";
+        if(body) body.textContent = "You will be sent to the COM assessment and can retake that layer from the beginning.";
+        if(btn) btn.textContent = "Yes, clear COM and continue";
+      } else if(INDEX_PENDING_ACTION === "som"){
+        if(title) title.textContent = "Retake SOM";
+        if(lead) lead.innerHTML = "<strong>This will remove your saved SOM result from this device.</strong>";
+        if(body) body.textContent = "You will be sent to the SOM assessment and can retake that layer from the beginning.";
+        if(btn) btn.textContent = "Yes, clear SOM and continue";
+      } else {
+        if(title) title.textContent = "Clear saved results";
+        if(lead) lead.innerHTML = "<strong>This will remove your saved COM and SOM results from this device.</strong>";
+        if(body) body.textContent = "After clearing, you can start again from the beginning and the saved result area will reset.";
+        if(btn) btn.textContent = "Yes, clear everything";
+      }
+
+      var modal = document.getElementById("indexConfirmModal");
+      if(!modal) return;
+      modal.classList.add("show");
+      modal.setAttribute("aria-hidden","false");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeIndexConfirm(){
+      var modal = document.getElementById("indexConfirmModal");
+      if(!modal) return;
+      modal.classList.remove("show");
+      modal.setAttribute("aria-hidden","true");
+      document.body.style.overflow = "";
+    }
+
+    function runIndexConfirmAction(){
+      if(INDEX_PENDING_ACTION === "com"){
+        clearComStorageDeep();
+        closeIndexConfirm();
+        window.location.href = "com.html";
+        return;
+      }
+      if(INDEX_PENDING_ACTION === "som"){
+        clearSomStorageDeep();
+        closeIndexConfirm();
+        window.location.href = "som.html";
+        return;
+      }
+      clearComStorageDeep();
+      clearSomStorageDeep();
+      closeIndexConfirm();
+      syncReturningArea();
+      showToast("Saved COM and SOM results cleared from this device.");
+    }
+
     if(btnMenu)  btnMenu.addEventListener("click", openMenu);
     if(btnClose) btnClose.addEventListener("click", closeMenu);
     if(menuModal) menuModal.addEventListener("click", function(e){ if(e.target===this) closeMenu(); });
-    document.addEventListener("keydown", function(e){ if(e.key==="Escape") closeMenu(); });
+    document.addEventListener("keydown", function(e){
+      if(e.key==="Escape"){
+        closeMenu();
+        closeIndexConfirm();
+      }
+    });
+
+    window.openIndexConfirm = openIndexConfirm;
+    window.closeIndexConfirm = closeIndexConfirm;
+    window.runIndexConfirmAction = runIndexConfirmAction;
+
+    window.addEventListener("pageshow", syncReturningArea);
+    window.addEventListener("focus", syncReturningArea);
+    window.addEventListener("storage", syncReturningArea);
+
+    syncReturningArea();
   </script>
 
 </body>
