@@ -613,10 +613,18 @@
       margin-top: 10px;
       display: none;
       justify-content: center;
-      gap: 10px;
+      align-items: center;
+      gap: 8px;
       flex-wrap: wrap;
+      flex-direction: column;
     }
     .bottom-actions.show{ display:flex; }
+    .bottom-actions .pill-btn{
+      opacity: .82;
+      font-size: .82rem;
+      padding: 7px 11px;
+      min-width: min(160px, 100%);
+    }
 
     .eu-footer{
       margin-top: 22px;
@@ -944,7 +952,7 @@
 
       <div class="bottom-actions" id="bottomActions">
         <a class="synth-link" id="synthLinkBottom" href="#" rel="noopener">See My Full Profile</a>
-        <button class="synth-link" id="retakeSomBottomBtn" type="button">Retake SOM</button>
+        <button class="pill-btn" id="retakeSomBottomBtn" type="button">Retake SOM</button>
       </div>
     </div>
   </div>
