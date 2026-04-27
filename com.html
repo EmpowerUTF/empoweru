@@ -679,6 +679,38 @@
       justify-content: center;
     }
     .bottom-actions.show{ display:flex; }
+    .bottom-com-actions{
+      margin-top: 12px;
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .bottom-com-actions .pill-btn{
+      min-width: min(220px, 100%);
+    }
+    .pill-btn.danger{
+      border-color: rgba(248,113,113,0.30);
+      background: rgba(248,113,113,0.08);
+      color: rgba(254,226,226,0.94);
+    }
+    .pill-btn.danger:hover{
+      border-color: rgba(248,113,113,0.55);
+      box-shadow: 0 14px 34px rgba(127,29,29,.28);
+    }
+    .confirm-copy{
+      color: rgba(230,237,247,0.78);
+      font-size: 0.94rem;
+      line-height: 1.58;
+      margin-bottom: 12px;
+    }
+    .confirm-actions{
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 12px;
+    }
     .next-link{
       display:inline-flex;
       align-items:center;
@@ -1047,9 +1079,9 @@
       <div class="meta">About <strong>15 minutes</strong>. Answers save automatically if you need to pause.</div>
       <div class="resume-row">
         <button class="pill-btn" id="resumeBtn" type="button" disabled>Resume saved answers</button>
-        <button class="pill-btn" id="clearBtn" type="button" disabled>Clear saved answers</button>
+        <button class="pill-btn" id="clearBtn" type="button" disabled>Retake COM</button>
       </div>
-      <div class="lock-note" id="lockNote">This COM submission is locked on this device after results are shown. To change answers, use Clear saved answers and retake from the beginning.</div>
+      <div class="lock-note" id="lockNote">This COM submission is locked on this device after results are shown. To change answers, use Retake COM and start again from the beginning.</div>
       <div class="atlas-intro">
         <strong>Step 1 of your UTF profile.</strong>
         This maps the layer that doesn't shift with your mood or circumstances. Take the SOM after and you'll have a complete picture of how you think and what you need right now.
@@ -1104,9 +1136,9 @@
         <div class="accordion">
           <button type="button" class="acc-btn" id="togglePatternMap">
             <span>Trait Map</span>
-            <span id="accChevron">▼</span>
+            <span id="accChevron">▲</span>
           </button>
-          <div class="acc-panel" id="patternPanel">
+          <div class="acc-panel show" id="patternPanel">
             <div class="trait-list" id="dimCards"></div>
           </div>
         </div>
@@ -1124,8 +1156,8 @@
           <a class="next-link" id="somLink" href="som.html">SOM Assessment</a>
         </div>
 
-        <div style="margin-top:16px;padding:16px 18px;background:rgba(255,255,255,0.03);border:1px solid rgba(148,163,184,0.22);border-radius:12px;color:rgba(230,237,247,0.72);font-size:0.92rem;line-height:1.6;">
-          The SOM takes about 5 minutes. It captures where you are right now so your final profile reflects both who you are and what you actually need in this season, not just one or the other.
+        <div class="bottom-com-actions" id="bottomComActions">
+          <button class="pill-btn" id="bottomRetakeComBtn" type="button">Retake COM</button>
         </div>
         </div>
 
@@ -1214,6 +1246,24 @@
         </div>
         <div class="tb-mini" style="text-align:center;">
           This step only affects which COM label is shown. Your underlying 9-dimension scores are unchanged.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="comClearModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="comClearTitle">
+      <div class="modal-header">
+        <div class="modal-title" id="comClearTitle">Retake COM?</div>
+        <button class="modal-close" id="btnCloseComClear" type="button">Cancel</button>
+      </div>
+      <div class="modal-body">
+        <div class="confirm-copy" id="comClearCopy">
+          This will delete your saved COM answers and COM result from this device, then return you to the beginning of the COM assessment.
+        </div>
+        <div class="confirm-actions">
+          <button class="pill-btn" id="comClearCancelBtn" type="button">Cancel</button>
+          <button class="pill-btn danger" id="comClearConfirmBtn" type="button">Retake COM</button>
         </div>
       </div>
     </div>
@@ -1316,86 +1366,86 @@
     // 80 questions
     // =========================
     const questions = [
-      "In messy situations, I naturally look for how the pieces fit together overall.",
-      "Once I have enough to choose, I prefer to decide and move forward.",
-      "When opinions clash, I look for ways they might still fit into one view.",
+      "I like finding the underlying pattern in messy situations.",
+      "Once I see the best option, I like to decide and move on.",
+      "When opinions clash, I look for ways to combine them into one view.",
       "I prefer having a clear plan and order to follow.",
       "I pay attention to the mood in a group and how people are reacting.",
-      "I usually spend extra time adjusting details even after the main work is done.",
-      "I naturally consider how my decisions will affect the people involved.",
+      "I keep improving things until the details feel solid.",
+      "I naturally consider how my decisions will affect people's feelings.",
       "I prefer to figure things out myself before asking for input.",
       "I gain energy from being around people for long periods.",
-      "Unexpected problems usually do not throw me off for long.",
-      "I often step back from the immediate facts to ask what they add up to overall.",
+      "I stay calm when things go unexpectedly wrong.",
+      "I care about the bigger meaning behind what is happening, not just the facts.",
       "Too many options bother me; I want to narrow things down.",
-      "I like seeing how unrelated pieces can fit together in one explanation.",
+      "I like connecting separate pieces into one explanation.",
       "I like having routines and structure.",
       "I track who has influence in a group and why.",
-      "I notice when wording, design, or logic feels slightly off.",
-      "In a decision involving other people, preserving the relationship matters more to me than proving a point.",
-      "When an important decision is mine to make, I usually finalize it without first checking whether someone close to me agrees.",
+      "I notice rough edges in wording, design, or logic.",
+      "Being kind is more important to me than being right.",
+      "I prefer relying on my own judgment rather than seeking agreement.",
       "After social time, I usually need quiet time alone to recharge.",
-      "After a problem is over, my mind stays on it longer than I want.",
-      "I act from the immediate facts and logic in front of me rather than looking for a larger pattern.",
-      "I like reducing the options to a short list before I decide.",
-      "I prefer finding how conflicting viewpoints might fit together.",
+      "I tend to ruminate on problems long after they are resolved.",
+      "I almost never think in patterns; I just deal with what is right in front of me.",
+      "I prefer setting clear priorities before deciding.",
+      "I prefer blending different viewpoints into a single picture.",
       "Planning drains me; I would rather just start and see what happens.",
       "I notice when someone feels left out even if they don't say it.",
-      "I would rather finish something well enough on time and move on than keep fixing every last detail.",
-      "I naturally check whether the people around me are doing okay, even when no one brings it up.",
-      "Once I understand the goal, I prefer to handle the work my own way without much input.",
+      "I am okay turning something in even if it is a bit rough.",
+      "I naturally check whether the people around me are doing okay, even when no one asks me to.",
+      "I prefer working with maximum independence and minimal oversight.",
       "I enjoy starting conversations with strangers.",
-      "Setbacks usually pass through me without lingering for very long.",
-      "I often ask what different situations have in common beneath the surface.",
-      "Committing early usually feels restrictive to me.",
+      "After something goes wrong, I bounce back without dwelling on it for long.",
+      "I look for the one idea that connects different topics.",
+      "I avoid committing; I keep options open as long as possible.",
       "When information conflicts, I look for an explanation that makes both true.",
       "I like turning goals into steps, checklists, or timelines.",
       "I pay attention to what motivates different people.",
-      "I notice when wording, numbers, or design could still be tightened further.",
-      "In a group decision, I find it hard to ignore how each option will affect the people involved.",
-      "I usually prefer choosing my own direction rather than having it set for me.",
+      "I care about precision in words, numbers, or design.",
+      "I readily help others even when it is inconvenient for me.",
+      "I prefer setting my own direction rather than being guided.",
       "I prefer to think privately before speaking in a group.",
-      "After criticism or tension, it can take me a while to settle back down.",
-      "When I encounter something new, I instinctively look for the underlying pattern or principle first.",
-      "I prefer the feeling of closing a decision over continuing to explore more options.",
-      "I would rather keep different viewpoints separate than force them into one explanation.",
+      "Criticism or negative feedback affects my mood significantly.",
+      "When I encounter something new, I instinctively look for the underlying pattern or principle.",
+      "I feel satisfied when a decision is final and action can begin.",
+      "I have trouble combining viewpoints; I prefer to keep them separate.",
       "I prefer working with clear constraints and rules.",
       "I notice tension early and look for what's causing it.",
-      "I often keep revising something even after it is already working.",
-      "Maintaining harmony matters a lot to me when a group has to make decisions together.",
-      "Once I have reached a decision, I usually do not need much outside reassurance before acting.",
-      "I usually like being actively involved when a group is in motion.",
-      "High-stakes situations do not usually shake my ability to function.",
-      "I usually stay with the concrete facts rather than asking what they mean more broadly.",
-      "I prefer discussions that end in a clear conclusion that can actually be used.",
+      "I keep iterating until the quality feels consistent, not just good enough.",
+      "Maintaining harmony is a top priority for me in groups.",
+      "I prefer making decisions without seeking external validation.",
+      "I enjoy being in the center of group activity.",
+      "When stakes are high, I feel steady rather than anxious about the outcome.",
+      "I rarely think about deeper meaning; I focus on what is right in front of me.",
+      "I prefer discussions that reach a clear conclusion.",
       "I like connecting people, problems, and resources into one picture.",
       "I often start without a plan and figure it out later.",
       "I miss subtle social cues unless they are said directly.",
-      "I usually notice right away when something could still be improved after the first draft.",
-      "When there is a tradeoff, I will choose the more effective option even if it affects people's feelings.",
-      "Before finalizing an important decision, I usually want another person's perspective.",
+      "I enjoy improving something after the first draft.",
+      "I make decisions based on logic regardless of how people might feel.",
+      "I prefer checking with others before finalizing decisions.",
       "Frequent messaging or social contact drains me.",
-      "Even when nothing specific is wrong, I can still feel internally off for a while.",
+      "I often feel anxious or unsettled even when nothing is clearly wrong.",
       "I look for the principle behind the rule.",
       "I'm comfortable staying undecided for a long time.",
-      "To understand something complicated, I usually look at how several factors are affecting each other.",
-      "I like putting in extra planning to prepare for failure points and contingencies.",
+      "I prefer making sense of complexity by combining different sources.",
+      "I like planning for failure points and contingencies.",
       "I notice how decisions will affect relationships and morale.",
-      "Once the main job is done, small imperfections rarely hold my attention.",
-      "When results matter, I focus on the outcome even if it strains morale.",
-      "I usually prefer periodic input from others rather than handling a long stretch entirely on my own.",
+      "Small mistakes do not bother me much.",
+      "When results matter, I focus on the outcome and worry about people's feelings later.",
+      "I prefer regular check-ins over long stretches working alone.",
       "I prefer talking through ideas out loud.",
       "My mood stays relatively even across different situations.",
-      "I naturally think in models, frameworks, or big-picture ideas.",
+      "I enjoy thinking in models, frameworks, or big-picture ideas.",
       "I prefer to choose one path and commit rather than keep exploring.",
-      "I would rather use one clear frame than combine several inputs into one picture.",
+      "I prefer one clear source; mixing inputs feels confusing.",
       "I prefer organizing my environment and workflow.",
       "I do not notice social undercurrents unless someone says it directly.",
-      "Even when something is already good enough, I still feel the pull to keep refining it.",
+      "When something is almost right, I keep refining it.",
       "Efficiency matters more to me than whether everyone feels included.",
       "I prefer collaborative decisions over solo decisions.",
-      "Social interaction usually drains me more than it energizes me.",
-      "Minor frustrations can stay in my system longer than the situation deserves."
+      "Social interaction energizes me more than it drains me.",
+      "Small frustrations throw me off longer than they should."
     ];
 
     const dimensionMaps = {
@@ -1918,123 +1968,14 @@
     var EMPOWERU_SCORE_ENDPOINT  = "https://empowerutf.up.railway.app/api/score";
     var EMPOWERU_AUTOSAVE_LOCAL  = true;
 
-    var AUTOSAVE_KEY             = "empoweru_utf2_com_v1_3_0";
-    var AUTOSAVE_KEY_BAK         = "empoweru_utf2_com_v1_3_0__bak";
+    var AUTOSAVE_KEY             = "empoweru_utf2_com_v1_7_1";
+    var AUTOSAVE_KEY_BAK         = "empoweru_utf2_com_v1_7_1__bak";
     var AUTOSAVE_SCHEMA          = "empoweru_utf2_com_schema_v5";
     var DERIVED_RESULT_KEY       = "empoweru_utf2_last_com_result";
-    var COM_LOCK_KEY              = "empoweru_utf2_com_lock_v1_3_0";
+    var COM_LOCK_KEY              = "empoweru_utf2_com_lock_v1_7_1";
 
     var EMPOWERU_PASS_COM_TO_SOM_URL = true;
     var EMPOWERU_DEBUG_AUDIT     = false;
-
-    const LEGACY_COM_AUTOSAVE_KEY_HINTS = [
-      "empoweru_utf2_com_v1_7_0",
-      "empoweru_utf2_com_v1_7_0__bak",
-      "empoweru_utf2_com_v1_6_0",
-      "empoweru_utf2_com_v1_6_0__bak",
-      "empoweru_utf2_com_v1_5_0",
-      "empoweru_utf2_com_v1_5_0__bak",
-      "empoweru_utf2_com_v1_4_0",
-      "empoweru_utf2_com_v1_4_0__bak",
-      "empoweru_utf2_com_v1_3_0",
-      "empoweru_utf2_com_v1_3_0__bak",
-      "empoweru_utf2_com_v1_2_7",
-      "empoweru_utf2_com_v1_2_7__bak"
-    ];
-
-    function isPlausibleAnswerValue(v){
-      return v === null || v === undefined || (Number.isInteger(v) && v >= 1 && v <= 5);
-    }
-
-    function isPlausibleAnswerArray(arr){
-      if (!Array.isArray(arr) || arr.length !== questions.length) return false;
-      for (var i=0;i<arr.length;i++){
-        if (!isPlausibleAnswerValue(arr[i])) return false;
-      }
-      return true;
-    }
-
-    function normalizeLegacyAutosavePayload(obj){
-      var arr = obj && (obj.answers || obj.responses || obj.items);
-      if (!obj || !isPlausibleAnswerArray(arr)) return null;
-      return {
-        schema: AUTOSAVE_SCHEMA,
-        bankId: QUESTION_BANK_ID,
-        qCount: questions.length,
-        answers: arr.slice(0),
-        updatedAt: obj.updatedAt || obj.createdAt || new Date().toISOString()
-      };
-    }
-
-    function getLegacyAutosaveCandidates(){
-      var keys = [];
-      try{
-        Object.keys(localStorage).forEach(function(k){
-          if (/^empoweru_utf2_com_v1_\d+_\d+(?:__bak)?$/.test(k)) keys.push(k);
-        });
-      } catch(e){}
-      LEGACY_COM_AUTOSAVE_KEY_HINTS.forEach(function(k){
-        if (keys.indexOf(k) === -1) keys.push(k);
-      });
-      return keys.filter(function(k){ return k !== AUTOSAVE_KEY && k !== AUTOSAVE_KEY_BAK; });
-    }
-
-    function migrateLegacyComStorage(){
-      if (!EMPOWERU_AUTOSAVE_LOCAL) return false;
-      var migrated = false;
-      try{
-        var currentRaw = localStorage.getItem(AUTOSAVE_KEY) || localStorage.getItem(AUTOSAVE_KEY_BAK);
-        var currentObj = currentRaw ? safeParseJSON(currentRaw) : null;
-        var currentOk = !!(currentObj && currentObj.schema === AUTOSAVE_SCHEMA && currentObj.bankId === QUESTION_BANK_ID && currentObj.qCount === questions.length && isPlausibleAnswerArray(currentObj.answers));
-
-        if (!currentOk){
-          var best = null;
-          var candidates = getLegacyAutosaveCandidates();
-          for (var i=0;i<candidates.length;i++){
-            var key = candidates[i];
-            var raw = null;
-            try { raw = localStorage.getItem(key); } catch(e1){}
-            if (!raw) continue;
-            var obj = safeParseJSON(raw);
-            var normalized = normalizeLegacyAutosavePayload(obj);
-            if (!normalized) continue;
-            var ts = new Date(normalized.updatedAt || 0).getTime();
-            if (!best || ts > best.ts){
-              best = { key:key, payload:normalized, ts:ts };
-            }
-          }
-          if (best){
-            var s = JSON.stringify(best.payload);
-            localStorage.setItem(AUTOSAVE_KEY, s);
-            try { localStorage.setItem(AUTOSAVE_KEY_BAK, s); } catch(e2){}
-            migrated = true;
-          }
-        }
-
-        var hasCurrentLock = !!localStorage.getItem(COM_LOCK_KEY);
-        if (!hasCurrentLock){
-          var lockKeys = [];
-          Object.keys(localStorage).forEach(function(k){
-            if (/^empoweru_utf2_com_lock_v1_\d+_\d+$/.test(k) && k !== COM_LOCK_KEY) lockKeys.push(k);
-          });
-          for (var j=0;j<lockKeys.length;j++){
-            var lockRaw = localStorage.getItem(lockKeys[j]);
-            var lockObj = lockRaw ? safeParseJSON(lockRaw) : null;
-            if (!lockObj || !lockObj.locked) continue;
-            localStorage.setItem(COM_LOCK_KEY, JSON.stringify({
-              schema: AUTOSAVE_SCHEMA,
-              bankId: QUESTION_BANK_ID,
-              locked: true,
-              lockedAt: lockObj.lockedAt || new Date().toISOString(),
-              primaryType: lockObj.primaryType || null
-            }));
-            migrated = true;
-            break;
-          }
-        }
-      } catch(e){}
-      return migrated;
-    }
 
     function showToast(mes){
       var t = document.getElementById('toast');
@@ -2144,6 +2085,50 @@
       m.classList.remove("show");
       m.setAttribute("aria-hidden","true");
       lockBodyScroll(false);
+    }
+
+    function openComClearConfirm(action){
+      window.__comClearAction = "retake";
+      var m = document.getElementById("comClearModal");
+      var title = document.getElementById("comClearTitle");
+      var copy = document.getElementById("comClearCopy");
+      var confirm = document.getElementById("comClearConfirmBtn");
+      if (title) title.textContent = "Retake COM?";
+      if (copy){
+        copy.textContent = "This will delete your saved COM answers and COM result from this device, then return you to the beginning of the COM assessment.";
+      }
+      if (confirm) confirm.textContent = "Retake COM";
+      if (!m) return;
+      m.classList.add("show");
+      m.setAttribute("aria-hidden","false");
+      lockBodyScroll(true);
+    }
+
+    function closeComClearConfirm(){
+      var m = document.getElementById("comClearModal");
+      if (!m) return;
+      m.classList.remove("show");
+      m.setAttribute("aria-hidden","true");
+      lockBodyScroll(false);
+    }
+
+    function resetComAssessmentAfterConfirm(action){
+      clearSavedAnswers();
+      clearAllSelections();
+      updateProgress();
+      var results = document.getElementById("results");
+      if (results) results.classList.remove("show");
+      var bottom = document.getElementById("bottomActions");
+      if (bottom) bottom.classList.remove("show");
+      var bottomCom = document.getElementById("bottomComActions");
+      if (bottomCom) bottomCom.style.display = "none";
+      var agree = document.getElementById("agreeChk");
+      if (agree) agree.checked = false;
+      setAssessmentLocked(false);
+      setSubmitEnabled();
+      syncResumeControls();
+      closeComClearConfirm();
+      window.location.href = buildUrlWithParams(EMPOWERU_COM_URL, getPassthroughParams());
     }
 
     // =========================
@@ -2269,10 +2254,6 @@
     function getSavedAnswerData(){
       if (!EMPOWERU_AUTOSAVE_LOCAL) return { found:false };
       var data = _readSavedRaw(AUTOSAVE_KEY) || _readSavedRaw(AUTOSAVE_KEY_BAK);
-      if (!data){
-        migrateLegacyComStorage();
-        data = _readSavedRaw(AUTOSAVE_KEY) || _readSavedRaw(AUTOSAVE_KEY_BAK);
-      }
       if (!data) return { found:false };
 
       var qCount = questions.length;
@@ -2332,7 +2313,7 @@
       if (!data.found) return false;
 
       if (!data.valid){
-        showToast("Saved answers found, but they don't match this COM build. Tap “Clear saved answers” then start fresh.");
+        showToast("Saved answers found, but they don't match this COM build. Tap “Retake COM” then start fresh.");
         return false;
       }
       if (!data.answers) return false;
@@ -2351,12 +2332,6 @@
       try{ localStorage.removeItem(AUTOSAVE_KEY); } catch(e){}
       try{ localStorage.removeItem(AUTOSAVE_KEY_BAK); } catch(e){}
       try{ localStorage.removeItem(DERIVED_RESULT_KEY); } catch(e){}
-      try{
-        Object.keys(localStorage).forEach(function(k){
-          if (/^empoweru_utf2_com_v1_\d+_\d+(?:__bak)?$/.test(k)) localStorage.removeItem(k);
-          if (/^empoweru_utf2_com_lock_v1_\d+_\d+$/.test(k)) localStorage.removeItem(k);
-        });
-      } catch(e){}
       clearComLock();
     }
 
@@ -2365,12 +2340,9 @@
       var clearBtn  = document.getElementById("clearBtn");
 
       var data = getSavedAnswerData();
-      var hasDerived = false;
-      try{ hasDerived = !!safeParseJSON(localStorage.getItem(DERIVED_RESULT_KEY) || 'null'); } catch(e){}
-      var hasLock = getComLockData().locked;
 
       var canResume = !!(data && data.found && data.valid && data.anyAnswered);
-      var canClear  = !!(data && data.found) || hasDerived || hasLock;
+      var canClear  = !!(data && data.found);
 
       if (resumeBtn) resumeBtn.disabled = !canResume;
       if (clearBtn)  clearBtn.disabled  = !canClear;
@@ -2378,7 +2350,6 @@
 
     function getComLockData(){
       try{
-        migrateLegacyComStorage();
         var raw = localStorage.getItem(COM_LOCK_KEY);
         if (!raw) return { locked:false };
         var data = safeParseJSON(raw);
@@ -2451,7 +2422,7 @@
           avgDims: derived.avgDims,
           picked: picked,
           undertones: undertones
-        }, derived.primaryType, tieData, { skipEndpoint:true, restored:true });
+        }, derived.primaryType, tieData);
       }
 
       setAssessmentLocked(true);
@@ -3344,7 +3315,7 @@ const TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
       return {
         contract: {
           assessment: "UTF-II_COM",
-          ui_v: "3.5.2",
+          ui_v: "3.5.1",
           math_v: "com_math_9_final_hardening",
           qbank: QUESTION_BANK_ID,
           undertone_v: UNDERTONE_VERSION,
@@ -3388,7 +3359,6 @@ const TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
       Bridge:      "linear-gradient(135deg,#0891b2 0%,#06b6d4 100%)",
       Operator:    "linear-gradient(135deg,#7dd3fc 0%,#64748b 100%)"
     };
-
 
     function getSomNavState(){
       var result = null, lock = null, autosave = null;
@@ -3445,9 +3415,9 @@ const TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
 
       var bottom = document.getElementById("bottomActions");
       if (bottom) bottom.classList.add("show");
+      var bottomCom = document.getElementById("bottomComActions");
+      if (bottomCom) bottomCom.style.display = "flex";
     }
-
-
 
     function getComSubmissionFingerprint(answers, finalType, tieData){
       try{
@@ -3553,7 +3523,7 @@ const TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
     function calculateResults(){
       var lock = getComLockData();
       if (lock.locked){
-        showToast("This COM submission is locked on this device. Clear saved answers to retake it.");
+        showToast("This COM submission is locked on this device. Use Retake COM to start again.");
         return;
       }
 
@@ -3851,12 +3821,10 @@ const TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
     document.addEventListener("DOMContentLoaded", function(){
       applyNavPassthrough();
       generateForm();
-      var migratedLegacy = migrateLegacyComStorage();
       updateProgress();
       syncResumeControls();
       setSubmitEnabled();
       restoreLockedSessionIfPresent();
-      if (migratedLegacy) showToast("Recovered saved COM answers from an older build.");
 
       var form = document.getElementById("assessmentForm");
       if (form){
@@ -3894,19 +3862,32 @@ const TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
       var clearBtn = document.getElementById("clearBtn");
       if (clearBtn){
         clearBtn.addEventListener("click", function(){
-          clearSavedAnswers();
-          clearAllSelections();
-          updateProgress();
-          var results = document.getElementById("results");
-          if (results) results.classList.remove("show");
-          var bottom = document.getElementById("bottomActions");
-          if (bottom) bottom.classList.remove("show");
-          var agree = document.getElementById("agreeChk");
-          if (agree) agree.checked = false;
-          setAssessmentLocked(false);
-          setSubmitEnabled();
-          syncResumeControls();
-          showToast("Saved COM answers cleared. You can now retake the assessment from the beginning.");
+          openComClearConfirm("retake");
+        });
+      }
+
+      var bottomRetakeComBtn = document.getElementById("bottomRetakeComBtn");
+      if (bottomRetakeComBtn){
+        bottomRetakeComBtn.addEventListener("click", function(){
+          openComClearConfirm("retake");
+        });
+      }
+
+
+      var btnCloseComClear = document.getElementById("btnCloseComClear");
+      var comClearCancelBtn = document.getElementById("comClearCancelBtn");
+      var comClearConfirmBtn = document.getElementById("comClearConfirmBtn");
+      var comClearModal = document.getElementById("comClearModal");
+      if (btnCloseComClear) btnCloseComClear.addEventListener("click", closeComClearConfirm);
+      if (comClearCancelBtn) comClearCancelBtn.addEventListener("click", closeComClearConfirm);
+      if (comClearConfirmBtn){
+        comClearConfirmBtn.addEventListener("click", function(){
+          resetComAssessmentAfterConfirm(window.__comClearAction || "clear");
+        });
+      }
+      if (comClearModal){
+        comClearModal.addEventListener("click", function(e){
+          if (e.target === comClearModal) closeComClearConfirm();
         });
       }
 
@@ -3957,6 +3938,7 @@ const TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
         if (e.key === "Escape"){
           closeMenu();
           closeAgreementModal();
+          closeComClearConfirm();
           var tm = document.getElementById("tieModal");
           if (tm && tm.classList.contains("show")) skipTieBreaker();
         }

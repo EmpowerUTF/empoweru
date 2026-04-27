@@ -613,6 +613,8 @@
       margin-top: 10px;
       display: none;
       justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
     }
     .bottom-actions.show{ display:flex; }
 
@@ -886,10 +888,10 @@
 
     <div class="resume-row">
       <button class="pill-btn" id="resumeBtn" type="button" disabled>Resume saved answers</button>
-      <button class="pill-btn" id="clearBtn" type="button" disabled>Clear saved answers</button>
+      <button class="pill-btn" id="clearBtn" type="button" disabled>Retake SOM</button>
     </div>
 
-    <div class="lock-note" id="lockNote">This SOM submission is locked on this device after results are shown. To change answers, use Clear saved answers and retake from the beginning.</div>
+    <div class="lock-note" id="lockNote">This SOM submission is locked on this device after results are shown. To change answers, use Retake SOM and start again from the beginning.</div>
 
     <div class="instructions">
       <h3>How to answer</h3>
@@ -927,10 +929,10 @@
 
       <div class="accordion" id="scoreAccordion">
         <button type="button" class="acc-btn" id="toggleScores">
-          <span>Show seasonal trait map</span>
-          <span id="accChevron">▼</span>
+          <span>Seasonal trait map</span>
+          <span id="accChevron">▲</span>
         </button>
-        <div class="acc-panel" id="scorePanel">
+        <div class="acc-panel show" id="scorePanel">
           <div id="scoreGrid" class="score-grid"></div>
           <div class="cred-note">
             <strong>Note:</strong> Each card shows how strongly that seasonal signal appeared across your recent answers.
@@ -942,6 +944,7 @@
 
       <div class="bottom-actions" id="bottomActions">
         <a class="synth-link" id="synthLinkBottom" href="#" rel="noopener">See My Full Profile</a>
+        <button class="synth-link" id="retakeSomBottomBtn" type="button">Retake SOM</button>
       </div>
     </div>
   </div>
@@ -1032,6 +1035,24 @@
       </div>
     </div>
   </div>
+
+  <!-- Retake SOM Confirm Modal -->
+  <div class="modal-backdrop" id="retakeModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="retakeTitle">
+      <div class="modal-header">
+        <div class="modal-title" id="retakeTitle">Retake SOM?</div>
+        <button class="modal-close" id="retakeCancelTop" type="button">Cancel</button>
+      </div>
+      <div class="modal-body">
+        <p>This will clear your saved SOM answers and result on this device so you can take the SOM assessment again.</p>
+        <div class="resume-row" style="margin-top: 14px; margin-bottom: 0;">
+          <button class="pill-btn" id="retakeCancelBtn" type="button">Cancel</button>
+          <button class="pill-btn" id="retakeConfirmBtn" type="button">Retake SOM</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
   <footer class="eu-footer" aria-label="Footer">
     <div class="eu-footer-inner">
@@ -1145,6 +1166,40 @@
       m.classList.remove("show");
       m.setAttribute("aria-hidden","true");
       document.body.style.overflow = "";
+    }
+
+    function openRetakeSomModal(){
+      var m = document.getElementById("retakeModal");
+      if (!m) return;
+      m.classList.add("show");
+      m.setAttribute("aria-hidden","false");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeRetakeSomModal(){
+      var m = document.getElementById("retakeModal");
+      if (!m) return;
+      m.classList.remove("show");
+      m.setAttribute("aria-hidden","true");
+      document.body.style.overflow = "";
+    }
+
+    function confirmRetakeSOM(){
+      closeRetakeSomModal();
+      clearSavedAnswers();
+      clearAllSelections();
+      updateProgress();
+      var results = document.getElementById("results");
+      if (results) results.classList.remove("show");
+      var bottomActions = document.getElementById("bottomActions");
+      if (bottomActions) bottomActions.classList.remove("show");
+      var agree = document.getElementById("agreeChk");
+      if (agree) agree.checked = false;
+      setAssessmentLocked(false);
+      setSubmitEnabled();
+      syncResumeControls();
+      syncActiveQuestion(0);
+      showToast("Saved SOM answers cleared. You can now retake the assessment from the beginning.");
     }
 
     function setSubmitEnabled(){
@@ -2308,7 +2363,7 @@
     function calculateResults(){
       var lock = getSomLockData();
       if (lock.locked){
-        showToast("This SOM submission is locked on this device. Clear saved answers to retake it.");
+        showToast("This SOM submission is locked on this device. Use Retake SOM to take it again.");
         return;
       }
 
@@ -2526,23 +2581,7 @@
       });
 
       clearBtn && clearBtn.addEventListener("click", function(){
-        var ok = window.confirm("Clear saved SOM answers?\n\nThis will unlock the assessment on this device and remove the saved SOM result.");
-        if (!ok) return;
-
-        clearSavedAnswers();
-        clearAllSelections();
-        updateProgress();
-        var results = document.getElementById("results");
-        if (results) results.classList.remove("show");
-        var bottomActions = document.getElementById("bottomActions");
-        if (bottomActions) bottomActions.classList.remove("show");
-        var agree = document.getElementById("agreeChk");
-        if (agree) agree.checked = false;
-        setAssessmentLocked(false);
-        setSubmitEnabled();
-        syncResumeControls();
-        syncActiveQuestion(0);
-        showToast("Saved SOM answers cleared. You can now retake the assessment from the beginning.");
+        openRetakeSomModal();
       });
 
       var openA = document.getElementById("openAgreement");
@@ -2571,11 +2610,24 @@
       tieSkipBtn && tieSkipBtn.addEventListener("click", function(e){ e.preventDefault(); handleTieSkip(); });
       tieConfirmBtn && tieConfirmBtn.addEventListener("click", function(e){ e.preventDefault(); handleTieConfirm(); });
 
+      var retakeSomBottomBtn = document.getElementById("retakeSomBottomBtn");
+      var retakeModal = document.getElementById("retakeModal");
+      var retakeCancelTop = document.getElementById("retakeCancelTop");
+      var retakeCancelBtn = document.getElementById("retakeCancelBtn");
+      var retakeConfirmBtn = document.getElementById("retakeConfirmBtn");
+
+      retakeSomBottomBtn && retakeSomBottomBtn.addEventListener("click", function(e){ e.preventDefault(); openRetakeSomModal(); });
+      retakeCancelTop && retakeCancelTop.addEventListener("click", function(e){ e.preventDefault(); closeRetakeSomModal(); });
+      retakeCancelBtn && retakeCancelBtn.addEventListener("click", function(e){ e.preventDefault(); closeRetakeSomModal(); });
+      retakeConfirmBtn && retakeConfirmBtn.addEventListener("click", function(e){ e.preventDefault(); confirmRetakeSOM(); });
+      retakeModal && retakeModal.addEventListener("click", function(e){ if (e.target === retakeModal) closeRetakeSomModal(); });
+
       document.addEventListener("keydown", function(e){
         if (e.key === "Escape"){
           closeAgreementModal();
           closeMenu();
           closeTieModal();
+          closeRetakeSomModal();
         }
       });
 
@@ -3099,7 +3151,7 @@
   calculateResults = function(){
     var lock = getSomLockData();
     if (lock.locked){
-      showToast("This SOM submission is locked on this device. Clear saved answers to retake it.");
+      showToast("This SOM submission is locked on this device. Use Retake SOM to take it again.");
       restoreLockedSessionIfPresent();
       return;
     }
