@@ -711,6 +711,37 @@
       flex-wrap:wrap;
       margin-top: 12px;
     }
+    .danger-confirm-actions{
+      align-items:center;
+    }
+    .danger-check{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid rgba(248,113,113,0.28);
+      background:rgba(248,113,113,0.06);
+      color:rgba(254,226,226,0.88);
+      font-size:0.82rem;
+      font-weight:900;
+      cursor:pointer;
+      user-select:none;
+    }
+    .danger-check input{
+      width:16px;
+      height:16px;
+      accent-color:#ef4444;
+      cursor:pointer;
+    }
+    .pill-btn.danger:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+      transform:none;
+      box-shadow:none;
+      border-color:rgba(248,113,113,0.18);
+      background:rgba(248,113,113,0.04);
+    }
     .next-link{
       display:inline-flex;
       align-items:center;
@@ -1255,15 +1286,18 @@
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="comClearTitle">
       <div class="modal-header">
         <div class="modal-title" id="comClearTitle">Retake COM?</div>
-        <button class="modal-close" id="btnCloseComClear" type="button">Cancel</button>
       </div>
       <div class="modal-body">
         <div class="confirm-copy" id="comClearCopy">
           This will delete your saved COM answers and COM result from this device, then return you to the beginning of the COM assessment.
         </div>
-        <div class="confirm-actions">
+        <div class="confirm-actions danger-confirm-actions">
           <button class="pill-btn" id="comClearCancelBtn" type="button">Cancel</button>
-          <button class="pill-btn danger" id="comClearConfirmBtn" type="button">Retake COM</button>
+          <button class="pill-btn danger" id="comClearConfirmBtn" type="button" disabled>Retake COM</button>
+          <label class="danger-check" for="comClearAgreeChk">
+            <input type="checkbox" id="comClearAgreeChk" />
+            <span>I understand</span>
+          </label>
         </div>
       </div>
     </div>
@@ -2070,6 +2104,10 @@
       m.classList.remove("show");
       m.setAttribute("aria-hidden","true");
       lockBodyScroll(false);
+      var agree = document.getElementById("comClearAgreeChk");
+      var confirm = document.getElementById("comClearConfirmBtn");
+      if (agree) agree.checked = false;
+      if (confirm) confirm.disabled = true;
     }
 
     function openTieModal(){
@@ -2093,11 +2131,13 @@
       var title = document.getElementById("comClearTitle");
       var copy = document.getElementById("comClearCopy");
       var confirm = document.getElementById("comClearConfirmBtn");
+      var agree = document.getElementById("comClearAgreeChk");
       if (title) title.textContent = "Retake COM?";
       if (copy){
         copy.textContent = "This will delete your saved COM answers and COM result from this device, then return you to the beginning of the COM assessment.";
       }
-      if (confirm) confirm.textContent = "Retake COM";
+      if (confirm){ confirm.textContent = "Retake COM"; confirm.disabled = true; }
+      if (agree) agree.checked = false;
       if (!m) return;
       m.classList.add("show");
       m.setAttribute("aria-hidden","false");
@@ -3874,14 +3914,19 @@ const TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
       }
 
 
-      var btnCloseComClear = document.getElementById("btnCloseComClear");
       var comClearCancelBtn = document.getElementById("comClearCancelBtn");
       var comClearConfirmBtn = document.getElementById("comClearConfirmBtn");
       var comClearModal = document.getElementById("comClearModal");
-      if (btnCloseComClear) btnCloseComClear.addEventListener("click", closeComClearConfirm);
+      var comClearAgreeChk = document.getElementById("comClearAgreeChk");
       if (comClearCancelBtn) comClearCancelBtn.addEventListener("click", closeComClearConfirm);
+      if (comClearAgreeChk && comClearConfirmBtn){
+        comClearAgreeChk.addEventListener("change", function(){
+          comClearConfirmBtn.disabled = !comClearAgreeChk.checked;
+        });
+      }
       if (comClearConfirmBtn){
         comClearConfirmBtn.addEventListener("click", function(){
+          if (comClearConfirmBtn.disabled) return;
           resetComAssessmentAfterConfirm(window.__comClearAction || "clear");
         });
       }

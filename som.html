@@ -251,6 +251,41 @@
       box-shadow:none;
     }
 
+    .pill-btn.danger{
+      border-color: rgba(248,113,113,0.34);
+      background: rgba(248,113,113,0.08);
+      color: rgba(254,226,226,0.96);
+    }
+    .pill-btn.danger:hover{
+      border-color: rgba(248,113,113,0.58);
+      box-shadow: 0 14px 34px rgba(127,29,29,.28);
+    }
+    .pill-btn.danger:disabled{
+      opacity: .45;
+      cursor:not-allowed;
+      transform:none;
+      box-shadow:none;
+    }
+    .retake-check{
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
+      gap:10px;
+      margin: 12px auto 0;
+      max-width: 620px;
+      color: rgba(229,231,235,.78);
+      font-size: .88rem;
+      line-height: 1.45;
+      user-select:none;
+    }
+    .retake-check input{
+      width:18px;
+      height:18px;
+      margin-top:2px;
+      accent-color:#ef4444;
+      flex:0 0 auto;
+    }
+
     .lock-note{
       display:none;
       margin: 0 auto 16px;
@@ -1049,13 +1084,16 @@
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="retakeTitle">
       <div class="modal-header">
         <div class="modal-title" id="retakeTitle">Retake SOM?</div>
-        <button class="modal-close" id="retakeCancelTop" type="button">Cancel</button>
       </div>
       <div class="modal-body">
         <p>This will clear your saved SOM answers and result on this device so you can take the SOM assessment again.</p>
+        <label class="retake-check">
+          <input type="checkbox" id="retakeConfirmCheck" />
+          <span>I understand this will delete my saved SOM answers and result from this device.</span>
+        </label>
         <div class="resume-row" style="margin-top: 14px; margin-bottom: 0;">
           <button class="pill-btn" id="retakeCancelBtn" type="button">Cancel</button>
-          <button class="pill-btn" id="retakeConfirmBtn" type="button">Retake SOM</button>
+          <button class="pill-btn danger" id="retakeConfirmBtn" type="button" disabled>Retake SOM</button>
         </div>
       </div>
     </div>
@@ -1178,6 +1216,10 @@
 
     function openRetakeSomModal(){
       var m = document.getElementById("retakeModal");
+      var chk = document.getElementById("retakeConfirmCheck");
+      var btn = document.getElementById("retakeConfirmBtn");
+      if (chk) chk.checked = false;
+      if (btn) btn.disabled = true;
       if (!m) return;
       m.classList.add("show");
       m.setAttribute("aria-hidden","false");
@@ -1193,6 +1235,11 @@
     }
 
     function confirmRetakeSOM(){
+      var chk = document.getElementById("retakeConfirmCheck");
+      if (chk && !chk.checked){
+        showToast("Please confirm that you understand before retaking SOM.");
+        return;
+      }
       closeRetakeSomModal();
       clearSavedAnswers();
       clearAllSelections();
@@ -2620,13 +2667,13 @@
 
       var retakeSomBottomBtn = document.getElementById("retakeSomBottomBtn");
       var retakeModal = document.getElementById("retakeModal");
-      var retakeCancelTop = document.getElementById("retakeCancelTop");
       var retakeCancelBtn = document.getElementById("retakeCancelBtn");
       var retakeConfirmBtn = document.getElementById("retakeConfirmBtn");
+      var retakeConfirmCheck = document.getElementById("retakeConfirmCheck");
 
       retakeSomBottomBtn && retakeSomBottomBtn.addEventListener("click", function(e){ e.preventDefault(); openRetakeSomModal(); });
-      retakeCancelTop && retakeCancelTop.addEventListener("click", function(e){ e.preventDefault(); closeRetakeSomModal(); });
       retakeCancelBtn && retakeCancelBtn.addEventListener("click", function(e){ e.preventDefault(); closeRetakeSomModal(); });
+      retakeConfirmCheck && retakeConfirmCheck.addEventListener("change", function(){ if (retakeConfirmBtn) retakeConfirmBtn.disabled = !retakeConfirmCheck.checked; });
       retakeConfirmBtn && retakeConfirmBtn.addEventListener("click", function(e){ e.preventDefault(); confirmRetakeSOM(); });
       retakeModal && retakeModal.addEventListener("click", function(e){ if (e.target === retakeModal) closeRetakeSomModal(); });
 
