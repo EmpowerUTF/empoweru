@@ -3949,5 +3949,175 @@ const TH = { VH:1.10, H:0.60, M:0.20, L:-0.20, VL:-0.60 };
       });
     });
   </script>
+
+  <script>
+  /* v3.5.20 COM recovery hardening: retake-only controls preserved.
+     Keeps the pinned current keys, but can recover compatible answers/results from older COM keys. */
+  (function(){
+    function jp(raw){ try{ return JSON.parse(raw); } catch(e){ return null; } }
+    function lsKeys(){ try{ return Object.keys(localStorage || {}); } catch(e){ return []; } }
+    function isComAnswer(v){ return v === null || v === undefined || (Number.isInteger(v) && v >= 1 && v <= 5); }
+    function hasComAnswersArray(arr){ return Array.isArray(arr) && arr.length === 80 && arr.every(isComAnswer); }
+    function hasAnyAnswer(arr){ return Array.isArray(arr) && arr.some(function(v){ return v !== null && v !== undefined; }); }
+
+    var LEGACY_COM_AUTOSAVE_HINTS = [
+      "empoweru_utf2_com_v1_2_7",
+      "empoweru_utf2_com_v1_2_7__bak",
+      "empoweru_utf2_com_v1_3_0",
+      "empoweru_utf2_com_v1_3_0__bak",
+      "empoweru_utf2_com_v1_7_1",
+      "empoweru_utf2_com_v1_7_1__bak"
+    ];
+
+    function normalizeComAutosaveCandidate(obj){
+      if (!obj || typeof obj !== "object") return null;
+      var arr = null;
+      if (Array.isArray(obj.answers)) arr = obj.answers;
+      else if (obj.answers && Array.isArray(obj.answers.values)) arr = obj.answers.values;
+      else if (Array.isArray(obj.responses)) arr = obj.responses;
+      if (!hasComAnswersArray(arr)) return null;
+
+      return {
+        schema: AUTOSAVE_SCHEMA,
+        bankId: QUESTION_BANK_ID,
+        qCount: 80,
+        answers: arr.slice(0,80),
+        updatedAt: obj.updatedAt || obj.createdAt || new Date().toISOString(),
+        migratedFrom: obj.bankId || obj.qbank || obj.schema || "legacy_com_storage"
+      };
+    }
+
+    function migrateLegacyComAutosave(){
+      try{
+        var current = jp(localStorage.getItem(AUTOSAVE_KEY));
+        if (current && current.schema === AUTOSAVE_SCHEMA && current.bankId === QUESTION_BANK_ID && hasComAnswersArray(current.answers)){
+          return current;
+        }
+
+        var candidates = [];
+        [AUTOSAVE_KEY, AUTOSAVE_KEY_BAK].concat(LEGACY_COM_AUTOSAVE_HINTS).forEach(function(k){
+          if (candidates.indexOf(k) === -1) candidates.push(k);
+        });
+
+        lsKeys().forEach(function(k){
+          if (/^empoweru_utf2_com_v\d+(?:_\d+)+(?:__bak)?$/.test(k) && candidates.indexOf(k) === -1){
+            candidates.push(k);
+          }
+        });
+
+        var best = null;
+        candidates.forEach(function(k){
+          var norm = normalizeComAutosaveCandidate(jp(localStorage.getItem(k)));
+          if (!norm) return;
+          var ts = new Date(norm.updatedAt || 0).getTime() || 0;
+          if (!best || ts > best.ts) best = { key:k, payload:norm, ts:ts };
+        });
+
+        if (best){
+          var s = JSON.stringify(best.payload);
+          localStorage.setItem(AUTOSAVE_KEY, s);
+          try{ localStorage.setItem(AUTOSAVE_KEY_BAK, s); } catch(e2){}
+          return best.payload;
+        }
+      } catch(e){}
+      return null;
+    }
+
+    getSavedAnswerData = function(){
+      if (!EMPOWERU_AUTOSAVE_LOCAL) return { found:false };
+      var data = migrateLegacyComAutosave();
+      if (!data) return { found:false };
+
+      var arr = data.answers;
+      var valid = !!(data.schema === AUTOSAVE_SCHEMA && data.bankId === QUESTION_BANK_ID && data.qCount === 80 && hasComAnswersArray(arr));
+
+      return {
+        found: true,
+        valid: valid,
+        anyAnswered: hasAnyAnswer(arr),
+        qCount: data.qCount,
+        schema: data.schema,
+        bankId: data.bankId,
+        answers: valid ? arr : null
+      };
+    };
+
+    restoreAnswersLocal = function(){
+      if (!EMPOWERU_AUTOSAVE_LOCAL) return false;
+      var data = getSavedAnswerData();
+      if (!data.found || !data.valid || !data.answers) return false;
+
+      for (var i = 1; i <= questions.length; i++){
+        var v = data.answers[i-1];
+        if (v === null || v === undefined) continue;
+        if (!Number.isInteger(v) || v < 1 || v > 5) continue;
+        var el = document.getElementById('q' + i + '_' + v);
+        if (el) el.checked = true;
+      }
+      return true;
+    };
+
+    syncResumeControls = function(){
+      var resumeBtn = document.getElementById("resumeBtn");
+      var retakeBtn = document.getElementById("clearBtn");
+      var data = getSavedAnswerData();
+      var derived = null;
+      var lock = null;
+      try{ derived = jp(localStorage.getItem(DERIVED_RESULT_KEY) || "null"); } catch(e){}
+      try{ lock = getComLockData(); } catch(e){}
+
+      var canResume = !!(data && data.found && data.valid && data.anyAnswered);
+      var canRetake = !!(canResume || (derived && derived.primaryType) || (lock && lock.locked));
+
+      if (resumeBtn) resumeBtn.disabled = !canResume;
+      if (retakeBtn) retakeBtn.disabled = !canRetake;
+    };
+
+    getComLockData = function(){
+      try{
+        var raw = localStorage.getItem(COM_LOCK_KEY);
+        var data = raw ? jp(raw) : null;
+        if (data && data.locked) return { locked:true, data:data };
+
+        var derived = jp(localStorage.getItem(DERIVED_RESULT_KEY) || "null");
+        if (derived && derived.primaryType && derived.avgDims){
+          return { locked:true, data:{ locked:true, primaryType:derived.primaryType, source:"derived_result" } };
+        }
+      } catch(e){}
+      return { locked:false };
+    };
+
+    restoreLockedSessionIfPresent = function(){
+      var lock = getComLockData();
+      if (!lock.locked) return false;
+
+      var saved = getSavedAnswerData();
+      if (saved && saved.valid && saved.anyAnswered){
+        clearAllSelections();
+        restoreAnswersLocal();
+        updateProgress();
+      }
+
+      var derived = null;
+      try{ derived = jp(localStorage.getItem(DERIVED_RESULT_KEY) || "null"); } catch(e){}
+      if (derived && derived.primaryType && derived.avgDims){
+        var picked = { primaryType: derived.primaryType, pass: [] };
+        var undertones = Array.isArray(derived.undertones) ? derived.undertones : [];
+        var tieData = derived.tieBreaker || { used:false, triggered:false };
+        finalizeAndRender({
+          answers: (saved && saved.answers) ? saved.answers : null,
+          avgDims: derived.avgDims,
+          picked: picked,
+          undertones: undertones
+        }, derived.primaryType, tieData, { skipEndpoint:true, restored:true });
+      }
+
+      setAssessmentLocked(true);
+      syncResumeControls();
+      return true;
+    };
+  })();
+  </script>
+
 </body>
 </html>
