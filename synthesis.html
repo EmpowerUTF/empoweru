@@ -288,6 +288,16 @@
     .confirm-clear{background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.34);color:rgba(254,202,202,0.96);}
     .confirm-clear:hover{background:rgba(239,68,68,0.18);border-color:rgba(239,68,68,0.48);}
 
+    .confirm-check{margin-top:14px;padding:11px 12px;border-radius:12px;border:1px solid rgba(239,68,68,0.18);background:rgba(239,68,68,0.055);color:rgba(254,226,226,0.86);font-size:.82rem;line-height:1.45;}
+    .confirm-check label{display:flex;align-items:flex-start;gap:10px;cursor:pointer;user-select:none;}
+    .confirm-check input{width:17px;height:17px;margin-top:2px;accent-color:#ef4444;flex:0 0 auto;}
+    .confirm-clear:disabled{opacity:.42;cursor:not-allowed;background:rgba(239,68,68,0.06);border-color:rgba(239,68,68,0.18);color:rgba(254,202,202,0.56);}
+    .confirm-clear:disabled:hover{background:rgba(239,68,68,0.06);border-color:rgba(239,68,68,0.18);}
+    .rating-submit-row{display:flex;justify-content:flex-end;margin-top:8px;}
+    .rating-submit-btn{padding:8px 12px;border-radius:8px;border:1px solid rgba(94,234,212,0.26);background:rgba(94,234,212,0.07);color:rgba(94,234,212,0.88);font-size:.78rem;font-weight:850;cursor:pointer;transition:all .12s;}
+    .rating-submit-btn:hover:not(:disabled){background:rgba(94,234,212,0.13);border-color:rgba(94,234,212,0.40);}
+    .rating-submit-btn:disabled{opacity:.45;cursor:default;}
+
     @keyframes fadeInUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
 
     
@@ -593,6 +603,9 @@
           </div>
           <textarea class="rating-comment" id="ratingComment" rows="2" maxlength="400"
             placeholder="Anything feel off or especially accurate? (optional)"></textarea>
+          <div class="rating-submit-row">
+            <button class="rating-submit-btn" id="ratingSubmitBtn" type="button" onclick="submitAtlasFeedback()">Submit feedback</button>
+          </div>
         </div>
 
         <!-- Thank you + early adopter email opt-in (shown after first copy) -->
@@ -1149,7 +1162,7 @@ function rebuildSomResultFromArtifacts(existingResult, autosave, lockObj){
   if (!sourceAnswers || !sourceAnswers.some(function(v){ return v; })) return hydrateSomResult(base);
   var dimScores = computeSomDimScoresFromAnswers(sourceAnswers, seed);
   var grid = computeSomGridFromDims(dimScores);
-  var primary = (base && base.primaryType) || (lockObj && lockObj.primaryType) || grid.primary;
+  var primary = grid.primary || (base && base.primaryType) || (lockObj && lockObj.primaryType);
   var out = hydrateSomResult(base || { primaryType: primary });
   out.primaryType = primary;
   out.primaryName = SOM_MODE_NAMES[primary] || primary;
@@ -2007,28 +2020,9 @@ function copyAtlas(){
   var note = document.getElementById("copiedNote");
   var text = box.value || "";
   if(!text) return;
-  try{fetch("https://empowerutf.up.railway.app/api/atlas/event",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({com_type:_comType,som_mode:_somMode,event_type:"copy"})});}catch(e){}
-  // Submit rating on first copy only
-  if(!_ratingDone && _rating > 0){
-    _ratingDone = true;
-    var comment = (document.getElementById("ratingComment")||{}).value||"";
-    var payload = {rating:_rating, comment:comment.trim().slice(0,400),
-                   com_type:_comType, som_mode:_somMode, ts:new Date().toISOString()};
-    try{
-      (function attempt(r){
-        fetch("https://empowerutf.up.railway.app/api/rating",{method:"POST",headers:{"Content-Type":"application/json"},
-          body:JSON.stringify(payload)})
-        .then(function(res){ if(!res.ok && r>0) setTimeout(function(){attempt(r-1);},8000); })
-        .catch(function(){ if(r>0) setTimeout(function(){attempt(r-1);},8000); });
-      })(3);
-    }catch(e){}
-    try{
-      var prev = JSON.parse(localStorage.getItem("eu_ratings")||"[]");
-      prev.push(payload); localStorage.setItem("eu_ratings",JSON.stringify(prev));
-    }catch(e){}
-    var ty = document.getElementById("ratingTy");
-    if(ty) ty.classList.add("show");
-  }
+
+  submitAtlasFeedback({ fromCopy:true });
+
   function onCopied(){
     btn.classList.add("copied");
     btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Copied';
@@ -2051,7 +2045,6 @@ function copyAtlas(){
     box.setAttribute("aria-hidden","true");onCopied();
   }
 }
-
 
 function openAtlasInfo(){
   document.getElementById("atlasInfoModal").classList.add("show");
@@ -2106,6 +2099,8 @@ function showToast(msg){
 // ── ATLAS AGREEMENT ─────────────────────────────────────────────────────────
 var _rating = 0;
 var _ratingDone = false;
+var _atlasEventDone = false;
+var _profileFingerprint = "";
 var _comType = "";
 var _somMode = "";
 var _pendingClearAction = "all";
@@ -2118,6 +2113,44 @@ function setRating(v){
   setAtlasCopyEnabled();
 }
 
+function getAtlasFeedbackKey(){
+  return "eu_atlas_feedback_" + (_profileFingerprint || "unknown");
+}
+function getAtlasEventKey(){
+  return "eu_atlas_copy_event_" + (_profileFingerprint || "unknown");
+}
+function readAtlasFeedbackState(){
+  try{ return JSON.parse(localStorage.getItem(getAtlasFeedbackKey()) || "null"); }catch(e){ return null; }
+}
+function writeAtlasFeedbackState(obj){
+  try{ localStorage.setItem(getAtlasFeedbackKey(), JSON.stringify(obj)); }catch(e){}
+}
+function readAtlasEventDone(){
+  try{ return localStorage.getItem(getAtlasEventKey()) === "1"; }catch(e){ return false; }
+}
+function writeAtlasEventDone(){
+  try{ localStorage.setItem(getAtlasEventKey(), "1"); }catch(e){}
+}
+function buildProfileFingerprint(comResult, somResult){
+  try{
+    var c = comResult || {};
+    var s = somResult || {};
+    var avg = c.avgDims || {};
+    var dim = s.dimScores || {};
+    var parts = [
+      "COM:" + (c.primaryType || ""),
+      "SOM:" + (s.primaryType || ""),
+      ["D1","D2","D3","D4","D5","D6","D7","D8","D9","E"].map(function(k){ return k + "=" + (typeof avg[k] === "number" ? avg[k].toFixed(3) : ""); }).join("|"),
+      ["EP","EM","OUT","PPL","CHG"].map(function(k){ return k + "=" + (typeof dim[k] === "number" ? String(dim[k]) : ""); }).join("|"),
+      (c.submissionFingerprint || c.createdAt || ""),
+      (s.submissionFingerprint || s.createdAt || "")
+    ];
+    return parts.join("::");
+  }catch(e){
+    return String(Date.now());
+  }
+}
+
 function setAtlasCopyEnabled(){
   var chk  = document.getElementById("atlasAgreeChk");
   var btn  = document.getElementById("copyBtn");
@@ -2125,7 +2158,146 @@ function setAtlasCopyEnabled(){
   if(!btn) return;
   var agreed = !!(chk && chk.checked);
   if(gate) gate.style.display = agreed ? "" : "none";
-  btn.disabled = !(agreed && _rating > 0);
+  if(agreed){
+    try{
+      var stored = readAtlasFeedbackState() || {};
+      stored.agreementAccepted = true;
+      stored.profileFingerprint = _profileFingerprint;
+      stored.com_type = _comType;
+      stored.som_mode = _somMode;
+      stored.updatedAt = new Date().toISOString();
+      writeAtlasFeedbackState(stored);
+    }catch(e){}
+  }
+  btn.disabled = !(agreed && (_ratingDone || _rating > 0));
+}
+
+function syncAtlasFeedbackUI(){
+  var stored = readAtlasFeedbackState();
+  var chk = document.getElementById("atlasAgreeChk");
+  var gate = document.getElementById("ratingGate");
+  var submitBtn = document.getElementById("ratingSubmitBtn");
+  var comment = document.getElementById("ratingComment");
+
+  _ratingDone = !!(stored && stored.ratingSubmitted);
+  _atlasEventDone = readAtlasEventDone();
+
+  if(stored && stored.agreementAccepted && chk) chk.checked = true;
+
+  if(stored && stored.ratingSubmitted){
+    _rating = parseInt(stored.rating || 0, 10) || 0;
+    document.querySelectorAll(".rating-num").forEach(function(b){
+      b.classList.toggle("sel", parseInt(b.getAttribute("data-v"),10) === _rating);
+    });
+    if(comment && stored.comment) comment.value = stored.comment;
+    if(submitBtn){
+      submitBtn.textContent = "Feedback saved";
+      submitBtn.disabled = true;
+    }
+    if(gate && chk && chk.checked) gate.style.display = "";
+  } else {
+    if(submitBtn){
+      submitBtn.textContent = "Submit feedback";
+      submitBtn.disabled = false;
+    }
+  }
+
+  setAtlasCopyEnabled();
+}
+
+function submitAtlasFeedback(opts){
+  opts = opts || {};
+  var chk = document.getElementById("atlasAgreeChk");
+  var agreed = !!(chk && chk.checked);
+  if(!agreed){
+    if(!opts.silent) showToast("Please check the Atlas User Agreement first.");
+    return false;
+  }
+
+  try{
+    var stored = readAtlasFeedbackState() || {};
+    stored.agreementAccepted = true;
+    stored.profileFingerprint = _profileFingerprint;
+    stored.com_type = _comType;
+    stored.som_mode = _somMode;
+    stored.updatedAt = new Date().toISOString();
+    writeAtlasFeedbackState(stored);
+  }catch(e){}
+
+  if(!_atlasEventDone){
+    try{
+      fetch("https://empowerutf.up.railway.app/api/atlas/event",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({com_type:_comType,som_mode:_somMode,event_type:"copy",profile_fingerprint:_profileFingerprint})
+      });
+      writeAtlasEventDone();
+      _atlasEventDone = true;
+    }catch(e){}
+  }
+
+  if(_ratingDone){
+    setAtlasCopyEnabled();
+    return true;
+  }
+
+  if(_rating <= 0){
+    if(!opts.silent) showToast("Choose a 1-10 accuracy rating before submitting feedback.");
+    setAtlasCopyEnabled();
+    return false;
+  }
+
+  _ratingDone = true;
+  var comment = (document.getElementById("ratingComment")||{}).value||"";
+  var payload = {
+    rating:_rating,
+    comment:comment.trim().slice(0,400),
+    com_type:_comType,
+    som_mode:_somMode,
+    profile_fingerprint:_profileFingerprint,
+    ts:new Date().toISOString()
+  };
+
+  try{
+    (function attempt(r){
+      fetch("https://empowerutf.up.railway.app/api/rating",{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify(payload)
+      })
+      .then(function(res){ if(!res.ok && r>0) setTimeout(function(){attempt(r-1);},8000); })
+      .catch(function(){ if(r>0) setTimeout(function(){attempt(r-1);},8000); });
+    })(3);
+  }catch(e){}
+
+  try{
+    var prev = JSON.parse(localStorage.getItem("eu_ratings")||"[]");
+    prev.push(payload);
+    localStorage.setItem("eu_ratings",JSON.stringify(prev));
+  }catch(e){}
+
+  try{
+    writeAtlasFeedbackState({
+      agreementAccepted:true,
+      ratingSubmitted:true,
+      rating:_rating,
+      comment:payload.comment,
+      profileFingerprint:_profileFingerprint,
+      com_type:_comType,
+      som_mode:_somMode,
+      submittedAt:payload.ts
+    });
+  }catch(e){}
+
+  var ty = document.getElementById("ratingTy");
+  if(ty) ty.classList.add("show");
+  var submitBtn = document.getElementById("ratingSubmitBtn");
+  if(submitBtn){
+    submitBtn.textContent = "Feedback saved";
+    submitBtn.disabled = true;
+  }
+  setAtlasCopyEnabled();
+  return true;
 }
 
 function submitRatingEmail(){
@@ -2209,6 +2381,8 @@ function hideAllStates(){
 function resetTransientUI(){
   _rating = 0;
   _ratingDone = false;
+  _atlasEventDone = false;
+  _profileFingerprint = "";
   _comType = "";
   _somMode = "";
   var chk = document.getElementById("atlasAgreeChk");
@@ -2217,12 +2391,14 @@ function resetTransientUI(){
   var ty = document.getElementById("ratingTy");
   var copied = document.getElementById("copiedNote");
   var btn = document.getElementById("copyBtn");
+  var submitBtn = document.getElementById("ratingSubmitBtn");
   if(chk) chk.checked = false;
   if(gate) gate.style.display = "none";
   if(comment) comment.value = "";
   if(ty) ty.classList.remove("show");
   if(copied) copied.style.display = "none";
   document.querySelectorAll(".rating-num").forEach(function(b){ b.classList.remove("sel"); });
+  if(submitBtn){ submitBtn.textContent = "Submit feedback"; submitBtn.disabled = false; }
   if(btn){
     btn.disabled = true;
     btn.classList.remove("copied");
@@ -2243,12 +2419,14 @@ function syncFromStorage(){
 
   if(hasCOM) _comType = comRaw.primaryType || "";
   if(hasSOM) _somMode = somRaw.primaryType || "";
+  if(hasCOM && hasSOM) _profileFingerprint = buildProfileFingerprint(comRaw, somRaw);
 
   setPartialStateActions(comState, somState);
   setStatePrimaryCTA("stateNeither", "com.html", "Take COM first");
 
   if(hasCOM && hasSOM){
     render(comRaw, somRaw);
+    syncAtlasFeedbackUI();
     var rb = document.getElementById("resultBlock");
     if(rb){ rb.classList.add("show"); rb.style.display = "block"; }
   } else if(hasCOM && !hasSOM){
@@ -2263,6 +2441,13 @@ function syncFromStorage(){
   }
 }
 
+
+function syncClearConfirmButton(){
+  var chk = document.getElementById("clearConfirmCheck");
+  var btn = document.getElementById("clearConfirmActionBtn");
+  if(btn) btn.disabled = !(chk && chk.checked);
+}
+
 function openClearConfirm(kind){
   _pendingClearAction = kind || "all";
   var title = document.getElementById("clearConfirmTitle");
@@ -2274,18 +2459,31 @@ function openClearConfirm(kind){
     if(title) title.textContent = "Retake COM";
     if(lead) lead.innerHTML = "<strong>This will remove your saved COM result from this device.</strong>";
     if(body) body.textContent = "You will be sent back to the COM assessment and your current synthesis will fall back to the partial-state view until COM is completed again.";
-    if(btn) btn.textContent = "Yes, clear COM and continue";
+    if(btn) btn.textContent = "Retake COM";
+    var chkTxt = document.getElementById("clearConfirmCheckText");
+    if(chkTxt) chkTxt.textContent = "I understand this will delete my saved COM result from this device.";
+
   } else if(_pendingClearAction === "som"){
     if(title) title.textContent = "Retake SOM";
     if(lead) lead.innerHTML = "<strong>This will remove your saved SOM result from this device.</strong>";
     if(body) body.textContent = "You will be sent back to the SOM assessment and your current synthesis will fall back to the partial-state view until SOM is completed again.";
-    if(btn) btn.textContent = "Yes, clear SOM and continue";
+    if(btn) btn.textContent = "Retake SOM";
+    var chkTxt = document.getElementById("clearConfirmCheckText");
+    if(chkTxt) chkTxt.textContent = "I understand this will delete my saved SOM result from this device.";
+
   } else {
     if(title) title.textContent = "Clear saved answers";
     if(lead) lead.innerHTML = "<strong>This will remove your saved COM and SOM results from this device.</strong>";
     if(body) body.textContent = "After clearing, the synthesis page will no longer show your current profile. If only one assessment is completed later, this page will show the matching Take COM or Take SOM state until both are completed again.";
-    if(btn) btn.textContent = "Yes, clear everything";
+    if(btn) btn.textContent = "Clear everything";
+    var chkTxt = document.getElementById("clearConfirmCheckText");
+    if(chkTxt) chkTxt.textContent = "I understand this will delete my saved COM and SOM results from this device.";
+
   }
+
+  var chk = document.getElementById("clearConfirmCheck");
+  if(chk) chk.checked = false;
+  syncClearConfirmButton();
 
   var m = document.getElementById("clearConfirmModal");
   if(!m) return;
@@ -2315,6 +2513,8 @@ function clearAllAnswers(){
 }
 
 function runPendingClearAction(){
+  var chk = document.getElementById("clearConfirmCheck");
+  if(!chk || !chk.checked){ showToast("Check the confirmation box first."); return; }
   if(_pendingClearAction === "com"){
     clearComStorageDeep();
     closeClearConfirm();
@@ -2383,14 +2583,19 @@ window.addEventListener("storage", syncFromStorage);
     <div class="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="clearConfirmTitle">
       <div class="confirm-header">
         <div class="confirm-title" id="clearConfirmTitle">Clear saved answers</div>
-        <button class="confirm-close" type="button" onclick="closeClearConfirm()">Close</button>
       </div>
       <div class="confirm-body">
         <p id="clearConfirmLead"><strong>This will remove your saved COM and SOM results from this device.</strong></p>
         <p id="clearConfirmBody">After clearing, the synthesis page will no longer show your current profile. If only one assessment is completed later, this page will show the matching “Take COM” or “Take SOM” state until both are completed again.</p>
+        <div class="confirm-check">
+          <label>
+            <input type="checkbox" id="clearConfirmCheck" onchange="syncClearConfirmButton()" />
+            <span id="clearConfirmCheckText">I understand this will delete saved assessment data from this device.</span>
+          </label>
+        </div>
         <div class="confirm-actions">
           <button class="confirm-cancel" type="button" onclick="closeClearConfirm()">Cancel</button>
-          <button class="confirm-clear" id="clearConfirmActionBtn" type="button" onclick="runPendingClearAction()">Yes, clear everything</button>
+          <button class="confirm-clear" id="clearConfirmActionBtn" type="button" onclick="runPendingClearAction()" disabled>Yes, clear everything</button>
         </div>
       </div>
     </div>
