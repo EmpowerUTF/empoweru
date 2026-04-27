@@ -293,10 +293,17 @@
     .confirm-check input{width:17px;height:17px;margin-top:2px;accent-color:#ef4444;flex:0 0 auto;}
     .confirm-clear:disabled{opacity:.42;cursor:not-allowed;background:rgba(239,68,68,0.06);border-color:rgba(239,68,68,0.18);color:rgba(254,202,202,0.56);}
     .confirm-clear:disabled:hover{background:rgba(239,68,68,0.06);border-color:rgba(239,68,68,0.18);}
-    .rating-submit-row{display:flex;justify-content:flex-end;margin-top:8px;}
+    .rating-submit-row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:8px;}
+    .rating-submit-note{display:none;flex:1;min-width:190px;font-size:.75rem;line-height:1.45;color:rgba(230,237,247,0.46);}
     .rating-submit-btn{padding:8px 12px;border-radius:8px;border:1px solid rgba(94,234,212,0.26);background:rgba(94,234,212,0.07);color:rgba(94,234,212,0.88);font-size:.78rem;font-weight:850;cursor:pointer;transition:all .12s;}
     .rating-submit-btn:hover:not(:disabled){background:rgba(94,234,212,0.13);border-color:rgba(94,234,212,0.40);}
     .rating-submit-btn:disabled{opacity:.45;cursor:default;}
+    .rating-gate.rating-locked .rating-gate-label{color:rgba(230,237,247,0.42);}
+    .rating-gate.rating-locked .rating-gate-label span{color:rgba(230,237,247,0.36) !important;}
+    .rating-gate.rating-locked .rating-num{background:rgba(148,163,184,0.045);border-color:rgba(148,163,184,0.12);color:rgba(230,237,247,0.28);cursor:default;}
+    .rating-gate.rating-locked .rating-num.sel{background:rgba(148,163,184,0.11);border-color:rgba(148,163,184,0.24);color:rgba(230,237,247,0.58);box-shadow:none;}
+    .rating-gate.rating-locked .rating-num:hover{background:rgba(148,163,184,0.045);border-color:rgba(148,163,184,0.12);color:rgba(230,237,247,0.28);}
+    .rating-gate.rating-locked .rating-num.sel:hover{background:rgba(148,163,184,0.11);border-color:rgba(148,163,184,0.24);color:rgba(230,237,247,0.58);}
 
     @keyframes fadeInUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
 
@@ -604,6 +611,7 @@
           <textarea class="rating-comment" id="ratingComment" rows="2" maxlength="400"
             placeholder="Anything feel off or especially accurate? (optional)"></textarea>
           <div class="rating-submit-row">
+            <span class="rating-submit-note" id="ratingSubmitNote">Thank you. Extra feedback helps improve the test and make future results more accurate.</span>
             <button class="rating-submit-btn" id="ratingSubmitBtn" type="button" onclick="submitAtlasFeedback()" style="display:none;">Submit feedback</button>
           </div>
         </div>
@@ -2178,6 +2186,7 @@ function syncAtlasFeedbackUI(){
   var chk = document.getElementById("atlasAgreeChk");
   var gate = document.getElementById("ratingGate");
   var submitBtn = document.getElementById("ratingSubmitBtn");
+  var submitNote = document.getElementById("ratingSubmitNote");
   var comment = document.getElementById("ratingComment");
 
   _ratingDone = !!(stored && stored.ratingSubmitted);
@@ -2186,6 +2195,7 @@ function syncAtlasFeedbackUI(){
   if(stored && stored.agreementAccepted && chk) chk.checked = true;
 
   if(stored && stored.ratingSubmitted){
+    if(gate) gate.classList.add("rating-locked");
     _rating = parseInt(stored.rating || 0, 10) || 0;
     document.querySelectorAll(".rating-num").forEach(function(b){
       var selected = parseInt(b.getAttribute("data-v"),10) === _rating;
@@ -2197,6 +2207,7 @@ function syncAtlasFeedbackUI(){
       comment.value = "";
       comment.placeholder = "Add more feedback if anything else feels accurate or off. (optional)";
     }
+    if(submitNote) submitNote.style.display = "inline";
     if(submitBtn){
       submitBtn.style.display = "";
       submitBtn.textContent = "Submit feedback";
@@ -2204,6 +2215,7 @@ function syncAtlasFeedbackUI(){
     }
     if(gate && chk && chk.checked) gate.style.display = "";
   } else {
+    if(gate) gate.classList.remove("rating-locked");
     _rating = 0;
     document.querySelectorAll(".rating-num").forEach(function(b){
       b.classList.remove("sel");
@@ -2214,6 +2226,7 @@ function syncAtlasFeedbackUI(){
       comment.value = "";
       comment.placeholder = "Anything feel off or especially accurate? (optional)";
     }
+    if(submitNote) submitNote.style.display = "none";
     if(submitBtn){
       submitBtn.style.display = "none";
       submitBtn.textContent = "Submit feedback";
@@ -2353,6 +2366,8 @@ function submitAtlasFeedback(opts){
 
   var ty = document.getElementById("ratingTy");
   if(ty) ty.classList.add("show");
+  var gateAfterSubmit = document.getElementById("ratingGate");
+  if(gateAfterSubmit) gateAfterSubmit.classList.add("rating-locked");
   document.querySelectorAll(".rating-num").forEach(function(b){
     b.disabled = true;
     b.setAttribute("aria-disabled", "true");
@@ -2361,6 +2376,8 @@ function submitAtlasFeedback(opts){
     commentEl.value = "";
     commentEl.placeholder = "Add more feedback if anything else feels accurate or off. (optional)";
   }
+  var submitNote = document.getElementById("ratingSubmitNote");
+  if(submitNote) submitNote.style.display = "inline";
   var submitBtn = document.getElementById("ratingSubmitBtn");
   if(submitBtn){
     submitBtn.style.display = "";
@@ -2463,12 +2480,14 @@ function resetTransientUI(){
   var copied = document.getElementById("copiedNote");
   var btn = document.getElementById("copyBtn");
   var submitBtn = document.getElementById("ratingSubmitBtn");
+  var submitNote = document.getElementById("ratingSubmitNote");
   if(chk) chk.checked = false;
-  if(gate) gate.style.display = "none";
+  if(gate){ gate.style.display = "none"; gate.classList.remove("rating-locked"); }
   if(comment) comment.value = "";
   if(ty) ty.classList.remove("show");
   if(copied) copied.style.display = "none";
   document.querySelectorAll(".rating-num").forEach(function(b){ b.classList.remove("sel"); b.disabled = false; b.removeAttribute("aria-disabled"); });
+  if(submitNote) submitNote.style.display = "none";
   if(submitBtn){ submitBtn.style.display = "none"; submitBtn.textContent = "Submit feedback"; submitBtn.disabled = false; }
   if(btn){
     btn.disabled = true;
