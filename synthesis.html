@@ -604,7 +604,7 @@
           <textarea class="rating-comment" id="ratingComment" rows="2" maxlength="400"
             placeholder="Anything feel off or especially accurate? (optional)"></textarea>
           <div class="rating-submit-row">
-            <button class="rating-submit-btn" id="ratingSubmitBtn" type="button" onclick="submitAtlasFeedback()">Submit feedback</button>
+            <button class="rating-submit-btn" id="ratingSubmitBtn" type="button" onclick="submitAtlasFeedback()" style="display:none;">Submit feedback</button>
           </div>
         </div>
 
@@ -2021,7 +2021,7 @@ function copyAtlas(){
   var text = box.value || "";
   if(!text) return;
 
-  submitAtlasFeedback({ fromCopy:true });
+  if(!submitAtlasFeedback({ fromCopy:true })) return;
 
   function onCopied(){
     btn.classList.add("copied");
@@ -2106,6 +2106,7 @@ var _somMode = "";
 var _pendingClearAction = "all";
 
 function setRating(v){
+  if(_ratingDone) return;
   _rating = v;
   document.querySelectorAll(".rating-num").forEach(function(b){
     b.classList.toggle("sel", parseInt(b.getAttribute("data-v"),10) === v);
@@ -2187,16 +2188,34 @@ function syncAtlasFeedbackUI(){
   if(stored && stored.ratingSubmitted){
     _rating = parseInt(stored.rating || 0, 10) || 0;
     document.querySelectorAll(".rating-num").forEach(function(b){
-      b.classList.toggle("sel", parseInt(b.getAttribute("data-v"),10) === _rating);
+      var selected = parseInt(b.getAttribute("data-v"),10) === _rating;
+      b.classList.toggle("sel", selected);
+      b.disabled = true;
+      b.setAttribute("aria-disabled", "true");
     });
-    if(comment && stored.comment) comment.value = stored.comment;
+    if(comment){
+      comment.value = "";
+      comment.placeholder = "Add more feedback if anything else feels accurate or off. (optional)";
+    }
     if(submitBtn){
-      submitBtn.textContent = "Feedback saved";
-      submitBtn.disabled = true;
+      submitBtn.style.display = "";
+      submitBtn.textContent = "Submit feedback";
+      submitBtn.disabled = false;
     }
     if(gate && chk && chk.checked) gate.style.display = "";
   } else {
+    _rating = 0;
+    document.querySelectorAll(".rating-num").forEach(function(b){
+      b.classList.remove("sel");
+      b.disabled = false;
+      b.removeAttribute("aria-disabled");
+    });
+    if(comment){
+      comment.value = "";
+      comment.placeholder = "Anything feel off or especially accurate? (optional)";
+    }
     if(submitBtn){
+      submitBtn.style.display = "none";
       submitBtn.textContent = "Submit feedback";
       submitBtn.disabled = false;
     }
@@ -2236,19 +2255,62 @@ function submitAtlasFeedback(opts){
     }catch(e){}
   }
 
+  var commentEl = document.getElementById("ratingComment");
+  var comment = (commentEl || {}).value || "";
+
   if(_ratingDone){
+    if(opts.fromCopy){
+      setAtlasCopyEnabled();
+      return true;
+    }
+
+    var followupComment = comment.trim().slice(0,400);
+    if(!followupComment){
+      if(!opts.silent) showToast("Add feedback before submitting.");
+      return false;
+    }
+
+    var feedbackPayload = {
+      rating:_rating,
+      comment:followupComment,
+      feedback_only:true,
+      com_type:_comType,
+      som_mode:_somMode,
+      profile_fingerprint:_profileFingerprint,
+      ts:new Date().toISOString()
+    };
+
+    try{
+      (function attemptFeedback(r){
+        fetch("https://empowerutf.up.railway.app/api/rating",{
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify(feedbackPayload)
+        })
+        .then(function(res){ if(!res.ok && r>0) setTimeout(function(){attemptFeedback(r-1);},8000); })
+        .catch(function(){ if(r>0) setTimeout(function(){attemptFeedback(r-1);},8000); });
+      })(3);
+    }catch(e){}
+
+    try{
+      var followups = JSON.parse(localStorage.getItem("eu_rating_feedback_followups")||"[]");
+      followups.push(feedbackPayload);
+      localStorage.setItem("eu_rating_feedback_followups",JSON.stringify(followups));
+    }catch(e){}
+
+    if(commentEl) commentEl.value = "";
+    showToast("Feedback submitted. Thank you.");
     setAtlasCopyEnabled();
     return true;
   }
 
   if(_rating <= 0){
-    if(!opts.silent) showToast("Choose a 1-10 accuracy rating before submitting feedback.");
+    if(!opts.silent) showToast("Choose a 1-10 accuracy rating before copying Atlas.");
     setAtlasCopyEnabled();
     return false;
   }
 
   _ratingDone = true;
-  var comment = (document.getElementById("ratingComment")||{}).value||"";
   var payload = {
     rating:_rating,
     comment:comment.trim().slice(0,400),
@@ -2291,10 +2353,19 @@ function submitAtlasFeedback(opts){
 
   var ty = document.getElementById("ratingTy");
   if(ty) ty.classList.add("show");
+  document.querySelectorAll(".rating-num").forEach(function(b){
+    b.disabled = true;
+    b.setAttribute("aria-disabled", "true");
+  });
+  if(commentEl){
+    commentEl.value = "";
+    commentEl.placeholder = "Add more feedback if anything else feels accurate or off. (optional)";
+  }
   var submitBtn = document.getElementById("ratingSubmitBtn");
   if(submitBtn){
-    submitBtn.textContent = "Feedback saved";
-    submitBtn.disabled = true;
+    submitBtn.style.display = "";
+    submitBtn.textContent = "Submit feedback";
+    submitBtn.disabled = false;
   }
   setAtlasCopyEnabled();
   return true;
@@ -2397,8 +2468,8 @@ function resetTransientUI(){
   if(comment) comment.value = "";
   if(ty) ty.classList.remove("show");
   if(copied) copied.style.display = "none";
-  document.querySelectorAll(".rating-num").forEach(function(b){ b.classList.remove("sel"); });
-  if(submitBtn){ submitBtn.textContent = "Submit feedback"; submitBtn.disabled = false; }
+  document.querySelectorAll(".rating-num").forEach(function(b){ b.classList.remove("sel"); b.disabled = false; b.removeAttribute("aria-disabled"); });
+  if(submitBtn){ submitBtn.style.display = "none"; submitBtn.textContent = "Submit feedback"; submitBtn.disabled = false; }
   if(btn){
     btn.disabled = true;
     btn.classList.remove("copied");
