@@ -526,6 +526,54 @@
     }
     .mini-explain strong{ color: rgba(229,231,235,.95); }
 
+
+    .near-type-box{
+      display:none;
+      margin-top: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(245,158,11,0.28);
+      overflow: hidden;
+      background: rgba(245,158,11,0.07);
+    }
+    .near-type-box.show{ display:block; }
+    .near-type-summary{
+      padding: 12px 14px;
+      color: rgba(255,237,180,0.96);
+      font-size: .88rem;
+      line-height: 1.55;
+      border-bottom: 1px solid rgba(245,158,11,0.18);
+      background: rgba(245,158,11,0.04);
+    }
+    .near-type-panel{
+      display:none;
+      padding: 12px 12px 14px;
+      color: rgba(229,231,235,.84);
+      font-size: .86rem;
+      line-height: 1.5;
+    }
+    .near-type-panel.show{ display:block; }
+    .near-type-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+      gap:10px;
+      margin-top: 10px;
+    }
+    .near-type-card{
+      border-radius: 14px;
+      border: 1px solid rgba(148,163,184,.22);
+      padding: 10px 11px;
+      background: rgba(2,6,23,.22);
+    }
+    .near-type-card strong{
+      display:block;
+      color: rgba(229,231,235,.95);
+      margin-bottom: 4px;
+    }
+    .near-type-muted{
+      color: rgba(229,231,235,.70);
+      margin-top: 8px;
+    }
+
     .accordion{
       margin-top: 12px;
       border-radius: 14px;
@@ -970,6 +1018,16 @@
       <div class="blurb" id="somBlurb"></div>
       <div class="mini-explain" id="seasonBlend"></div>
 
+
+      <div class="near-type-box" id="nearTypeBox">
+        <button type="button" class="acc-btn" id="toggleNearTypes">
+          <span id="nearTypeTitle">Close result signal</span>
+          <span id="nearChevron">▼</span>
+        </button>
+        <div class="near-type-summary" id="nearTypeSummary"></div>
+        <div class="near-type-panel" id="nearTypePanel"></div>
+      </div>
+
       <div class="accordion" id="scoreAccordion">
         <button type="button" class="acc-btn" id="toggleScores">
           <span>Seasonal trait map</span>
@@ -1062,18 +1120,18 @@
       </div>
       <div class="modal-body">
         <p id="tieIntro" style="margin-bottom:10px;">
-          Your results are close. Answer these 3 quick forced-choice items to confirm the best fit.
+          Your results are close. Rate these quick fit statements to confirm the cleanest seasonal label.
         </p>
 
         <div id="tieForm"></div>
 
         <div class="resume-row" style="margin-top: 12px; margin-bottom: 0;">
-          <button class="pill-btn" id="tieSkipBtn" type="button">Skip (use original)</button>
+          <button class="pill-btn" id="tieSkipBtn" type="button">Skip (use calculated result)</button>
           <button class="pill-btn" id="tieConfirmBtn" type="button">Confirm</button>
         </div>
 
         <div class="cred-note" style="margin-top: 12px;">
-          <strong>Note:</strong> Tie-breaker only helps choose between two close modes.
+          <strong>Note:</strong> The tie-breaker only chooses between two close seasonal labels. It does not change your underlying trait scores.
         </div>
       </div>
     </div>
@@ -1121,16 +1179,23 @@
     var EMPOWERU_AUTOSAVE_LOCAL = true;
     var EMPOWERU_STORE_RESULT_LOCAL = true;
 
-    var SOM_UI_VERSION   = "1.0.1";
-    var SOM_VERSION      = "3.1.0";
-    var SOM_MATH_VERSION = "3.1.0";
-    var SOM_QBANK_ID     = "SOM27_FORCEDCHOICE_ABC_DIMS5_GRID9_v3_1_0";
+    var SOM_UI_VERSION   = "1.0.4";
+    var SOM_VERSION      = "3.3.0";
+    var SOM_MATH_VERSION = "3.3.1_normalized_grid_strict_tie_near_type";
+    var SOM_QBANK_ID     = "SOM27_FORCEDCHOICE_ABC_DIMS5_GRID9_v3_3_0";
 
-    var AUTOSAVE_KEY = "empoweru_utf2_som_v3_1_0_autosave";
+    var AUTOSAVE_KEY = "empoweru_utf2_som_v3_3_0_autosave";
     var RESULT_KEY   = "empoweru_utf2_som_latest";
-    var SOM_LOCK_KEY = "empoweru_utf2_som_lock_v3_1_0";
+    var SOM_LOCK_KEY = "empoweru_utf2_som_lock_v3_3_0";
+    var PENDING_ENDPOINT_KEY = "empoweru_utf2_som_v3_3_0_pending_endpoint";
 
-    var TIE_TRIGGER_POINTS = 1;
+    var SOM_ENERGY_HIGH_THRESHOLD = 0.18;
+    var SOM_ENERGY_LOW_THRESHOLD = -0.18;
+    var SOM_ENERGY_TIE_EPS = 0.04;
+    var SOM_ORIENT_TIE_EPS = 0.10;
+    var SOM_BUILDER_MIN_ORIENT_GAP = 0.12;
+    var SOM_HIGH_MIN_EP_RATE = 0.34;
+    var SOM_LOW_MIN_EM_RATE = 0.34;
 
     function showToast(message){
       var t = document.getElementById('toast');
@@ -1163,6 +1228,17 @@
       showToast("JS error: " + msg + " (line " + line + ")");
       return false;
     };
+
+    function jp(raw){ try{ return JSON.parse(raw); } catch(e){ return null; } }
+    function keys(){ try{ return Object.keys(localStorage || {}); } catch(e){ return []; } }
+    function escapeHtml(s){
+      return String(s)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+    }
 
     function clearAllSelections(){
       var radios = document.querySelectorAll('input[type="radio"]');
@@ -1234,40 +1310,18 @@
       document.body.style.overflow = "";
     }
 
-    function confirmRetakeSOM(){
-      var chk = document.getElementById("retakeConfirmCheck");
-      if (chk && !chk.checked){
-        showToast("Please confirm that you understand before retaking SOM.");
-        return;
-      }
-      closeRetakeSomModal();
-      clearSavedAnswers();
-      clearAllSelections();
-      updateProgress();
-      var results = document.getElementById("results");
-      if (results) results.classList.remove("show");
-      var bottomActions = document.getElementById("bottomActions");
-      if (bottomActions) bottomActions.classList.remove("show");
-      var agree = document.getElementById("agreeChk");
-      if (agree) agree.checked = false;
-      setAssessmentLocked(false);
-      setSubmitEnabled();
-      syncResumeControls();
-      syncActiveQuestion(0);
-      showToast("Saved SOM answers cleared. You can now retake the assessment from the beginning.");
-    }
-
     function setSubmitEnabled(){
       var agree = document.getElementById("agreeChk");
       var btn = document.getElementById("submitBtn");
       if (!btn) return;
-      btn.disabled = !(agree && agree.checked);
+      var locked = getSomLockData().locked;
+      btn.disabled = locked || !(agree && agree.checked);
     }
 
     function updateProgress(){
-      var total = questions.length;
+      var total = questions.length || 1;
       var answered = 0;
-      for (var i=1;i<=total;i++){
+      for (var i=1;i<=questions.length;i++){
         if (document.querySelector('input[name="q' + i + '"]:checked')) answered++;
       }
       var bar = document.getElementById("progressBar");
@@ -1282,66 +1336,12 @@
       if (chev) chev.textContent = isOpen ? "▲" : "▼";
     }
 
-    function escapeHtml(s){
-      return String(s)
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
-    }
-
-    function storePayload(payload){
-      if (!EMPOWERU_SCORE_ENDPOINT || EMPOWERU_SCORE_ENDPOINT === "YOUR_SCORE_ENDPOINT_HERE") return;
-      function attempt(retriesLeft){
-        fetch(EMPOWERU_SCORE_ENDPOINT, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        }).then(function(r){
-          if(!r.ok && retriesLeft > 0){
-            setTimeout(function(){ attempt(retriesLeft - 1); }, 8000);
-          }
-        }).catch(function(){
-          if(retriesLeft > 0){
-            setTimeout(function(){ attempt(retriesLeft - 1); }, 8000);
-          }
-        });
-      }
-      try{ attempt(3); } catch(e){}
-    }
-
     var SOM_DIMS = [
-      {
-        code:"EP",
-        tech:"Energy Available",
-        ui:"Current Capacity",
-        blurb:"How much usable energy and lift you seem to have lately."
-      },
-      {
-        code:"EM",
-        tech:"Recovery Need",
-        ui:"Recovery Pull",
-        blurb:"How strongly your system seems to want rest, simplicity, or lower load."
-      },
-      {
-        code:"OUT",
-        tech:"Output Focus",
-        ui:"Build Focus",
-        blurb:"How much your season is leaning toward progress, work, and tangible output."
-      },
-      {
-        code:"PPL",
-        tech:"People Focus",
-        ui:"People Pull",
-        blurb:"How much relationships, connection, and social alignment are showing up lately."
-      },
-      {
-        code:"CHG",
-        tech:"Change Focus",
-        ui:"Change Pull",
-        blurb:"How much you are leaning toward novelty, experimentation, or trying a new angle."
-      }
+      { code:"EP", tech:"Energy Available", ui:"Current Capacity", blurb:"How much usable energy and lift you seem to have lately." },
+      { code:"EM", tech:"Recovery Need", ui:"Recovery Pull", blurb:"How strongly your system seems to want rest, simplicity, or lower load." },
+      { code:"OUT", tech:"Output Focus", ui:"Build Focus", blurb:"How much your season is leaning toward progress, work, and tangible output." },
+      { code:"PPL", tech:"People Focus", ui:"People Pull", blurb:"How much relationships, connection, and social alignment are showing up lately." },
+      { code:"CHG", tech:"Change Focus", ui:"Change Pull", blurb:"How much you are leaning toward novelty, experimentation, or trying a new angle." }
     ];
 
     function emptyDimScores(){
@@ -1514,6 +1514,12 @@
       REF: "A protected-capacity, change-led season. Something in your life or inner direction is shifting, but the shape of it may still be forming. This season often feels transitional: not fully settled, not fully clear, but no longer fitting the old pattern either. The risk is forcing clarity too early instead of letting smaller shifts show you what is actually changing."
     };
 
+    var SOM_MODE_NAMES = (function(){
+      var out = {};
+      for (var i=0;i<SOM_MODES.length;i++) out[SOM_MODES[i].code] = SOM_MODES[i].name;
+      return out;
+    })();
+
     function mulberry32(seed){
       return function(){
         var t = seed += 0x6D2B79F5;
@@ -1531,18 +1537,26 @@
       return arr;
     }
 
+    function shuffleInPlace(arr){
+      for (var i=arr.length-1;i>0;i--){
+        var j = Math.floor(Math.random()*(i+1));
+        var tmp = arr[i]; arr[i]=arr[j]; arr[j]=tmp;
+      }
+      return arr;
+    }
+
     var __seed = null;
     var questions = [];
+    var __pending = null;
+    var __flushingEndpoint = false;
 
     function buildQuestionsFromRaw(seed){
       var rng = mulberry32(seed >>> 0);
       var out = [];
-
       for (var i=0;i<QUESTIONS_RAW.length;i++){
         var q = QUESTIONS_RAW[i];
         var order = ["A","B","C"];
         shuffleWithRng(order, rng);
-
         var q2 = { prompt: q.prompt };
         q2.A = q[order[0]];
         q2.B = q[order[1]];
@@ -1573,68 +1587,116 @@
       return scores;
     }
 
-    function clamp(n, lo, hi){
-      if (n < lo) return lo;
-      if (n > hi) return hi;
-      return n;
+    function computeDimMaxCounts(){
+      var max = emptyDimScores();
+      for (var q=0;q<QUESTIONS_RAW.length;q++){
+        ["A","B","C"].forEach(function(L){
+          var s = QUESTIONS_RAW[q][L];
+          if (s && s.w && s.w.dim && max.hasOwnProperty(s.w.dim)) max[s.w.dim] += 1;
+        });
+      }
+      return max;
+    }
+    var DIM_MAX = computeDimMaxCounts();
+
+    function somNormalizeDimScores(dimScores){
+      function rate(code){
+        var denom = (DIM_MAX && DIM_MAX[code]) ? DIM_MAX[code] : 1;
+        return denom ? ((dimScores[code] || 0) / denom) : 0;
+      }
+      return {
+        EP: rate("EP"),
+        EM: rate("EM"),
+        OUT: rate("OUT"),
+        PPL: rate("PPL"),
+        CHG: rate("CHG")
+      };
+    }
+
+    function modeForGrid(tier, orient){
+      if (tier === "HIGH"   && orient === "OUT") return "DRV";
+      if (tier === "HIGH"   && orient === "PPL") return "HRB";
+      if (tier === "HIGH"   && orient === "CHG") return "TBZ";
+      if (tier === "STEADY" && orient === "OUT") return "BLD";
+      if (tier === "STEADY" && orient === "PPL") return "EQZ";
+      if (tier === "STEADY" && orient === "CHG") return "ENH";
+      if (tier === "LOW"    && orient === "OUT") return "BST";
+      if (tier === "LOW"    && orient === "PPL") return "HVN";
+      if (tier === "LOW"    && orient === "CHG") return "REF";
+      return null;
+    }
+
+    function gridForMode(modeCode, fallbackGrid){
+      var map = {
+        DRV:{tier:"HIGH", orient:"OUT"}, HRB:{tier:"HIGH", orient:"PPL"}, TBZ:{tier:"HIGH", orient:"CHG"},
+        BLD:{tier:"STEADY", orient:"OUT"}, EQZ:{tier:"STEADY", orient:"PPL"}, ENH:{tier:"STEADY", orient:"CHG"},
+        BST:{tier:"LOW", orient:"OUT"}, HVN:{tier:"LOW", orient:"PPL"}, REF:{tier:"LOW", orient:"CHG"}
+      };
+      var base = map[modeCode] || { tier:(fallbackGrid && fallbackGrid.tier) || "STEADY", orient:(fallbackGrid && fallbackGrid.orient) || "OUT" };
+      var copy = {};
+      for (var k in (fallbackGrid || {})) copy[k] = fallbackGrid[k];
+      copy.tier = base.tier;
+      copy.orient = base.orient;
+      copy.primary = modeCode;
+      return copy;
+    }
+
+    function somOrientForMode(code){
+      if (code === "DRV" || code === "BLD" || code === "BST") return "OUT";
+      if (code === "HRB" || code === "EQZ" || code === "HVN") return "PPL";
+      return "CHG";
+    }
+
+    function somTierCenterForMode(code){
+      if (code === "DRV" || code === "HRB" || code === "TBZ") return 0.32;
+      if (code === "BST" || code === "HVN" || code === "REF") return -0.32;
+      return 0.00;
     }
 
     function computeGridPrimary(dimScores){
-      var ep = dimScores.EP || 0;
-      var em = dimScores.EM || 0;
-      var net = ep - em;
-
+      var rates = somNormalizeDimScores(dimScores);
+      var netNorm = rates.EP - rates.EM;
       var tier = "STEADY";
-      if (net >= 5) tier = "HIGH";
-      else if (net <= -5) tier = "LOW";
+      if (netNorm >= SOM_ENERGY_HIGH_THRESHOLD && rates.EP >= SOM_HIGH_MIN_EP_RATE) tier = "HIGH";
+      else if (netNorm <= SOM_ENERGY_LOW_THRESHOLD && rates.EM >= SOM_LOW_MIN_EM_RATE) tier = "LOW";
 
-      var o = dimScores.OUT || 0;
-      var p = dimScores.PPL || 0;
-      var c = dimScores.CHG || 0;
+      var orientRates = [
+        { code:"OUT", rate: rates.OUT },
+        { code:"PPL", rate: rates.PPL },
+        { code:"CHG", rate: rates.CHG }
+      ].sort(function(a,b){
+        if (b.rate !== a.rate) return b.rate - a.rate;
+        return (a.code < b.code) ? -1 : 1;
+      });
 
-      var orient = "OUT";
-      if (p > o && p >= c) orient = "PPL";
-      else if (c > o && c > p) orient = "CHG";
+      var orient = orientRates[0].code;
+      var orientGap = orientRates[0].rate - orientRates[1].rate;
+      var primary = modeForGrid(tier, orient);
 
-      var primary = null;
-      if (tier === "HIGH" && orient === "OUT") primary = "DRV";
-      if (tier === "HIGH" && orient === "PPL") primary = "HRB";
-      if (tier === "HIGH" && orient === "CHG") primary = "TBZ";
-      if (tier === "STEADY" && orient === "OUT") primary = "BLD";
-      if (tier === "STEADY" && orient === "PPL") primary = "EQZ";
-      if (tier === "STEADY" && orient === "CHG") primary = "ENH";
-      if (tier === "LOW" && orient === "OUT") primary = "BST";
-      if (tier === "LOW" && orient === "PPL") primary = "HVN";
-      if (tier === "LOW" && orient === "CHG") primary = "REF";
-
-      return { tier: tier, orient: orient, net: net, primary: primary };
+      return {
+        tier: tier,
+        orient: orient,
+        net: (dimScores.EP || 0) - (dimScores.EM || 0),
+        netNorm: netNorm,
+        rates: rates,
+        orientGap: orientGap,
+        orientRates: orientRates,
+        primary: primary
+      };
     }
 
     function computeModeScores(dimScores){
-      var modeScores = emptyModeScores();
-      var ep = dimScores.EP || 0;
-      var em = dimScores.EM || 0;
-      var net = ep - em;
-
-      function orientStrength(modeCode){
-        if (modeCode === "DRV" || modeCode === "BLD" || modeCode === "BST") return (dimScores.OUT || 0);
-        if (modeCode === "HRB" || modeCode === "EQZ" || modeCode === "HVN") return (dimScores.PPL || 0);
-        return (dimScores.CHG || 0);
-      }
-
-      function tierTarget(modeCode){
-        if (modeCode === "DRV" || modeCode === "HRB" || modeCode === "TBZ") return 8;
-        if (modeCode === "BST" || modeCode === "HVN" || modeCode === "REF") return -8;
-        return 0;
-      }
-
+      var grid = computeGridPrimary(dimScores);
+      var rates = grid.rates || somNormalizeDimScores(dimScores);
+      var netNorm = (typeof grid.netNorm === "number") ? grid.netNorm : 0;
+      var modeScores = {};
       for (var i=0;i<SOM_MODES.length;i++){
         var code = SOM_MODES[i].code;
-        var o = orientStrength(code);
-        var target = tierTarget(code);
-        var closeness = 18 - Math.abs(net - target);
-        closeness = clamp(closeness, 0, 18);
-        modeScores[code] = (o * 10) + (closeness * 2);
+        var orientRate = rates[somOrientForMode(code)] || 0;
+        var tierCenter = somTierCenterForMode(code);
+        var energyDistance = Math.abs(netNorm - tierCenter);
+        var energyScore = 1 - Math.min(1, energyDistance / 0.50);
+        modeScores[code] = (orientRate * 100) + (energyScore * 40);
       }
       return modeScores;
     }
@@ -1650,15 +1712,58 @@
       return arr;
     }
 
+    function getModeName(code){ return SOM_MODE_NAMES[code] || code; }
+
+    function determineTiePair(provisional){
+      if (!provisional || !provisional.grid) return { shouldTie:false, pair:null, reasons:[] };
+      var g = provisional.grid;
+      var reasons = [];
+      var candidates = [];
+      function add(code){ if (code && candidates.indexOf(code) === -1) candidates.push(code); }
+
+      var base = (g && g.primary) || (provisional.top1 && provisional.top1.code) || null;
+      add(base);
+
+      var orientSecond = g.orientRates && g.orientRates[1] ? g.orientRates[1].code : null;
+      if (typeof g.orientGap === "number" && g.orientGap <= SOM_ORIENT_TIE_EPS){
+        reasons.push("orientation_close");
+        add(modeForGrid(g.tier, orientSecond));
+      }
+
+      if (base === "BLD" && typeof g.orientGap === "number" && g.orientGap < SOM_BUILDER_MIN_ORIENT_GAP){
+        reasons.push("builder_borderline_orientation");
+        add(modeForGrid(g.tier, orientSecond));
+      }
+
+      if (typeof g.netNorm === "number"){
+        if (Math.abs(g.netNorm - SOM_ENERGY_HIGH_THRESHOLD) <= SOM_ENERGY_TIE_EPS && g.rates && g.rates.EP >= SOM_HIGH_MIN_EP_RATE){
+          reasons.push("energy_high_boundary");
+          add(modeForGrid("HIGH", g.orient));
+          add(modeForGrid("STEADY", g.orient));
+        }
+        if (Math.abs(g.netNorm - SOM_ENERGY_LOW_THRESHOLD) <= SOM_ENERGY_TIE_EPS && g.rates && g.rates.EM >= SOM_LOW_MIN_EM_RATE){
+          reasons.push("energy_low_boundary");
+          add(modeForGrid("LOW", g.orient));
+          add(modeForGrid("STEADY", g.orient));
+        }
+      }
+
+      if (provisional.ranked && provisional.ranked[0] && base && provisional.ranked[0].code !== base){
+        reasons.push("grid_rank_conflict");
+        add(provisional.ranked[0].code);
+      }
+
+      if (candidates.length < 2) return { shouldTie:false, pair:null, reasons:reasons };
+      return { shouldTie:true, pair:[candidates[0], candidates[1]], reasons:reasons };
+    }
+
     function generateForm(){
       var form = document.getElementById("somForm");
       if (!form) return hardError("somForm not found.");
-
       var html = "";
       for (var i=0; i<questions.length; i++){
         var q = questions[i];
         var qNum = i+1;
-
         html += '\
           <div class="question">\
             <div class="question-text">\
@@ -1691,12 +1796,15 @@
       return arr;
     }
 
+    function isSomLetter(v){ return v === null || v === undefined || v === "A" || v === "B" || v === "C"; }
+    function hasSomArray(arr){ return Array.isArray(arr) && arr.length === 27 && arr.every(isSomLetter); }
+
     function saveAnswersLocal(){
       if (!EMPOWERU_AUTOSAVE_LOCAL) return;
       try{
         var payload = {
           schema: "empoweru_som_autosave",
-          schema_v: 2,
+          schema_v: 3,
           ui_v: SOM_UI_VERSION,
           som_v: SOM_VERSION,
           som_math: SOM_MATH_VERSION,
@@ -1714,13 +1822,26 @@
       try{
         var raw = localStorage.getItem(AUTOSAVE_KEY);
         if (!raw) return null;
-        var data = JSON.parse(raw);
+        var data = jp(raw);
         if (!data || data.schema !== "empoweru_som_autosave") return null;
         if (data.qbank !== SOM_QBANK_ID) return null;
+        if (data.som_math !== SOM_MATH_VERSION) return null;
         if (data.q_count !== 27) return null;
-        if (!Array.isArray(data.answers) || data.answers.length !== 27) return null;
+        if (!hasSomArray(data.answers)) return null;
         if (typeof data.seed !== "number") return null;
         return data;
+      } catch(e){ return null; }
+    }
+
+    function readSomResult(){
+      try{
+        var obj = jp(localStorage.getItem(RESULT_KEY) || "null");
+        if (!obj || obj.schema !== "empoweru_utf2_som_result") return null;
+        if (obj.som_qbank !== SOM_QBANK_ID) return null;
+        if (obj.som_math !== SOM_MATH_VERSION) return null;
+        if (!obj.primaryType || !SOM_MODE_NAMES[obj.primaryType]) return null;
+        if (!obj.dimScores || typeof obj.dimScores !== "object") return null;
+        return obj;
       } catch(e){ return null; }
     }
 
@@ -1744,72 +1865,59 @@
     }
 
     function syncActiveQuestion(preferredIdx){
-      if (typeof preferredIdx === "number" && preferredIdx >= 0){
-        setActiveQuestion(preferredIdx);
-      } else {
-        setActiveQuestion(getNextQuestionIndex());
-      }
+      if (typeof preferredIdx === "number" && preferredIdx >= 0) setActiveQuestion(preferredIdx);
+      else setActiveQuestion(getNextQuestionIndex());
     }
 
     function restoreAnswersLocal(){
       if (!EMPOWERU_AUTOSAVE_LOCAL) return false;
       var data = readAutosave();
       if (!data) return false;
-
       __seed = data.seed >>> 0;
       questions = buildQuestionsFromRaw(__seed);
       generateForm();
-
+      clearAllSelections();
       for (var i = 1; i <= questions.length; i++){
         var v = data.answers[i-1];
         if (!v) continue;
         var el = document.getElementById('q' + i + '_' + v);
         if (el) el.checked = true;
       }
-
       var last = -1;
-      for (var k=0;k<data.answers.length;k++){
-        if (data.answers[k]) last = k;
-      }
-
+      for (var k=0;k<data.answers.length;k++) if (data.answers[k]) last = k;
       if (last >= 0){
         var nextIdx = (last + 1 < questions.length) ? (last + 1) : last;
         syncActiveQuestion(nextIdx);
-
         var target = document.querySelectorAll(".question")[nextIdx];
-        if (target && target.scrollIntoView){
-          setTimeout(function(){
-            target.scrollIntoView({behavior:"smooth", block:"center"});
-          }, 60);
-        }
-      } else {
-        syncActiveQuestion(0);
-      }
-
+        if (target && target.scrollIntoView) setTimeout(function(){ target.scrollIntoView({behavior:"smooth", block:"center"}); }, 60);
+      } else syncActiveQuestion(0);
       return true;
     }
 
-    function clearSavedAnswers(){
+    function deepClearSomStorage(){
       try{ localStorage.removeItem(AUTOSAVE_KEY); } catch(e){}
       try{ localStorage.removeItem(RESULT_KEY); } catch(e){}
-      clearSomLock();
+      try{ localStorage.removeItem(SOM_LOCK_KEY); } catch(e){}
+      try{ localStorage.removeItem(PENDING_ENDPOINT_KEY); } catch(e){}
+      try{
+        keys().forEach(function(k){
+          if (/^empoweru_utf2_som_v\d+(?:_\d+)+(?:_autosave)?(?:__bak)?$/.test(k)) localStorage.removeItem(k);
+          if (/^empoweru_utf2_som_lock_v\d+(?:_\d+)+$/.test(k)) localStorage.removeItem(k);
+          if (/^empoweru_utf2_som_v\d+(?:_\d+)+_pending_endpoint$/.test(k)) localStorage.removeItem(k);
+        });
+      } catch(e){}
     }
 
-    function syncResumeControls(){
-      var resumeBtn = document.getElementById("resumeBtn");
-      var clearBtn  = document.getElementById("clearBtn");
-      var has = hasSavedAnswers();
-      if (resumeBtn) resumeBtn.disabled = !has;
-      if (clearBtn)  clearBtn.disabled  = !has;
-    }
+    function clearSavedAnswers(){ deepClearSomStorage(); }
 
     function getSomLockData(){
       try{
         var raw = localStorage.getItem(SOM_LOCK_KEY);
         if (!raw) return { locked:false };
-        var data = JSON.parse(raw);
+        var data = jp(raw);
         if (!data) return { locked:false };
         if (data.qbank !== SOM_QBANK_ID) return { locked:false };
+        if (data.som_math !== SOM_MATH_VERSION) return { locked:false };
         return { locked:true, data:data };
       } catch(e){ return { locked:false }; }
     }
@@ -1827,70 +1935,89 @@
       } catch(e){}
     }
 
-    function clearSomLock(){
-      try{ localStorage.removeItem(SOM_LOCK_KEY); } catch(e){}
-    }
+    function clearSomLock(){ try{ localStorage.removeItem(SOM_LOCK_KEY); } catch(e){} }
 
     function setAssessmentLocked(isLocked){
       var radios = document.querySelectorAll('input[type="radio"]');
       for (var i=0;i<radios.length;i++) radios[i].disabled = !!isLocked;
-
       var agree = document.getElementById("agreeChk");
       if (agree) agree.disabled = !!isLocked;
-
       var submitBtn = document.getElementById("submitBtn");
       if (submitBtn){
         submitBtn.disabled = !!isLocked || !(agree && agree.checked);
         submitBtn.textContent = isLocked ? "SOM already submitted on this device" : "Show My Results";
       }
-
       var resumeBtn = document.getElementById("resumeBtn");
       if (resumeBtn && isLocked) resumeBtn.disabled = true;
-
       var lockNote = document.getElementById("lockNote");
       if (lockNote) lockNote.classList.toggle("show", !!isLocked);
+    }
+
+    function syncResumeControls(){
+      var resumeBtn = document.getElementById("resumeBtn");
+      var clearBtn  = document.getElementById("clearBtn");
+      var has = hasSavedAnswers();
+      var locked = getSomLockData().locked;
+      var hasResult = !!readSomResult();
+      if (resumeBtn) resumeBtn.disabled = !(has && !locked);
+      if (clearBtn)  clearBtn.disabled  = !(has || locked || hasResult);
+    }
+
+    function confirmRetakeSOM(){
+      var chk = document.getElementById("retakeConfirmCheck");
+      if (chk && !chk.checked){
+        showToast("Please confirm that you understand before retaking SOM.");
+        return;
+      }
+      closeRetakeSomModal();
+      clearSavedAnswers();
+      clearAllSelections();
+      updateProgress();
+      var results = document.getElementById("results");
+      if (results) results.classList.remove("show");
+      var bottomActions = document.getElementById("bottomActions");
+      if (bottomActions) bottomActions.classList.remove("show");
+      var agree = document.getElementById("agreeChk");
+      if (agree){ agree.checked = false; agree.disabled = false; }
+      setAssessmentLocked(false);
+      setSubmitEnabled();
+      syncResumeControls();
+      syncActiveQuestion(0);
+      showToast("Saved SOM answers cleared. You can now retake the assessment from the beginning.");
     }
 
     function restoreLockedSessionIfPresent(){
       var lock = getSomLockData();
       if (!lock.locked) return false;
-
+      var stored = readSomResult();
       var saved = readAutosave();
-      if (!saved || !saved.answers || !saved.answers.some(function(x){ return x !== null && x !== undefined; })){
-        clearSomLock();
-        return false;
+      if (!stored && !saved){ clearSomLock(); return false; }
+      var answers = null;
+      var seed = null;
+      if (stored && stored.answers && hasSomArray(stored.answers.values)){
+        answers = stored.answers.values.slice(0);
+        seed = stored.meta && typeof stored.meta.seed === "number" ? stored.meta.seed : null;
+      } else if (saved && hasSomArray(saved.answers)){
+        answers = saved.answers.slice(0);
+        seed = saved.seed;
       }
-
-      __seed = saved.seed >>> 0;
+      if (!answers){ clearSomLock(); return false; }
+      __seed = (typeof seed === "number") ? (seed >>> 0) : ((Date.now() & 0xffffffff) >>> 0);
       questions = buildQuestionsFromRaw(__seed);
       generateForm();
       clearAllSelections();
-
       for (var i = 1; i <= questions.length; i++){
-        var v = saved.answers[i-1];
+        var v = answers[i-1];
         if (!v) continue;
         var el = document.getElementById('q' + i + '_' + v);
         if (el) el.checked = true;
       }
-
       updateProgress();
-
-      var stored = null;
-      try{ stored = JSON.parse(localStorage.getItem(RESULT_KEY) || 'null'); } catch(e){}
-      if (stored && stored.primaryType && stored.dimScores && stored.meta){
-        var provisional = {
-          answersABC: stored.answers && stored.answers.values ? stored.answers.values.slice(0) : saved.answers.slice(0),
-          dimScores: stored.dimScores,
-          modeScores: stored.modeScores || {},
-          ranked: stored.ranked || [],
-          top1: stored.meta.top1 || null,
-          top2: stored.meta.top2 || null,
-          gapPoints: stored.meta.gapPoints,
-          grid: stored.meta.grid || null
-        };
-        finalizeAndRender(stored.primaryType, provisional, stored.tieBreaker || { used:false, skipped:false, considered:false }, { skipEndpoint:true, restored:true });
+      var provisional = stored && stored.provisional ? stored.provisional : buildSomProvisionalFromAnswers(answers);
+      var primary = stored && stored.primaryType ? stored.primaryType : (provisional.grid && provisional.grid.primary);
+      if (primary){
+        finalizeAndRender(primary, provisional, stored && stored.tieBreaker ? stored.tieBreaker : { used:false, skipped:false, considered:false }, { skipEndpoint:true, restored:true });
       }
-
       setAssessmentLocked(true);
       syncResumeControls();
       return true;
@@ -1899,64 +2026,28 @@
     function renderSomBlurb(modeCode){
       var el = document.getElementById("somBlurb");
       if (!el) return;
-
       var mode = SOM_MODES.filter(function(m){ return m.code === modeCode; })[0] || {name:modeCode};
       var desc = SOM_MODE_DESC[modeCode] || "This reflects your current seasonal emphasis.";
-
-      el.innerHTML =
-        "<strong>" + escapeHtml(mode.name) + "</strong>. " +
-        escapeHtml(desc);
+      el.innerHTML = "<strong>" + escapeHtml(mode.name) + "</strong>. " + escapeHtml(desc);
     }
 
     function renderSeasonBlend(gridMeta){
       var el = document.getElementById("seasonBlend");
       if (!el || !gridMeta) return;
-
       var key = (gridMeta.tier || "STEADY") + "_" + (gridMeta.orient || "OUT");
-
       var blendMap = {
-        HIGH_OUT:
-          "This looks like a high-capacity season with a strong output pull. There is real fuel in the system, and it wants movement. That usually means building, carrying, shipping, or pushing something forward feels more available than usual. The healthiest version of this season uses the momentum with intention instead of turning every open space into more pressure.",
-
-        HIGH_PPL:
-          "This looks like a high-capacity season with a strong people pull. You have more room than usual for connection, responsiveness, and relational presence. That usually means people matter more right now, but in a way that can feel nourishing rather than draining. The healthiest version of this season stays open without becoming overavailable.",
-
-        HIGH_CHG:
-          "This looks like a high-capacity season with a strong change pull. Your system seems open to movement, experimentation, and fresh direction. That usually means trying, testing, and following what feels alive can create real momentum right now. The healthiest version of this season gives novelty enough structure to become signal rather than scatter.",
-
-        STEADY_OUT:
-          "This looks like a steady season with an output pull. You may not be in a huge surge, but there is enough usable steadiness here to build something meaningful if you stay consistent. That usually means rhythm matters more than hype right now. The healthiest version of this season trusts repetition to do the work.",
-
-        STEADY_PPL:
-          "This looks like a steady season with a people pull. Relationships are present, but not in a chaotic or overloaded way. That usually means connection is workable, warmth is sustainable, and your social world can feel more balanced than intense. The healthiest version of this season lets simple steadiness count as a real strength.",
-
-        STEADY_CHG:
-          "This looks like a steady season with a change pull. Your system seems open to adjustment without needing a dramatic reset. That usually means smart shifts, cleaner systems, and gradual improvement fit better than extreme moves. The healthiest version of this season grows through integration rather than impatience.",
-
-        LOW_OUT:
-          "This looks like a protected season that still carries an output pull. Part of you still wants movement, but the system is asking for tighter boundaries and narrower targets. That usually means progress works best when it is selective, reduced, and realistic. The healthiest version of this season stops measuring itself against a pace that no longer matches the current state.",
-
-        LOW_PPL:
-          "This looks like a protected season with a people pull. Connection still matters, but it likely needs to feel safe, low-pressure, and emotionally clean. That usually means you want trust and comfort more than stimulation or expansion. The healthiest version of this season treats restoration as part of connection, not as its opposite.",
-
-        LOW_CHG:
-          "This looks like a protected season with a change pull. Something is shifting, but the system may not want a hard push all at once. That usually means recalibration is happening through smaller moves, partial clarity, and uneven but real reorientation. The healthiest version of this season lets the transition reveal itself instead of demanding total certainty too early."
+        HIGH_OUT:"This looks like a high-capacity season with a strong output pull. There is real fuel in the system, and it wants movement. That usually means building, carrying, shipping, or pushing something forward feels more available than usual. The healthiest version of this season uses the momentum with intention instead of turning every open space into more pressure.",
+        HIGH_PPL:"This looks like a high-capacity season with a strong people pull. You have more room than usual for connection, responsiveness, and relational presence. That usually means people matter more right now, but in a way that can feel nourishing rather than draining. The healthiest version of this season stays open without becoming overavailable.",
+        HIGH_CHG:"This looks like a high-capacity season with a strong change pull. Your system seems open to movement, experimentation, and fresh direction. That usually means trying, testing, and following what feels alive can create real momentum right now. The healthiest version of this season gives novelty enough structure to become signal rather than scatter.",
+        STEADY_OUT:"This looks like a steady season with an output pull. You may not be in a huge surge, but there is enough usable steadiness here to build something meaningful if you stay consistent. That usually means rhythm matters more than hype right now. The healthiest version of this season trusts repetition to do the work.",
+        STEADY_PPL:"This looks like a steady season with a people pull. Relationships are present, but not in a chaotic or overloaded way. That usually means connection is workable, warmth is sustainable, and your social world can feel more balanced than intense. The healthiest version of this season lets simple steadiness count as a real strength.",
+        STEADY_CHG:"This looks like a steady season with a change pull. Your system seems open to adjustment without needing a dramatic reset. That usually means smart shifts, cleaner systems, and gradual improvement fit better than extreme moves. The healthiest version of this season grows through integration rather than impatience.",
+        LOW_OUT:"This looks like a protected season that still carries an output pull. Part of you still wants movement, but the system is asking for tighter boundaries and narrower targets. That usually means progress works best when it is selective, reduced, and realistic. The healthiest version of this season stops measuring itself against a pace that no longer matches the current state.",
+        LOW_PPL:"This looks like a protected season with a people pull. Connection still matters, but it likely needs to feel safe, low-pressure, and emotionally clean. That usually means you want trust and comfort more than stimulation or expansion. The healthiest version of this season treats restoration as part of connection, not as its opposite.",
+        LOW_CHG:"This looks like a protected season with a change pull. Something is shifting, but the system may not want a hard push all at once. That usually means recalibration is happening through smaller moves, partial clarity, and uneven but real reorientation. The healthiest version of this season lets the transition reveal itself instead of demanding total certainty too early."
       };
-
       el.innerHTML = "<strong>What this combination suggests:</strong> " + escapeHtml(blendMap[key] || "");
     }
-
-    function computeDimMaxCounts(){
-      var max = emptyDimScores();
-      for (var q=0;q<QUESTIONS_RAW.length;q++){
-        ["A","B","C"].forEach(function(L){
-          var s = QUESTIONS_RAW[q][L];
-          if (s && s.w && s.w.dim && max.hasOwnProperty(s.w.dim)) max[s.w.dim] += 1;
-        });
-      }
-      return max;
-    }
-    var DIM_MAX = computeDimMaxCounts();
 
     function dimScoreToPct(score, dimCode){
       var denom = DIM_MAX[dimCode] || questions.length;
@@ -1975,37 +2066,31 @@
 
     function getTraitExplanation(dimCode, score, maxScore){
       var pct = maxScore ? (score / maxScore) : 0;
-
       if (dimCode === "EP"){
         if (pct >= 0.67) return "Usable energy showed up often in your answers.";
-        if (pct >= 0.34) return "Capacity is present, but not the loudest signal.";
-        return "Capacity did not stand out as a dominant pattern.";
+        if (pct >= 0.34) return "Some usable capacity appeared, but it is mixed with other seasonal needs.";
+        return "Usable energy appeared lightly in this result.";
       }
-
       if (dimCode === "EM"){
-        if (pct >= 0.67) return "Your answers often pointed toward needing more recovery.";
-        if (pct >= 0.34) return "Recovery matters, but it is only part of the picture.";
-        return "Recovery was not one of the strongest signals.";
+        if (pct >= 0.67) return "Your answers often pointed toward recovery, lower load, or simpler pacing.";
+        if (pct >= 0.34) return "Recovery is part of the pattern, but not the whole story.";
+        return "Recovery need appeared lightly in this result.";
       }
-
       if (dimCode === "OUT"){
-        if (pct >= 0.67) return "Your answers strongly leaned toward building and progress.";
-        if (pct >= 0.34) return "Progress matters, though other pulls are present too.";
-        return "Building was not the main center of gravity here.";
+        if (pct >= 0.67) return "Your answers strongly leaned toward building, progress, and tangible output.";
+        if (pct >= 0.34) return "Progress matters in this season, alongside other pulls.";
+        return "Building and output appeared lightly in this result.";
       }
-
       if (dimCode === "PPL"){
         if (pct >= 0.67) return "Connection and people were strongly present in your answers.";
-        if (pct >= 0.34) return "The people side matters, but it shares space with other needs.";
-        return "People were present, but not the strongest pull.";
+        if (pct >= 0.34) return "The people side matters in this season, alongside other needs.";
+        return "People and connection appeared lightly in this result.";
       }
-
       if (dimCode === "CHG"){
-        if (pct >= 0.67) return "Your answers strongly leaned toward change and fresh movement.";
-        if (pct >= 0.34) return "There is some pull toward change, but it is balanced.";
-        return "Change was not the strongest visible signal.";
+        if (pct >= 0.67) return "Your answers strongly leaned toward change, adjustment, and fresh movement.";
+        if (pct >= 0.34) return "Change is part of the current pattern, alongside other pulls.";
+        return "Change and novelty appeared lightly in this result.";
       }
-
       return "";
     }
 
@@ -2013,7 +2098,6 @@
       var grid = document.getElementById("scoreGrid");
       if (!grid) return;
       grid.innerHTML = "";
-
       for (var i=0;i<SOM_DIMS.length;i++){
         var d = SOM_DIMS[i];
         var v = dimScores[d.code] || 0;
@@ -2021,10 +2105,8 @@
         var pct = dimScoreToPct(v, d.code);
         var level = getTraitLevel(v, denom);
         var detail = getTraitExplanation(d.code, v, denom);
-
         var card = document.createElement("div");
         card.className = "score-card";
-
         card.innerHTML =
           '<div class="score-head">' +
             '<div class="score-name">' + escapeHtml(d.ui) + '</div>' +
@@ -2034,11 +2116,9 @@
             '<div class="score-bar" style="width:' + pct.toFixed(0) + '%"></div>' +
           '</div>' +
           '<div class="score-detail">' + escapeHtml(detail) + '</div>';
-
         grid.appendChild(card);
       }
     }
-
 
     function readComResultForNav(){
       try{ return JSON.parse(localStorage.getItem("empoweru_utf2_last_com_result") || "null"); } catch(e){ return null; }
@@ -2046,9 +2126,9 @@
 
     function readComAutosaveForNav(){
       try{
-        var keys = ["empoweru_utf2_com_v1_3_0", "empoweru_utf2_com_v1_3_0__bak"];
-        for (var i=0;i<keys.length;i++){
-          var raw = localStorage.getItem(keys[i]);
+        var keysToCheck = ["empoweru_utf2_com_v1_3_0", "empoweru_utf2_com_v1_3_0__bak", "empoweru_utf2_com_v1_2_7"];
+        for (var i=0;i<keysToCheck.length;i++){
+          var raw = localStorage.getItem(keysToCheck[i]);
           if (!raw) continue;
           var data = JSON.parse(raw);
           if (data && Array.isArray(data.answers)) return data;
@@ -2062,7 +2142,6 @@
       var lock = null;
       try{ lock = JSON.parse(localStorage.getItem("empoweru_utf2_com_lock_v1_3_0") || "null"); } catch(e){}
       var autosave = readComAutosaveForNav();
-
       var complete = !!((result && result.primaryType) || (lock && lock.locked));
       var resumable = false;
       if (!complete && autosave && Array.isArray(autosave.answers)){
@@ -2071,36 +2150,26 @@
       return { complete: complete, resumable: resumable };
     }
 
-    function setSynthesisLink(primaryCode, meta){
+    function setSynthesisLink(primaryCode, resultObj){
       var bottom = document.getElementById("synthLinkBottom");
       if (!bottom) return;
-
       if (!EMPOWERU_COMSOM_URL || EMPOWERU_COMSOM_URL === "YOUR_COM_SOM_SYNTHESIS_PAGE_HERE"){
         bottom.href = "#";
         return;
       }
-
       try{
         var current = new URL(window.location.href);
         var profileUrl = new URL(EMPOWERU_COMSOM_URL, window.location.href);
-
-        current.searchParams.forEach(function(v,k){
-          profileUrl.searchParams.set(k, v);
-        });
-
+        current.searchParams.forEach(function(v,k){ profileUrl.searchParams.set(k, v); });
         if (primaryCode) profileUrl.searchParams.set("som", primaryCode);
-
         profileUrl.searchParams.set("som_source", "som.html");
         profileUrl.searchParams.set("som_v", SOM_VERSION);
         profileUrl.searchParams.set("som_math", SOM_MATH_VERSION);
         profileUrl.searchParams.set("som_qbank", SOM_QBANK_ID);
-        profileUrl.searchParams.set("som_tb_used", meta && meta.tieBreaker ? (meta.tieBreaker.used ? "1" : "0") : "0");
+        profileUrl.searchParams.set("som_tb_used", resultObj && resultObj.tieBreaker && resultObj.tieBreaker.used ? "1" : "0");
 
         var comUrl = new URL("com.html", window.location.href);
-        current.searchParams.forEach(function(v,k){
-          comUrl.searchParams.set(k, v);
-        });
-
+        current.searchParams.forEach(function(v,k){ comUrl.searchParams.set(k, v); });
         var comState = getComNavState();
         if (comState.complete){
           bottom.href = profileUrl.toString();
@@ -2120,79 +2189,99 @@
 
     function saveSomResultLocal(resultObj){
       if (!EMPOWERU_STORE_RESULT_LOCAL) return;
-      try{
-        localStorage.setItem(RESULT_KEY, JSON.stringify(resultObj));
-      } catch(e){}
+      try{ localStorage.setItem(RESULT_KEY, JSON.stringify(resultObj)); } catch(e){}
     }
 
-    var __pending = null;
+    function readPendingEndpointQueue(){
+      var arr = jp(localStorage.getItem(PENDING_ENDPOINT_KEY) || "[]");
+      return Array.isArray(arr) ? arr : [];
+    }
+
+    function writePendingEndpointQueue(arr){
+      try{ localStorage.setItem(PENDING_ENDPOINT_KEY, JSON.stringify(arr || [])); } catch(e){}
+    }
+
+    function queueEndpointPayload(payload, fingerprint){
+      if (!EMPOWERU_SCORE_ENDPOINT || EMPOWERU_SCORE_ENDPOINT === "YOUR_SCORE_ENDPOINT_HERE") return;
+      var q = readPendingEndpointQueue();
+      var exists = q.some(function(x){ return x && x.fingerprint === fingerprint; });
+      if (!exists){
+        q.push({
+          id: "som_" + Date.now() + "_" + Math.random().toString(16).slice(2),
+          fingerprint: fingerprint,
+          payload: payload,
+          attempts: 0,
+          queuedAt: new Date().toISOString()
+        });
+        writePendingEndpointQueue(q);
+      }
+    }
+
+    function markEndpointSentForFingerprint(fingerprint){
+      var current = readSomResult();
+      if (current && current.submissionFingerprint === fingerprint){
+        current.endpointSent = true;
+        current.endpointPending = false;
+        current.endpointSentAt = new Date().toISOString();
+        saveSomResultLocal(current);
+      }
+    }
+
+    function flushPendingPayloads(){
+      if (__flushingEndpoint) return;
+      if (!EMPOWERU_SCORE_ENDPOINT || EMPOWERU_SCORE_ENDPOINT === "YOUR_SCORE_ENDPOINT_HERE") return;
+      var queue = readPendingEndpointQueue();
+      if (!queue.length) return;
+      __flushingEndpoint = true;
+      var remaining = [];
+      var chain = Promise.resolve();
+      queue.forEach(function(item){
+        chain = chain.then(function(){
+          item.attempts = (item.attempts || 0) + 1;
+          return fetch(EMPOWERU_SCORE_ENDPOINT, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(item.payload)
+          }).then(function(r){
+            if (r && r.ok){
+              markEndpointSentForFingerprint(item.fingerprint);
+            } else {
+              remaining.push(item);
+            }
+          }).catch(function(){
+            remaining.push(item);
+          });
+        });
+      });
+      chain.then(function(){
+        writePendingEndpointQueue(remaining);
+        __flushingEndpoint = false;
+      }).catch(function(){
+        writePendingEndpointQueue(queue);
+        __flushingEndpoint = false;
+      });
+    }
 
     var TIEBANK = {
-      DRV: [
-        "I want output and results more than reflection lately.",
-        "I feel best when I am producing and finishing.",
-        "Progress matters more than comfort right now."
-      ],
-      HRB: [
-        "Connection and trust feel unusually important lately.",
-        "I am drawn to check-ins and being present with people.",
-        "The people side feels central in this season."
-      ],
-      TBZ: [
-        "I want novelty and exploration right now.",
-        "Trying new paths feels energizing lately.",
-        "I learn best by experimenting and moving."
-      ],
-      BLD: [
-        "Consistency and steady building feel right for me.",
-        "Deep work beats scattered effort lately.",
-        "I want to build something real at a sustainable pace."
-      ],
-      EQZ: [
-        "I am aiming for balance and steadiness with people.",
-        "I want connection without overextending.",
-        "My season is about stable relationships and a calm baseline."
-      ],
-      ENH: [
-        "Small upgrades and smart adjustments feel most useful.",
-        "I am expanding capacity without forcing big leaps.",
-        "My season is growth through better systems and choices."
-      ],
-      BST: [
-        "I am simplifying and protecting my stability.",
-        "Boundaries matter more than extra commitments lately.",
-        "I want progress, but in smaller and safer steps."
-      ],
-      HVN: [
-        "Recovery and restoration feel like the priority.",
-        "Safe connection matters while I rebuild my baseline.",
-        "My system needs rest before it needs a push."
-      ],
-      REF: [
-        "This season feels like a transition phase.",
-        "I am recalibrating priorities and direction.",
-        "Progress is real, even if it looks uneven."
-      ]
+      DRV:["I feel strongest when I am moving quickly toward real results.","Momentum and execution feel more natural than reflection lately.","I have enough fuel to push important outcomes forward."],
+      HRB:["Connection and trust feel especially important right now.","I have more room than usual to be present with people.","People, belonging, and relational tone feel central in this season."],
+      TBZ:["New paths and experiments feel energizing right now.","I want movement, novelty, and fresh direction.","Trying something different feels more alive than staying in the same pattern."],
+      BLD:["Consistency and steady building feel right for me.","I want to keep making real progress without needing a dramatic surge.","Deep work and sustainable output fit this season."],
+      EQZ:["I want connection without overextending myself.","Stable relationships and a calmer baseline feel important right now.","The people side matters, but I need it to stay balanced."],
+      ENH:["Small upgrades and smart adjustments feel most useful.","I am improving my systems without needing a total reset.","Growth through better choices fits this season."],
+      BST:["I still want progress, but in smaller and safer steps.","Protecting my stability matters more than taking on more.","Fewer priorities feel like the correct strategy right now."],
+      HVN:["Recovery and restoration feel like the priority.","Safe, low-pressure connection matters while I rebuild my baseline.","My system needs rest before it needs a push."],
+      REF:["This season feels transitional, like something is recalibrating.","I am changing direction, but the new shape is still forming.","Progress is real even if it looks uneven right now."]
     };
 
-    function shuffleInPlace(arr){
-      for (var i=arr.length-1;i>0;i--){
-        var j = Math.floor(Math.random()*(i+1));
-        var tmp = arr[i]; arr[i]=arr[j]; arr[j]=tmp;
-      }
-      return arr;
-    }
-
     function buildTieItems(modeA, modeB){
+      var items = [];
       var a = (TIEBANK[modeA] || []).slice(0,3);
       var b = (TIEBANK[modeB] || []).slice(0,3);
-      while (a.length < 3) a.push("This fits me better lately.");
-      while (b.length < 3) b.push("This fits me better lately.");
-
-      var items = [];
-      for (var i=0;i<3;i++){
-        items.push({ ownerA:modeA, ownerB:modeB, A:a[i], B:b[i], C:"Both are partly true; I am mixed." });
-      }
+      while (a.length < 3) a.push("This fits my current season.");
+      while (b.length < 3) b.push("This fits my current season.");
+      for (var i=0;i<3;i++) items.push({ owner:modeA, text:a[i] });
+      for (var j=0;j<3;j++) items.push({ owner:modeB, text:b[j] });
       shuffleInPlace(items);
       return items;
     }
@@ -2200,24 +2289,23 @@
     function renderTieForm(items){
       var holder = document.getElementById("tieForm");
       if (!holder) return;
-
+      var labels = {1:"1 - Not much", 2:"2", 3:"3 - Mixed", 4:"4", 5:"5 - Strong fit"};
       var html = "";
       for (var i=0;i<items.length;i++){
         var tNum = i+1;
         html += '\
           <div class="question">\
             <div class="question-text">\
-              <span class="question-number">T' + tNum + '.</span>Pick the best fit lately.\
+              <span class="question-number">T' + tNum + '.</span>' + escapeHtml(items[i].text) + '\
             </div>\
             <div class="options">\
-              ' + ["A","B","C"].map(function(letter){
-                var stmt = items[i][letter];
+              ' + [1,2,3,4,5].map(function(value){
                 return '\
                 <div class="option">\
-                  <input type="radio" id="t' + tNum + '_' + letter + '" name="t' + tNum + '" value="' + letter + '">\
-                  <label for="t' + tNum + '_' + letter + '">\
-                    <span class="choice-letter">' + letter + '</span>\
-                    ' + escapeHtml(stmt) + '\
+                  <input type="radio" id="t' + tNum + '_' + value + '" name="t' + tNum + '" value="' + value + '">\
+                  <label for="t' + tNum + '_' + value + '">\
+                    <span class="choice-letter">' + value + '</span>\
+                    ' + escapeHtml(labels[value]) + '\
                   </label>\
                 </div>';
               }).join("") + '\
@@ -2232,39 +2320,34 @@
       for (var i=0;i<items.length;i++){
         var tNum = i+1;
         var sel = document.querySelector('input[name="t' + tNum + '"]:checked');
-        answers.push(sel ? sel.value : null);
+        answers.push(sel ? parseInt(sel.value, 10) : null);
       }
       return answers;
     }
 
-    function computeTieWinner(items, answersABC){
-      var sum = {};
-      var modeA = items[0].ownerA;
-      var modeB = items[0].ownerB;
-      sum[modeA]=0; sum[modeB]=0;
-
-      var pickedAorB = 0;
-
+    function computeTieWinner(items, answers){
+      var sums = {};
+      var counts = {};
       for (var i=0;i<items.length;i++){
-        var ans = answersABC[i];
-        if (ans === "A"){ sum[items[i].ownerA] += 1; pickedAorB++; }
-        else if (ans === "B"){ sum[items[i].ownerB] += 1; pickedAorB++; }
+        var owner = items[i].owner;
+        if (!sums.hasOwnProperty(owner)){ sums[owner]=0; counts[owner]=0; }
+        var v = answers[i];
+        if (typeof v === "number" && isFinite(v)){
+          sums[owner] += v;
+          counts[owner] += 1;
+        }
       }
-
-      if (pickedAorB < 2){
-        return { sums: sum, winner: null, note: "insufficient_signal" };
-      }
-
+      var modes = Object.keys(sums);
       var winner = null;
-      if (sum[modeA] > sum[modeB]) winner = modeA;
-      else if (sum[modeB] > sum[modeA]) winner = modeB;
-
-      return { sums: sum, winner: winner, note: "ok" };
+      if (modes.length >= 2){
+        if (sums[modes[0]] > sums[modes[1]]) winner = modes[0];
+        else if (sums[modes[1]] > sums[modes[0]]) winner = modes[1];
+      }
+      return { sums:sums, counts:counts, winner:winner, note:winner ? "ok" : "tie_no_clear_winner" };
     }
 
     function requireAllAnsweredOrWarn(){
-      var totalQs = questions.length;
-      for (var i=1;i<=totalQs;i++){
+      for (var i=1;i<=questions.length;i++){
         if (!document.querySelector('input[name="q' + i + '"]:checked')){
           showToast("Please answer question " + i + " before calculating.");
           showError("Please answer question " + i + " before calculating your mode.");
@@ -2278,75 +2361,234 @@
     }
 
     function getAnsweredLetters(){
-      var total = questions.length;
       var out = [];
-      for (var i=1;i<=total;i++){
-        out.push(document.querySelector('input[name="q' + i + '"]:checked').value);
+      for (var i=1;i<=questions.length;i++){
+        var sel = document.querySelector('input[name="q' + i + '"]:checked');
+        out.push(sel ? sel.value : null);
       }
       return out;
     }
 
-    function calculateProvisional(){
-      var answersABC = getAnsweredLetters();
+    function buildSomProvisionalFromAnswers(answerArr){
+      var answersABC = Array.isArray(answerArr) ? answerArr.slice(0) : [];
       var dimScores = computeDimScoresFromAnswers(answersABC);
+      var grid = computeGridPrimary(dimScores);
       var modeScores = computeModeScores(dimScores);
       var ranked = rankModes(modeScores);
-      var top1 = ranked[0];
-      var top2 = ranked[1];
+      var primaryCode = grid && grid.primary ? grid.primary : (ranked[0] ? ranked[0].code : null);
+      var top1 = null, top2 = null;
+      for (var i=0;i<ranked.length;i++){
+        if (!top1 && ranked[i].code === primaryCode){ top1 = ranked[i]; continue; }
+      }
+      if (!top1 && primaryCode) top1 = { code: primaryCode, name: getModeName(primaryCode), score: modeScores[primaryCode] || 0 };
+      for (var j=0;j<ranked.length;j++){
+        if (ranked[j].code !== primaryCode){ top2 = ranked[j]; break; }
+      }
       var gapPoints = (top1 && top2) ? (top1.score - top2.score) : 999;
-      var grid = computeGridPrimary(dimScores);
-
-      return {
-        answersABC: answersABC,
-        dimScores: dimScores,
-        modeScores: modeScores,
-        ranked: ranked,
-        top1: top1,
-        top2: top2,
-        gapPoints: gapPoints,
-        grid: grid
-      };
+      var tieCheck = determineTiePair({ answersABC:answersABC, dimScores:dimScores, modeScores:modeScores, ranked:ranked, top1:top1, top2:top2, gapPoints:gapPoints, grid:grid });
+      return { answersABC:answersABC, dimScores:dimScores, modeScores:modeScores, ranked:ranked, top1:top1, top2:top2, gapPoints:gapPoints, grid:grid, tieCheck:tieCheck };
     }
 
+    function calculateProvisional(){ return buildSomProvisionalFromAnswers(getAnsweredLetters()); }
 
     function getSomSubmissionFingerprint(primaryCode, provisional, tieMeta){
       try{
         var answers = (provisional && provisional.answersABC && Array.isArray(provisional.answersABC)) ? provisional.answersABC.join("") : "";
         var tieSig = "";
         if (tieMeta && typeof tieMeta === "object"){
-          if (tieMeta.winner) tieSig = String(tieMeta.winner);
-          else if (tieMeta.topA || tieMeta.topB) tieSig = String(tieMeta.topA || "") + "|" + String(tieMeta.topB || "");
+          tieSig = [tieMeta.topA || "", tieMeta.topB || "", tieMeta.winner || "", tieMeta.chosen || "", tieMeta.skipped ? "skip" : ""].join("|");
         }
-        return [
-          SOM_QBANK_ID || "",
-          primaryCode || "",
-          answers,
-          tieSig
-        ].join("::");
-      } catch(e){
-        return String(primaryCode || "");
+        return [SOM_QBANK_ID || "", SOM_MATH_VERSION || "", primaryCode || "", answers, tieSig].join("::");
+      } catch(e){ return String(primaryCode || ""); }
+    }
+
+    function buildEndpointPayload(resultObj){
+      return {
+        assessment: "UTF-II_SOM",
+        primaryType: resultObj.primaryType,
+        primaryName: resultObj.primaryName,
+        ranked: resultObj.ranked,
+        dimScores: resultObj.dimScores,
+        modeScores: resultObj.modeScores,
+        meta: resultObj.meta,
+        tieBreaker: resultObj.tieBreaker,
+        createdAt: resultObj.createdAt,
+        v: SOM_VERSION,
+        qbank: SOM_QBANK_ID
+      };
+    }
+
+    function modeForGrid(tier, orient){
+      if (tier === "HIGH" && orient === "OUT") return "DRV";
+      if (tier === "HIGH" && orient === "PPL") return "HRB";
+      if (tier === "HIGH" && orient === "CHG") return "TBZ";
+      if (tier === "STEADY" && orient === "OUT") return "BLD";
+      if (tier === "STEADY" && orient === "PPL") return "EQZ";
+      if (tier === "STEADY" && orient === "CHG") return "ENH";
+      if (tier === "LOW" && orient === "OUT") return "BST";
+      if (tier === "LOW" && orient === "PPL") return "HVN";
+      if (tier === "LOW" && orient === "CHG") return "REF";
+      return null;
+    }
+
+    function addUniqueCode(arr, code, primaryCode){
+      if (!code || code === primaryCode) return;
+      if (arr.indexOf(code) === -1) arr.push(code);
+    }
+
+    function getShortModeDesc(code){
+      var map = {
+        DRV:"High-capacity output. Momentum, execution, visible progress, and carrying more weight than usual.",
+        HRB:"High-capacity people focus. Connection, trust, responsiveness, and relational presence feel more available.",
+        TBZ:"High-capacity change. Novelty, experimentation, fresh direction, and movement create energy.",
+        BLD:"Steady output. Consistent progress, sustainable build pace, and tangible results without needing a surge.",
+        EQZ:"Steady people focus. Warmth, relationship balance, social steadiness, and manageable connection.",
+        ENH:"Steady change. Improvement, adjustment, smarter systems, and gradual upgrades without a full reset.",
+        BST:"Protected output. Narrower bandwidth, fewer priorities, careful progress, and stronger boundaries.",
+        HVN:"Protected people focus. Safety, trust, restoration, and low-pressure connection matter most.",
+        REF:"Protected change. Transition, recalibration, shifting direction, and clarity forming over time."
+      };
+      return map[code] || "A nearby seasonal pattern in the current result space.";
+    }
+
+    function computeNearTypeMeta(primaryCode, provisional, tieMeta){
+      var candidates = [];
+      var reasons = [];
+      var g = provisional && provisional.grid ? provisional.grid : null;
+      var tie = tieMeta || {};
+
+      if (tie && tie.considered){
+        addUniqueCode(candidates, tie.topA, primaryCode);
+        addUniqueCode(candidates, tie.topB, primaryCode);
+        if (tie.used) reasons.push("tie-breaker used");
+        else if (tie.skipped) reasons.push("tie-breaker skipped");
+        else reasons.push("tie-breaker considered");
       }
+
+      if (provisional && provisional.tieCheck && provisional.tieCheck.shouldTie){
+        var pair = provisional.tieCheck.pair || [];
+        addUniqueCode(candidates, pair[0], primaryCode);
+        addUniqueCode(candidates, pair[1], primaryCode);
+        if (provisional.tieCheck.reasons && provisional.tieCheck.reasons.length){
+          for (var r=0;r<provisional.tieCheck.reasons.length;r++) reasons.push(provisional.tieCheck.reasons[r]);
+        }
+      }
+
+      if (provisional && provisional.top2 && typeof provisional.gapPoints === "number" && provisional.gapPoints <= 14){
+        addUniqueCode(candidates, provisional.top2.code, primaryCode);
+        reasons.push("near score gap");
+      }
+
+      if (g && Array.isArray(g.orientRates) && g.orientRates.length > 1){
+        var secondOrient = g.orientRates[1];
+        if (secondOrient && typeof g.orientGap === "number" && g.orientGap <= 0.16){
+          addUniqueCode(candidates, modeForGrid(g.tier, secondOrient.code), primaryCode);
+          reasons.push("near orientation boundary");
+        }
+      }
+
+      if (g && typeof g.netNorm === "number"){
+        var orient = g.orient || "OUT";
+        if (Math.abs(g.netNorm - SOM_ENERGY_HIGH_THRESHOLD) <= 0.08){
+          addUniqueCode(candidates, modeForGrid("HIGH", orient), primaryCode);
+          addUniqueCode(candidates, modeForGrid("STEADY", orient), primaryCode);
+          reasons.push("near high/steady energy boundary");
+        }
+        if (Math.abs(g.netNorm - SOM_ENERGY_LOW_THRESHOLD) <= 0.08){
+          addUniqueCode(candidates, modeForGrid("LOW", orient), primaryCode);
+          addUniqueCode(candidates, modeForGrid("STEADY", orient), primaryCode);
+          reasons.push("near steady/protected energy boundary");
+        }
+      }
+
+      var cleanReasons = [];
+      for (var i=0;i<reasons.length;i++){
+        if (cleanReasons.indexOf(reasons[i]) === -1) cleanReasons.push(reasons[i]);
+      }
+      candidates = candidates.slice(0, 3);
+
+      return {
+        show: candidates.length > 0,
+        primary: primaryCode,
+        nearby: candidates,
+        reasons: cleanReasons
+      };
+    }
+
+    function renderNearTypeBox(nearMeta){
+      var box = document.getElementById("nearTypeBox");
+      var summary = document.getElementById("nearTypeSummary");
+      var panel = document.getElementById("nearTypePanel");
+      var title = document.getElementById("nearTypeTitle");
+      var chev = document.getElementById("nearChevron");
+      if (!box || !summary || !panel) return;
+
+      if (!nearMeta || !nearMeta.show || !nearMeta.nearby || !nearMeta.nearby.length){
+        box.classList.remove("show");
+        summary.innerHTML = "";
+        panel.innerHTML = "";
+        panel.classList.remove("show");
+        if (chev) chev.textContent = "▼";
+        return;
+      }
+
+      var primaryName = getModeName(nearMeta.primary);
+      var nearNames = nearMeta.nearby.map(function(c){ return getModeName(c); }).join(", ");
+      if (title) title.textContent = "Close result signal";
+      summary.innerHTML =
+        "<strong>Close signal detected:</strong> Your final SOM is <strong>" + escapeHtml(primaryName) + "</strong>, but your answers also sat near <strong>" + escapeHtml(nearNames) + "</strong>. This is not an error. It means your current season is near a boundary between related modes.";
+
+      var reasonText = nearMeta.reasons && nearMeta.reasons.length ? nearMeta.reasons.join(", ") : "nearby score pattern";
+      var html = '<div class="near-type-muted"><strong>Why this appeared:</strong> ' + escapeHtml(reasonText) + '.</div>';
+      html += '<div class="near-type-grid">';
+      html += '<div class="near-type-card"><strong>Primary: ' + escapeHtml(primaryName) + '</strong>' + escapeHtml(getShortModeDesc(nearMeta.primary)) + '</div>';
+      for (var i=0;i<nearMeta.nearby.length;i++){
+        var code = nearMeta.nearby[i];
+        html += '<div class="near-type-card"><strong>Nearby: ' + escapeHtml(getModeName(code)) + '</strong>' + escapeHtml(getShortModeDesc(code)) + '</div>';
+      }
+      html += '</div>';
+      html += '<div class="near-type-muted">The primary result remains the result used for synthesis. The nearby signal is included so close or borderline seasons are easier to interpret honestly.</div>';
+
+      panel.innerHTML = html;
+      box.classList.add("show");
+      panel.classList.remove("show");
+      if (chev) chev.textContent = "▼";
+    }
+
+    function toggleNearTypes(){
+      var panel = document.getElementById("nearTypePanel");
+      var chev = document.getElementById("nearChevron");
+      if (!panel) return;
+      var isOpen = panel.classList.toggle("show");
+      if (chev) chev.textContent = isOpen ? "▲" : "▼";
     }
 
     function finalizeAndRender(primaryCode, provisional, tieMeta, opts){
       opts = opts || {};
+      if (!primaryCode) primaryCode = provisional && provisional.grid ? provisional.grid.primary : null;
       var m = SOM_MODES.filter(function(x){ return x.code === primaryCode; })[0] || { code: primaryCode, name: primaryCode };
+      var displayGrid = gridForMode(primaryCode, provisional.grid);
       var submissionFingerprint = getSomSubmissionFingerprint(primaryCode, provisional, tieMeta);
-
-      var existingResult = null;
-      try{ existingResult = readSomResult(); } catch(e){}
+      var existingResult = readSomResult();
       var sameSubmission = !!(existingResult && existingResult.submissionFingerprint === submissionFingerprint);
-      var endpointSent = !!(sameSubmission && existingResult.endpointSent);
+      var createdAt = (sameSubmission && existingResult && existingResult.createdAt) ? existingResult.createdAt : new Date().toISOString();
+      var endpointSent = !!(sameSubmission && existingResult && existingResult.endpointSent);
 
-      document.getElementById("primaryType").textContent = m.code + " - " + m.name;
+      var primaryEl = document.getElementById("primaryType");
+      if (primaryEl) primaryEl.textContent = m.code + " - " + m.name;
       renderSomBlurb(m.code);
-      renderSeasonBlend(provisional.grid);
+      renderSeasonBlend(displayGrid);
       renderDimBars(provisional.dimScores);
 
-      var createdAt = (sameSubmission && existingResult && existingResult.createdAt) ? existingResult.createdAt : new Date().toISOString();
+      var tie = tieMeta || { used:false, skipped:false, considered:false };
+      var nearMeta = computeNearTypeMeta(m.code, provisional, tie);
+      renderNearTypeBox(nearMeta);
+
+      if (tie.considered && !tie.chosen) tie.chosen = m.code;
+
       var resultObj = {
         schema: "empoweru_utf2_som_result",
-        schema_v: 5,
+        schema_v: 6,
         assessment: "UTF-II_SOM",
         ui_v: SOM_UI_VERSION,
         som_v: SOM_VERSION,
@@ -2360,22 +2602,46 @@
         dimScores: provisional.dimScores,
         modeScores: provisional.modeScores,
         ranked: provisional.ranked,
+        provisional: provisional,
         meta: {
-          scoring: "forced_choice_single_dim_per_statement_then_grid_primary_with_rank_scores",
+          scoring: "forced_choice_single_dim_normalized_grid_strict_tie_v3_3_0",
           seed: __seed,
-          tieTriggerPoints: TIE_TRIGGER_POINTS,
+          thresholds: {
+            energyHigh: SOM_ENERGY_HIGH_THRESHOLD,
+            energyLow: SOM_ENERGY_LOW_THRESHOLD,
+            energyTieEps: SOM_ENERGY_TIE_EPS,
+            orientTieEps: SOM_ORIENT_TIE_EPS,
+            builderMinOrientGap: SOM_BUILDER_MIN_ORIENT_GAP,
+            highMinEpRate: SOM_HIGH_MIN_EP_RATE,
+            lowMinEmRate: SOM_LOW_MIN_EM_RATE
+          },
           top1: provisional.top1 ? { code: provisional.top1.code, score: provisional.top1.score } : null,
           top2: provisional.top2 ? { code: provisional.top2.code, score: provisional.top2.score } : null,
           gapPoints: provisional.gapPoints,
-          grid: provisional.grid ? { tier: provisional.grid.tier, orient: provisional.grid.orient, net: provisional.grid.net } : null,
-          dimMax: DIM_MAX
+          grid: provisional.grid ? {
+            tier: provisional.grid.tier,
+            orient: provisional.grid.orient,
+            net: provisional.grid.net,
+            netNorm: provisional.grid.netNorm,
+            orientGap: provisional.grid.orientGap,
+            primary: provisional.grid.primary
+          } : null,
+          displayGrid: displayGrid ? {
+            tier: displayGrid.tier,
+            orient: displayGrid.orient,
+            primary: displayGrid.primary
+          } : null,
+          rates: provisional.grid ? provisional.grid.rates : somNormalizeDimScores(provisional.dimScores),
+          orientRates: provisional.grid ? provisional.grid.orientRates : null,
+          dimMax: DIM_MAX,
+          tieCheck: provisional.tieCheck || null,
+          nearType: nearMeta || null
         },
-        tieBreaker: tieMeta || { used:false, skipped:false, considered:false },
-        answers: {
-          format: "ABC_forced_choice",
-          values: provisional.answersABC.slice(0)
-        },
+        nearType: nearMeta || null,
+        tieBreaker: tie,
+        answers: { format: "ABC_forced_choice", values: provisional.answersABC.slice(0) },
         endpointSent: endpointSent,
+        endpointPending: !endpointSent,
         submissionFingerprint: submissionFingerprint,
         createdAt: createdAt
       };
@@ -2386,42 +2652,29 @@
       setSynthesisLink(m.code, resultObj);
 
       if (!opts.skipEndpoint && !endpointSent){
-        storePayload({
-          assessment: "UTF-II_SOM",
-          primaryType: m.code,
-          primaryName: m.name,
-          ranked: provisional.ranked,
-          dimScores: provisional.dimScores,
-          modeScores: provisional.modeScores,
-          meta: resultObj.meta,
-          tieBreaker: resultObj.tieBreaker,
-          createdAt: createdAt,
-          v: SOM_VERSION,
-          qbank: SOM_QBANK_ID
-        });
-        endpointSent = true;
-        resultObj.endpointSent = true;
-        saveSomResultLocal(resultObj);
+        queueEndpointPayload(buildEndpointPayload(resultObj), submissionFingerprint);
+        flushPendingPayloads();
       }
 
       var results = document.getElementById("results");
-      results.classList.add("show");
-
+      if (results){
+        results.classList.add("show");
+        results.scrollIntoView({behavior:"smooth", block:"start"});
+      }
       var bottomActions = document.getElementById("bottomActions");
-      bottomActions && bottomActions.classList.add("show");
-
-      results.scrollIntoView({behavior:"smooth", block:"start"});
+      if (bottomActions) bottomActions.classList.add("show");
       updateProgress();
       setActiveQuestion(questions.length - 1);
+      syncResumeControls();
     }
 
     function calculateResults(){
       var lock = getSomLockData();
       if (lock.locked){
         showToast("This SOM submission is locked on this device. Use Retake SOM to take it again.");
+        restoreLockedSessionIfPresent();
         return;
       }
-
       var agree = document.getElementById("agreeChk");
       if (!agree || !agree.checked){
         showToast("Please check the User Agreement box before calculating your mode.");
@@ -2429,68 +2682,48 @@
         box && box.scrollIntoView && box.scrollIntoView({behavior:"smooth", block:"center"});
         return;
       }
-
       if (!requireAllAnsweredOrWarn()) return;
-
       var provisional = calculateProvisional();
-      var basePrimary = provisional.grid && provisional.grid.primary ? provisional.grid.primary : provisional.top1.code;
+      var basePrimary = provisional.grid && provisional.grid.primary ? provisional.grid.primary : (provisional.top1 ? provisional.top1.code : null);
+      var tieCheck = provisional.tieCheck || determineTiePair(provisional);
+      provisional.tieCheck = tieCheck;
 
-      var net = provisional.grid ? provisional.grid.net : 0;
-      var borderlineEnergy = (net >= -3 && net <= 3);
-      var shouldTie = !!(provisional.top1 && provisional.top2 && (provisional.gapPoints <= TIE_TRIGGER_POINTS) && borderlineEnergy);
-
-      if (shouldTie){
-        // Check if we already have a stored result for this tie
-        try{
-          var _stored = JSON.parse(localStorage.getItem(RESULT_KEY) || 'null');
-          if (_stored && _stored.primaryType && _stored.tieBreaker &&
-              _stored.tieBreaker.considered &&
-              _stored.tieBreaker.topA === provisional.top1.code &&
-              _stored.tieBreaker.topB === provisional.top2.code){
-            finalizeAndRender(_stored.primaryType, provisional, _stored.tieBreaker);
-            return;
-          }
-        } catch(e){}
+      if (tieCheck.shouldTie && tieCheck.pair && tieCheck.pair.length >= 2){
         __pending = {
           provisional: provisional,
           basePrimary: basePrimary,
-          topA: provisional.top1.code,
-          topB: provisional.top2.code,
+          topA: tieCheck.pair[0],
+          topB: tieCheck.pair[1],
+          triggerReasons: tieCheck.reasons || [],
           tieItems: null
         };
-
         var intro = document.getElementById("tieIntro");
         if (intro){
-          intro.textContent =
-            "Your results are close between " + provisional.top1.code + " and " + provisional.top2.code +
-            ". Pick the best-fit statement in each item.";
+          intro.textContent = "Your results are close between " + getModeName(__pending.topA) + " and " + getModeName(__pending.topB) + ". Rate each statement from 1 to 5 to confirm the cleanest fit.";
         }
-
-        var tieItems = buildTieItems(provisional.top1.code, provisional.top2.code);
+        var tieItems = buildTieItems(__pending.topA, __pending.topB);
         __pending.tieItems = tieItems;
         renderTieForm(tieItems);
-
         openTieModal();
         return;
       }
-
-      finalizeAndRender(basePrimary, provisional, { used:false, skipped:false, considered:false });
+      finalizeAndRender(basePrimary, provisional, { used:false, skipped:false, considered:false, chosen:basePrimary });
     }
 
     function handleTieSkip(){
       if (!__pending) { closeTieModal(); return; }
       var p = __pending.provisional;
       var basePrimary = __pending.basePrimary;
-
       var tieMeta = {
         considered: true,
         used: false,
         skipped: true,
-        triggerPoints: TIE_TRIGGER_POINTS,
+        triggerReasons: (__pending.triggerReasons || []).slice(0),
         topA: __pending.topA,
-        topB: __pending.topB
+        topB: __pending.topB,
+        chosen: basePrimary,
+        note: "skipped_used_calculated_result"
       };
-
       closeTieModal();
       finalizeAndRender(basePrimary, p, tieMeta);
       __pending = null;
@@ -2498,34 +2731,31 @@
 
     function handleTieConfirm(){
       if (!__pending) { closeTieModal(); return; }
-
       var items = __pending.tieItems || [];
       var answers = getTieAnswers(items);
-
       for (var i=0;i<answers.length;i++){
-        if (!answers[i]){
-          showToast("Please answer all tie-breaker items (T" + (i+1) + "). Or skip.");
+        if (answers[i] === null || answers[i] === undefined || isNaN(answers[i])){
+          showToast("Please rate all tie-breaker items, or skip.");
           return;
         }
       }
-
       var tie = computeTieWinner(items, answers);
       var chosen = tie.winner ? tie.winner : __pending.basePrimary;
-
       var tieMeta = {
         considered: true,
         used: !!tie.winner,
         skipped: false,
-        triggerPoints: TIE_TRIGGER_POINTS,
+        triggerReasons: (__pending.triggerReasons || []).slice(0),
         topA: __pending.topA,
         topB: __pending.topB,
         answers: answers.slice(0),
+        itemOwners: items.map(function(x){ return x.owner; }),
         sums: tie.sums,
+        counts: tie.counts,
         winner: tie.winner,
         chosen: chosen,
         note: tie.note
       };
-
       closeTieModal();
       finalizeAndRender(chosen, __pending.provisional, tieMeta);
       __pending = null;
@@ -2535,9 +2765,7 @@
       var issues = [];
       var expectedQ = 27;
       if (!Array.isArray(QUESTIONS_RAW) || QUESTIONS_RAW.length !== expectedQ) issues.push("Question count must be " + expectedQ + ".");
-
       var dimCounts = emptyDimScores();
-
       for (var q=0;q<QUESTIONS_RAW.length;q++){
         var seen = {};
         ["A","B","C"].forEach(function(L){
@@ -2556,22 +2784,106 @@
           dimCounts[dim] += 1;
         });
       }
-
-      console.log("[SOM_SCORE_INTEGRITY_CHECK] dim statement counts:", dimCounts);
-      console.log("[SOM_SCORE_INTEGRITY_CHECK] dim max used for bars:", DIM_MAX);
       var ok = issues.length === 0;
-      console.log("[SOM_SCORE_INTEGRITY_CHECK] ok =", ok);
+      var out = {
+        ok: ok,
+        issues: issues,
+        dimCounts: dimCounts,
+        dimMax: DIM_MAX,
+        normalization: {
+          usingNormalizedGrid: true,
+          thresholds: {
+            energyHigh: SOM_ENERGY_HIGH_THRESHOLD,
+            energyLow: SOM_ENERGY_LOW_THRESHOLD,
+            energyTieEps: SOM_ENERGY_TIE_EPS,
+            orientTieEps: SOM_ORIENT_TIE_EPS,
+            builderMinOrientGap: SOM_BUILDER_MIN_ORIENT_GAP,
+            highMinEpRate: SOM_HIGH_MIN_EP_RATE,
+            lowMinEmRate: SOM_LOW_MIN_EM_RATE
+          }
+        },
+        version: { ui:SOM_UI_VERSION, som:SOM_VERSION, math:SOM_MATH_VERSION, qbank:SOM_QBANK_ID }
+      };
+      console.log("[SOM_SCORE_INTEGRITY_CHECK]", out);
       if (!ok) console.warn("Issues:", issues);
-      return { ok: ok, issues: issues, dimCounts: dimCounts, dimMax: DIM_MAX };
+      return out;
     }
     window.SOM_SCORE_INTEGRITY_CHECK = SOM_SCORE_INTEGRITY_CHECK;
 
+    window.SOM_TRACE_RESULT = function(dimScores){
+      dimScores = dimScores || emptyDimScores();
+      var grid = computeGridPrimary(dimScores);
+      var modeScores = computeModeScores(dimScores);
+      var ranked = rankModes(modeScores);
+      var primaryCode = grid && grid.primary ? grid.primary : (ranked[0] ? ranked[0].code : null);
+      var top1 = null, top2 = null;
+      for (var i=0;i<ranked.length;i++) if (!top1 && ranked[i].code === primaryCode) top1 = ranked[i];
+      for (var j=0;j<ranked.length;j++) if (ranked[j].code !== primaryCode){ top2 = ranked[j]; break; }
+      var provisional = { dimScores:dimScores, grid:grid, modeScores:modeScores, ranked:ranked, top1:top1, top2:top2, gapPoints:(top1 && top2 ? top1.score - top2.score : 999) };
+      provisional.tieCheck = determineTiePair(provisional);
+      console.log("[SOM_TRACE_RESULT]", provisional);
+      return provisional;
+    };
+
+    window.SOM_BIAS_AUDIT = function(rounds){
+      rounds = (typeof rounds === "number" && rounds > 0) ? Math.floor(rounds) : 10000;
+      var counts = {}, ties = 0;
+      SOM_MODES.forEach(function(m){ counts[m.code] = 0; });
+      for (var r=0;r<rounds;r++){
+        var answers = [];
+        for (var i=0;i<questions.length;i++){
+          var opts = ["A","B","C"];
+          answers.push(opts[Math.floor(Math.random()*3)]);
+        }
+        var p = buildSomProvisionalFromAnswers(answers);
+        if (p.grid && p.grid.primary && counts.hasOwnProperty(p.grid.primary)) counts[p.grid.primary] += 1;
+        if (p.tieCheck && p.tieCheck.shouldTie) ties++;
+      }
+      var rows = SOM_MODES.map(function(m){ return { mode:m.code, name:m.name, count:counts[m.code], pct:((counts[m.code] / rounds) * 100).toFixed(2) + "%" }; });
+      console.table(rows);
+      console.log("Tie checks:", ties, ((ties / rounds) * 100).toFixed(2) + "%");
+      return { rounds:rounds, counts:counts, rows:rows, tieCount:ties };
+    };
+
+    window.SOM_RUN_KNOWN_CASES = function(){
+      var cases = [
+        { name:"OUT9_CHG8_LOW_BOUNDARY", dim:{ EM:7, EP:3, CHG:8, OUT:9, PPL:0 }, expectNot:"BLD", expectTie:["ENH","REF"] },
+        { name:"CLEAN_BUILDER_OUT14", dim:{ EM:2, EP:4, CHG:3, OUT:14, PPL:4 }, expectPrimary:"BLD" },
+        { name:"HIGH_PPL", dim:{ EM:1, EP:8, CHG:2, OUT:3, PPL:10 }, expectPrimary:"HRB" },
+        { name:"LOW_CHG", dim:{ EM:10, EP:2, CHG:9, OUT:3, PPL:1 }, expectPrimary:"REF" },
+        { name:"LOW_OUT", dim:{ EM:10, EP:2, CHG:2, OUT:12, PPL:1 }, expectPrimary:"BST" }
+      ];
+      var results = cases.map(function(c){
+        var trace = window.SOM_TRACE_RESULT(c.dim);
+        var ok = true;
+        if (c.expectPrimary && trace.grid.primary !== c.expectPrimary) ok = false;
+        if (c.expectNot && trace.grid.primary === c.expectNot) ok = false;
+        if (c.expectTie){
+          var pair = trace.tieCheck && trace.tieCheck.pair ? trace.tieCheck.pair.slice(0).sort().join("|") : "";
+          if (pair !== c.expectTie.slice(0).sort().join("|")) ok = false;
+        }
+        return { name:c.name, ok:ok, primary:trace.grid.primary, tiePair:trace.tieCheck && trace.tieCheck.pair, reasons:trace.tieCheck && trace.tieCheck.reasons, rates:trace.grid.rates, netNorm:trace.grid.netNorm };
+      });
+      console.table(results.map(function(r){ return { name:r.name, ok:r.ok, primary:r.primary, tiePair:(r.tiePair || []).join("/"), reasons:(r.reasons || []).join(",") }; }));
+      return results;
+    };
+
+    window.SOM_GET_LAST_RESULT = function(){ return readSomResult(); };
+    window.SOM_RECALC_LAST_RESULT = function(){
+      var stored = readSomResult();
+      if (!stored || !stored.answers || !hasSomArray(stored.answers.values)) return null;
+      return buildSomProvisionalFromAnswers(stored.answers.values);
+    };
+    window.SOM_LIST_TOOLS = function(){
+      var tools = ["SOM_SCORE_INTEGRITY_CHECK()", "SOM_TRACE_RESULT({EM:7,EP:3,CHG:8,OUT:9,PPL:0})", "SOM_RUN_KNOWN_CASES()", "SOM_BIAS_AUDIT(rounds)", "SOM_GET_LAST_RESULT()", "SOM_RECALC_LAST_RESULT()", "SOM_LIST_TOOLS()"];
+      console.log("[SOM TOOLS]", tools);
+      return tools;
+    };
+
     try{
       setSynthesisLink(null, null);
-
       var data = readAutosave();
       __seed = data ? (data.seed >>> 0) : ((Date.now() & 0xffffffff) >>> 0);
-
       questions = buildQuestionsFromRaw(__seed);
       generateForm();
       clearAllSelections();
@@ -2580,25 +2892,25 @@
       syncResumeControls();
       syncActiveQuestion(0);
       restoreLockedSessionIfPresent();
+      flushPendingPayloads();
 
       var form = document.getElementById("somForm");
-      form.addEventListener("change", function(e){
+      form && form.addEventListener("change", function(e){
         if (e.target && e.target.matches('input[type="radio"]')){
           updateProgress();
           saveAnswersLocal();
           syncResumeControls();
-
           var qNum = parseInt(String(e.target.name).replace("q",""), 10) - 1;
-          var nextIdx = qNum + 1;
-          while (nextIdx < questions.length && document.querySelector('input[name="q' + (nextIdx + 1) + '"]:checked')) {
-            nextIdx++;
+          if (!isNaN(qNum)){
+            var nextIdx = qNum + 1;
+            while (nextIdx < questions.length && document.querySelector('input[name="q' + (nextIdx + 1) + '"]:checked')) nextIdx++;
+            if (nextIdx >= questions.length) nextIdx = qNum;
+            setActiveQuestion(nextIdx);
           }
-          if (nextIdx >= questions.length) nextIdx = qNum;
-          setActiveQuestion(nextIdx);
         }
       });
 
-      form.addEventListener("click", function(e){
+      form && form.addEventListener("click", function(e){
         var card = e.target.closest(".question");
         if (!card) return;
         var cards = Array.prototype.slice.call(document.querySelectorAll(".question"));
@@ -2609,40 +2921,30 @@
       var agreeChk = document.getElementById("agreeChk");
       agreeChk && agreeChk.addEventListener("change", function(){ setSubmitEnabled(); });
 
-      document.getElementById("submitBtn").addEventListener("click", function(e){
-        e.preventDefault();
-        calculateResults();
-      });
+      var submitBtn = document.getElementById("submitBtn");
+      submitBtn && submitBtn.addEventListener("click", function(e){ e.preventDefault(); calculateResults(); });
 
-      document.getElementById("toggleScores").addEventListener("click", function(e){
-        e.preventDefault();
-        toggleAccordion();
-      });
+      var toggleScores = document.getElementById("toggleScores");
+      toggleScores && toggleScores.addEventListener("click", function(e){ e.preventDefault(); toggleAccordion(); });
+
+      var toggleNearTypesBtn = document.getElementById("toggleNearTypes");
+      toggleNearTypesBtn && toggleNearTypesBtn.addEventListener("click", function(e){ e.preventDefault(); toggleNearTypes(); });
 
       var resumeBtn = document.getElementById("resumeBtn");
       var clearBtn  = document.getElementById("clearBtn");
-
       resumeBtn && resumeBtn.addEventListener("click", function(){
         clearAllSelections();
         var ok = restoreAnswersLocal();
         updateProgress();
         syncResumeControls();
-        if (ok){
-          showToast("Saved answers restored.");
-        } else {
-          showToast("No compatible saved answers found.");
-          syncActiveQuestion(0);
-        }
+        if (ok) showToast("Saved answers restored.");
+        else { showToast("No compatible saved answers found."); syncActiveQuestion(0); }
       });
-
-      clearBtn && clearBtn.addEventListener("click", function(){
-        openRetakeSomModal();
-      });
+      clearBtn && clearBtn.addEventListener("click", function(){ openRetakeSomModal(); });
 
       var openA = document.getElementById("openAgreement");
       var closeA = document.getElementById("closeAgreement");
       var backdropA = document.getElementById("agreementModal");
-
       openA && openA.addEventListener("click", function(e){ e.preventDefault(); openAgreementModal(); });
       closeA && closeA.addEventListener("click", function(e){ e.preventDefault(); closeAgreementModal(); });
       backdropA && backdropA.addEventListener("click", function(e){ if (e.target === backdropA) closeAgreementModal(); });
@@ -2650,7 +2952,6 @@
       var btnMenu = document.getElementById("btnMenu");
       var btnCloseMenu = document.getElementById("btnCloseMenu");
       var menuModal = document.getElementById("menuModal");
-
       btnMenu && btnMenu.addEventListener("click", openMenu);
       btnCloseMenu && btnCloseMenu.addEventListener("click", closeMenu);
       menuModal && menuModal.addEventListener("click", function(e){ if (e.target === menuModal) closeMenu(); });
@@ -2659,9 +2960,8 @@
       var tieModal = document.getElementById("tieModal");
       var tieSkipBtn = document.getElementById("tieSkipBtn");
       var tieConfirmBtn = document.getElementById("tieConfirmBtn");
-
-      closeTie && closeTie.addEventListener("click", function(e){ e.preventDefault(); closeTieModal(); });
-      tieModal && tieModal.addEventListener("click", function(e){ if (e.target === tieModal) closeTieModal(); });
+      closeTie && closeTie.addEventListener("click", function(e){ e.preventDefault(); handleTieSkip(); });
+      tieModal && tieModal.addEventListener("click", function(e){ if (e.target === tieModal) handleTieSkip(); });
       tieSkipBtn && tieSkipBtn.addEventListener("click", function(e){ e.preventDefault(); handleTieSkip(); });
       tieConfirmBtn && tieConfirmBtn.addEventListener("click", function(e){ e.preventDefault(); handleTieConfirm(); });
 
@@ -2670,7 +2970,6 @@
       var retakeCancelBtn = document.getElementById("retakeCancelBtn");
       var retakeConfirmBtn = document.getElementById("retakeConfirmBtn");
       var retakeConfirmCheck = document.getElementById("retakeConfirmCheck");
-
       retakeSomBottomBtn && retakeSomBottomBtn.addEventListener("click", function(e){ e.preventDefault(); openRetakeSomModal(); });
       retakeCancelBtn && retakeCancelBtn.addEventListener("click", function(e){ e.preventDefault(); closeRetakeSomModal(); });
       retakeConfirmCheck && retakeConfirmCheck.addEventListener("change", function(){ if (retakeConfirmBtn) retakeConfirmBtn.disabled = !retakeConfirmCheck.checked; });
@@ -2681,681 +2980,18 @@
         if (e.key === "Escape"){
           closeAgreementModal();
           closeMenu();
-          closeTieModal();
+          if (__pending) handleTieSkip(); else closeTieModal();
           closeRetakeSomModal();
         }
       });
 
-      window.addEventListener("pageshow", function(){
-        restoreLockedSessionIfPresent();
-      });
-
+      window.addEventListener("pageshow", function(){ restoreLockedSessionIfPresent(); flushPendingPayloads(); });
       SOM_SCORE_INTEGRITY_CHECK();
-
+      window.SOM_RUN_KNOWN_CASES();
     } catch (e){
       showToast("Setup error: " + (e && e.message ? e.message : String(e)));
       hardError("Setup error: " + (e && e.message ? e.message : String(e)));
     }
   </script>
-<script>
-/* Load this AFTER the existing som.html script, before </body>. */
-(function(){
-  try{
-    SOM_UI_VERSION = "1.0.2";
-    SOM_VERSION = "3.2.0";
-    SOM_MATH_VERSION = "3.2.0_balanced_recovery";
-  }catch(e){}
-
-
-  var SOM_MODE_NAMES = (function(){
-    var m = {};
-    try{
-      if (Array.isArray(SOM_MODES)) {
-        for (var i=0;i<SOM_MODES.length;i++){
-          if (SOM_MODES[i] && SOM_MODES[i].code) m[SOM_MODES[i].code] = SOM_MODES[i].name || SOM_MODES[i].code;
-        }
-      }
-    }catch(e){}
-    return m;
-  })();
-
-  var LEGACY_SOM_AUTOSAVE_KEY_HINTS = [
-    "empoweru_utf2_som_v1_0_1",
-    "empoweru_utf2_som_v1_0_1_autosave",
-    "empoweru_utf2_som_v3_1_0_autosave"
-  ];
-
-  var SOM_ENERGY_HIGH_THRESHOLD = 0.18;
-  var SOM_ENERGY_LOW_THRESHOLD = -0.18;
-  var SOM_ENERGY_TIE_EPS = 0.05;
-  var SOM_ORIENT_TIE_EPS = 0.08;
-  var SOM_MODE_GAP_TIE_EPS = 10;
-
-  function jp(raw){ try{ return JSON.parse(raw); } catch(e){ return null; } }
-  function keys(){ try{ return Object.keys(localStorage || {}); } catch(e){ return []; } }
-  function isSomLetter(v){ return v === null || v === undefined || v === "A" || v === "B" || v === "C"; }
-  function hasSomArray(arr){ return Array.isArray(arr) && arr.length === 27 && arr.every(isSomLetter); }
-
-  function normalizeSomAutosaveCandidate(obj){
-    if (!obj || typeof obj !== "object") return null;
-    var arr = null;
-    if (Array.isArray(obj.answers)) arr = obj.answers;
-    else if (Array.isArray(obj.responses)) arr = obj.responses;
-    else if (Array.isArray(obj.items)) arr = obj.items;
-    else if (obj.answers && Array.isArray(obj.answers.values)) arr = obj.answers.values;
-    if (!hasSomArray(arr)) return null;
-
-    var seed = (typeof obj.seed === "number") ? obj.seed :
-               (obj.meta && typeof obj.meta.seed === "number") ? obj.meta.seed : null;
-
-    return {
-      schema: "empoweru_som_autosave",
-      schema_v: 2,
-      ui_v: SOM_UI_VERSION,
-      som_v: SOM_VERSION,
-      som_math: SOM_MATH_VERSION,
-      qbank: SOM_QBANK_ID,
-      q_count: 27,
-      seed: (typeof seed === "number") ? (seed >>> 0) : null,
-      answers: arr.slice(0, 27),
-      updatedAt: obj.updatedAt || obj.createdAt || new Date().toISOString()
-    };
-  }
-
-  function validateSomResult(obj){
-    return !!(
-      obj &&
-      obj.primaryType &&
-      SOM_MODE_NAMES &&
-      SOM_MODE_NAMES[obj.primaryType] &&
-      obj.dimScores &&
-      typeof obj.dimScores === "object" &&
-      ["EP","EM","OUT","PPL","CHG"].every(function(k){ return typeof obj.dimScores[k] === "number" && isFinite(obj.dimScores[k]); })
-    );
-  }
-
-  function readSomResult(){
-    var obj = jp(localStorage.getItem(RESULT_KEY) || "null");
-    return validateSomResult(obj) ? obj : null;
-  }
-
-  function migrateLegacySomStorage(){
-    var migrated = false;
-
-    try{
-      var current = jp(localStorage.getItem(AUTOSAVE_KEY));
-      var currentOk = !!(
-        current &&
-        current.schema === "empoweru_som_autosave" &&
-        current.qbank === SOM_QBANK_ID &&
-        current.q_count === 27 &&
-        hasSomArray(current.answers)
-      );
-
-      if (!currentOk){
-        var best = null;
-        var allKeys = keys().filter(function(k){
-          return /^empoweru_utf2_som_v\d+(?:_\d+)+(?:_autosave)?(?:__bak)?$/.test(k);
-        });
-        LEGACY_SOM_AUTOSAVE_KEY_HINTS.forEach(function(k){
-          if (allKeys.indexOf(k) === -1) allKeys.push(k);
-        });
-
-        allKeys.forEach(function(k){
-          var norm = normalizeSomAutosaveCandidate(jp(localStorage.getItem(k)));
-          if (!norm) return;
-          var ts = new Date(norm.updatedAt || 0).getTime() || 0;
-          if (!best || ts > best.ts) best = { key:k, payload:norm, ts:ts };
-        });
-
-        if (!best){
-          var result = readSomResult();
-          if (result && result.answers && hasSomArray(result.answers.values)){
-            best = {
-              key: RESULT_KEY,
-              ts: new Date(result.createdAt || 0).getTime() || Date.now(),
-              payload: {
-                schema: "empoweru_som_autosave",
-                schema_v: 2,
-                ui_v: SOM_UI_VERSION,
-                som_v: SOM_VERSION,
-                som_math: SOM_MATH_VERSION,
-                qbank: SOM_QBANK_ID,
-                q_count: 27,
-                seed: (result.meta && typeof result.meta.seed === "number") ? (result.meta.seed >>> 0) : null,
-                answers: result.answers.values.slice(0, 27),
-                updatedAt: result.createdAt || new Date().toISOString()
-              }
-            };
-          }
-        }
-
-        if (best){
-          if (typeof best.payload.seed !== "number"){
-            best.payload.seed = ((Date.now() & 0xffffffff) >>> 0);
-          }
-          localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(best.payload));
-          migrated = true;
-        }
-      }
-
-      var currentLock = jp(localStorage.getItem(SOM_LOCK_KEY));
-      var lockOk = !!(currentLock && currentLock.qbank === SOM_QBANK_ID && (currentLock.locked || currentLock.primaryType));
-      if (!lockOk){
-        var lockKeys = keys().filter(function(k){ return /^empoweru_utf2_som_lock_v\d+(?:_\d+)+$/.test(k); });
-        var migratedLock = null;
-
-        for (var i=0;i<lockKeys.length;i++){
-          var lk = jp(localStorage.getItem(lockKeys[i]));
-          if (lk && (lk.locked || lk.primaryType)){
-            migratedLock = {
-              locked: true,
-              som_v: SOM_VERSION,
-              som_math: SOM_MATH_VERSION,
-              qbank: SOM_QBANK_ID,
-              primaryType: lk.primaryType || null,
-              lockedAt: lk.lockedAt || new Date().toISOString()
-            };
-            break;
-          }
-        }
-
-        if (!migratedLock){
-          var result2 = readSomResult();
-          if (result2 && result2.primaryType){
-            migratedLock = {
-              locked: true,
-              som_v: SOM_VERSION,
-              som_math: SOM_MATH_VERSION,
-              qbank: SOM_QBANK_ID,
-              primaryType: result2.primaryType || null,
-              lockedAt: result2.createdAt || new Date().toISOString()
-            };
-          }
-        }
-
-        if (migratedLock){
-          localStorage.setItem(SOM_LOCK_KEY, JSON.stringify(migratedLock));
-          migrated = true;
-        }
-      }
-    } catch(e){}
-
-    return migrated;
-  }
-
-  function deepClearSomStorage(){
-    try{ localStorage.removeItem(AUTOSAVE_KEY); } catch(e){}
-    try{ localStorage.removeItem(RESULT_KEY); } catch(e){}
-    try{ localStorage.removeItem(SOM_LOCK_KEY); } catch(e){}
-    try{
-      keys().forEach(function(k){
-        if (/^empoweru_utf2_som_v\d+(?:_\d+)+(?:_autosave)?(?:__bak)?$/.test(k)) localStorage.removeItem(k);
-        if (/^empoweru_utf2_som_lock_v\d+(?:_\d+)+$/.test(k)) localStorage.removeItem(k);
-      });
-    } catch(e){}
-  }
-
-  readAutosave = function(){
-    try{
-      migrateLegacySomStorage();
-      var raw = localStorage.getItem(AUTOSAVE_KEY);
-      if (!raw) return null;
-      var data = jp(raw);
-      if (!data || data.schema !== "empoweru_som_autosave") return null;
-      if (data.qbank !== SOM_QBANK_ID) return null;
-      if (data.q_count !== 27) return null;
-      if (!hasSomArray(data.answers)) return null;
-      if (typeof data.seed !== "number") data.seed = ((Date.now() & 0xffffffff) >>> 0);
-      return data;
-    } catch(e){ return null; }
-  };
-
-  hasSavedAnswers = function(){
-    var data = readAutosave();
-    if (data && hasSomArray(data.answers)) return data.answers.some(function(x){ return x !== null && x !== undefined; });
-    var result = readSomResult();
-    return !!(result && result.answers && hasSomArray(result.answers.values));
-  };
-
-  clearSavedAnswers = function(){
-    deepClearSomStorage();
-  };
-
-  syncResumeControls = function(){
-    var resumeBtn = document.getElementById("resumeBtn");
-    var clearBtn  = document.getElementById("clearBtn");
-    var has = hasSavedAnswers();
-    var hasResult = !!readSomResult();
-    var locked = getSomLockData().locked;
-    if (resumeBtn) resumeBtn.disabled = !(has || hasResult);
-    if (clearBtn)  clearBtn.disabled  = !(has || hasResult || locked);
-  };
-
-  getSomLockData = function(){
-    try{
-      migrateLegacySomStorage();
-      var raw = localStorage.getItem(SOM_LOCK_KEY);
-      if (!raw) return { locked:false };
-      var data = jp(raw);
-      if (!data) return { locked:false };
-      if (data.qbank !== SOM_QBANK_ID) return { locked:false };
-      return { locked:true, data:data };
-    } catch(e){ return { locked:false }; }
-  };
-
-  function restoreSomAnswersToUI(answerArr, seed){
-    __seed = (typeof seed === "number") ? (seed >>> 0) : ((Date.now() & 0xffffffff) >>> 0);
-    questions = buildQuestionsFromRaw(__seed);
-    generateForm();
-    clearAllSelections();
-
-    for (var i = 1; i <= questions.length; i++){
-      var v = answerArr[i-1];
-      if (!v) continue;
-      var el = document.getElementById("q" + i + "_" + v);
-      if (el) el.checked = true;
-    }
-
-    updateProgress();
-  }
-
-
-  function buildSomProvisionalFromAnswers(answerArr){
-    var answersABC = Array.isArray(answerArr) ? answerArr.slice(0) : [];
-    var dimScores = computeDimScoresFromAnswers(answersABC);
-    var grid = computeGridPrimary(dimScores);
-    var modeScores = computeModeScores(dimScores);
-    var ranked = rankModes(modeScores);
-    var primaryCode = grid && grid.primary ? grid.primary : (ranked[0] ? ranked[0].code : null);
-    var top1 = null, top2 = null;
-    for (var i=0;i<ranked.length;i++){
-      if (!top1 && ranked[i].code === primaryCode){ top1 = ranked[i]; continue; }
-    }
-    if (!top1 && primaryCode){
-      top1 = { code: primaryCode, name: (SOM_MODE_NAMES[primaryCode] || primaryCode), score: modeScores[primaryCode] || 0 };
-    }
-    for (var j=0;j<ranked.length;j++){
-      if (ranked[j].code !== primaryCode){ top2 = ranked[j]; break; }
-    }
-    var gapPoints = (top1 && top2) ? (top1.score - top2.score) : 999;
-    return {
-      answersABC: answersABC,
-      dimScores: dimScores,
-      modeScores: modeScores,
-      ranked: ranked,
-      top1: top1,
-      top2: top2,
-      gapPoints: gapPoints,
-      grid: grid
-    };
-  }
-
-  function scrollSomResultsIntoView(){
-    var results = document.getElementById('results');
-    if (results && results.classList.contains('show') && results.scrollIntoView){
-      setTimeout(function(){ results.scrollIntoView({behavior:'smooth', block:'start'}); }, 90);
-    }
-  }
-
-  restoreLockedSessionIfPresent = function(){
-    var lock = getSomLockData();
-    if (!lock.locked) return false;
-
-    var saved = readAutosave();
-    var stored = readSomResult();
-
-    var answers = null;
-    var seed = null;
-
-    if (saved && hasSomArray(saved.answers) && saved.answers.some(function(x){ return x !== null && x !== undefined; })){
-      answers = saved.answers.slice(0);
-      seed = saved.seed;
-    } else if (stored && stored.answers && hasSomArray(stored.answers.values)){
-      answers = stored.answers.values.slice(0);
-      seed = stored.meta && typeof stored.meta.seed === "number" ? stored.meta.seed : null;
-      try{
-        localStorage.setItem(AUTOSAVE_KEY, JSON.stringify({
-          schema: "empoweru_som_autosave",
-          schema_v: 2,
-          ui_v: SOM_UI_VERSION,
-          som_v: SOM_VERSION,
-          som_math: SOM_MATH_VERSION,
-          qbank: SOM_QBANK_ID,
-          q_count: 27,
-          seed: (typeof seed === "number") ? (seed >>> 0) : ((Date.now() & 0xffffffff) >>> 0),
-          answers: answers.slice(0,27),
-          updatedAt: stored.createdAt || new Date().toISOString()
-        }));
-      } catch(e){}
-    }
-
-    if (!answers){
-      clearSomLock();
-      return false;
-    }
-
-    restoreSomAnswersToUI(answers, seed);
-
-    var provisional = null;
-    var chosenPrimary = null;
-    if (stored && stored.primaryType && stored.dimScores && stored.meta){
-      provisional = {
-        answersABC: stored.answers && stored.answers.values ? stored.answers.values.slice(0) : answers.slice(0),
-        dimScores: stored.dimScores,
-        modeScores: stored.modeScores || {},
-        ranked: stored.ranked || [],
-        top1: stored.meta.top1 || null,
-        top2: stored.meta.top2 || null,
-        gapPoints: stored.meta.gapPoints,
-        grid: stored.meta.grid || null
-      };
-      chosenPrimary = stored.primaryType;
-    } else {
-      provisional = buildSomProvisionalFromAnswers(answers);
-      chosenPrimary = (stored && stored.primaryType) || (lock.data && lock.data.primaryType) || (provisional.grid && provisional.grid.primary) || (provisional.top1 && provisional.top1.code) || null;
-    }
-
-    if (provisional && chosenPrimary){
-      finalizeAndRender(chosenPrimary, provisional, stored && stored.tieBreaker ? stored.tieBreaker : { used:false, skipped:false, considered:false }, { skipEndpoint:true, restored:true });
-      scrollSomResultsIntoView();
-    }
-
-    setAssessmentLocked(true);
-    syncResumeControls();
-    return true;
-  };
-
-  function somNormalizeDimScores(dimScores){
-    function rate(code){
-      var denom = (DIM_MAX && DIM_MAX[code]) ? DIM_MAX[code] : 1;
-      return denom ? ((dimScores[code] || 0) / denom) : 0;
-    }
-    return {
-      EP: rate("EP"),
-      EM: rate("EM"),
-      OUT: rate("OUT"),
-      PPL: rate("PPL"),
-      CHG: rate("CHG")
-    };
-  }
-
-  function somOrientForMode(code){
-    if (code === "DRV" || code === "BLD" || code === "BST") return "OUT";
-    if (code === "HRB" || code === "EQZ" || code === "HVN") return "PPL";
-    return "CHG";
-  }
-
-  function somTierCenterForMode(code){
-    if (code === "DRV" || code === "HRB" || code === "TBZ") return 0.32;
-    if (code === "BST" || code === "HVN" || code === "REF") return -0.32;
-    return 0.00;
-  }
-
-  computeGridPrimary = function(dimScores){
-    var rates = somNormalizeDimScores(dimScores);
-    var netNorm = rates.EP - rates.EM;
-
-    var tier = "STEADY";
-    if (netNorm >= SOM_ENERGY_HIGH_THRESHOLD) tier = "HIGH";
-    else if (netNorm <= SOM_ENERGY_LOW_THRESHOLD) tier = "LOW";
-
-    var orientRates = [
-      { code:"OUT", rate: rates.OUT },
-      { code:"PPL", rate: rates.PPL },
-      { code:"CHG", rate: rates.CHG }
-    ].sort(function(a,b){
-      if (b.rate !== a.rate) return b.rate - a.rate;
-      return (a.code < b.code) ? -1 : 1;
-    });
-
-    var orient = orientRates[0].code;
-    var orientGap = orientRates[0].rate - orientRates[1].rate;
-
-    var primary = null;
-    if (tier === "HIGH"   && orient === "OUT") primary = "DRV";
-    if (tier === "HIGH"   && orient === "PPL") primary = "HRB";
-    if (tier === "HIGH"   && orient === "CHG") primary = "TBZ";
-    if (tier === "STEADY" && orient === "OUT") primary = "BLD";
-    if (tier === "STEADY" && orient === "PPL") primary = "EQZ";
-    if (tier === "STEADY" && orient === "CHG") primary = "ENH";
-    if (tier === "LOW"    && orient === "OUT") primary = "BST";
-    if (tier === "LOW"    && orient === "PPL") primary = "HVN";
-    if (tier === "LOW"    && orient === "CHG") primary = "REF";
-
-    return {
-      tier: tier,
-      orient: orient,
-      net: (dimScores.EP || 0) - (dimScores.EM || 0),
-      netNorm: netNorm,
-      rates: rates,
-      orientGap: orientGap,
-      orientRates: orientRates,
-      primary: primary
-    };
-  };
-
-  computeModeScores = function(dimScores){
-    var grid = computeGridPrimary(dimScores);
-    var rates = grid.rates || somNormalizeDimScores(dimScores);
-    var netNorm = grid.netNorm || 0;
-
-    var modeScores = {};
-    for (var i=0;i<SOM_MODES.length;i++){
-      var code = SOM_MODES[i].code;
-      var orientRate = rates[somOrientForMode(code)] || 0;
-      var tierCenter = somTierCenterForMode(code);
-      var energyDistance = Math.abs(netNorm - tierCenter);
-      var energyScore = 1 - Math.min(1, energyDistance / 0.50);
-      modeScores[code] = (orientRate * 100) + (energyScore * 40);
-    }
-    return modeScores;
-  };
-
-  calculateProvisional = function(){
-    var answersABC = getAnsweredLetters();
-    var dimScores = computeDimScoresFromAnswers(answersABC);
-    var grid = computeGridPrimary(dimScores);
-    var modeScores = computeModeScores(dimScores);
-    var ranked = rankModes(modeScores);
-
-    var primaryCode = grid && grid.primary ? grid.primary : (ranked[0] ? ranked[0].code : null);
-    var top1 = null, top2 = null;
-    for (var i=0;i<ranked.length;i++){
-      if (!top1 && ranked[i].code === primaryCode) { top1 = ranked[i]; continue; }
-    }
-    if (!top1 && primaryCode){
-      top1 = { code: primaryCode, name: (SOM_MODE_NAMES[primaryCode] || primaryCode), score: modeScores[primaryCode] || 0 };
-    }
-    for (var j=0;j<ranked.length;j++){
-      if (ranked[j].code !== primaryCode){
-        top2 = ranked[j];
-        break;
-      }
-    }
-
-    var gapPoints = (top1 && top2) ? (top1.score - top2.score) : 999;
-
-    return {
-      answersABC: answersABC,
-      dimScores: dimScores,
-      modeScores: modeScores,
-      ranked: ranked,
-      top1: top1,
-      top2: top2,
-      gapPoints: gapPoints,
-      grid: grid
-    };
-  };
-
-  function somShouldTie(provisional){
-    if (!provisional || !provisional.top1 || !provisional.top2 || !provisional.grid) return false;
-
-    var g = provisional.grid;
-    var netNorm = (typeof g.netNorm === "number") ? g.netNorm : 0;
-    var energyNear =
-      Math.abs(Math.abs(netNorm) - SOM_ENERGY_HIGH_THRESHOLD) <= SOM_ENERGY_TIE_EPS ||
-      Math.abs(netNorm) <= SOM_ENERGY_TIE_EPS;
-
-    var orientNear = (typeof g.orientGap === "number") ? (g.orientGap <= SOM_ORIENT_TIE_EPS) : false;
-    var scoreNear = provisional.gapPoints <= SOM_MODE_GAP_TIE_EPS;
-
-    return scoreNear && (energyNear || orientNear);
-  }
-
-  calculateResults = function(){
-    var lock = getSomLockData();
-    if (lock.locked){
-      showToast("This SOM submission is locked on this device. Use Retake SOM to take it again.");
-      restoreLockedSessionIfPresent();
-      return;
-    }
-
-    var agree = document.getElementById("agreeChk");
-    if (!agree || !agree.checked){
-      showToast("Please check the User Agreement box before calculating your mode.");
-      var box = document.getElementById("agreementBox");
-      box && box.scrollIntoView && box.scrollIntoView({behavior:"smooth", block:"center"});
-      return;
-    }
-
-    if (!requireAllAnsweredOrWarn()) return;
-
-    var provisional = calculateProvisional();
-    var basePrimary = provisional.grid && provisional.grid.primary ? provisional.grid.primary : (provisional.top1 ? provisional.top1.code : null);
-
-    if (somShouldTie(provisional)){
-      try{
-        var _stored = jp(localStorage.getItem(RESULT_KEY) || "null");
-        if (_stored && _stored.primaryType && _stored.tieBreaker &&
-            _stored.tieBreaker.considered &&
-            _stored.tieBreaker.topA === provisional.top1.code &&
-            _stored.tieBreaker.topB === provisional.top2.code){
-          finalizeAndRender(_stored.primaryType, provisional, _stored.tieBreaker);
-          return;
-        }
-      } catch(e){}
-
-      __pending = {
-        provisional: provisional,
-        basePrimary: basePrimary,
-        topA: provisional.top1.code,
-        topB: provisional.top2.code,
-        tieItems: null
-      };
-
-      var intro = document.getElementById("tieIntro");
-      if (intro){
-        intro.textContent =
-          "Your results are close between " + provisional.top1.code + " and " + provisional.top2.code +
-          ". Pick the best-fit statement in each item.";
-      }
-
-      var tieItems = buildTieItems(provisional.top1.code, provisional.top2.code);
-      __pending.tieItems = tieItems;
-      renderTieForm(tieItems);
-      openTieModal();
-      return;
-    }
-
-    finalizeAndRender(basePrimary, provisional, { used:false, skipped:false, considered:false });
-  };
-
-  window.SOM_BIAS_AUDIT = function(rounds){
-    rounds = (typeof rounds === "number" && rounds > 0) ? Math.floor(rounds) : 10000;
-    var counts = {};
-    SOM_MODES.forEach(function(m){ counts[m.code] = 0; });
-
-    for (var r=0;r<rounds;r++){
-      var answers = [];
-      for (var i=0;i<questions.length;i++){
-        var opts = ["A","B","C"];
-        answers.push(opts[Math.floor(Math.random()*3)]);
-      }
-      var dimScores = computeDimScoresFromAnswers(answers);
-      var grid = computeGridPrimary(dimScores);
-      if (grid && grid.primary && counts.hasOwnProperty(grid.primary)) counts[grid.primary] += 1;
-    }
-
-    var rows = SOM_MODES.map(function(m){
-      return {
-        mode: m.code,
-        name: m.name,
-        count: counts[m.code],
-        pct: ((counts[m.code] / rounds) * 100).toFixed(2) + "%"
-      };
-    });
-
-    console.table(rows);
-    return { rounds: rounds, counts: counts, rows: rows };
-  };
-
-  window.SOM_LIST_TOOLS = function(){
-    var tools = ["SOM_SCORE_INTEGRITY_CHECK()", "SOM_BIAS_AUDIT(rounds)", "SOM_LIST_TOOLS()"];
-    console.log("[SOM TOOLS]", tools);
-    return tools;
-  };
-
-  var _origIntegrity = window.SOM_SCORE_INTEGRITY_CHECK;
-  window.SOM_SCORE_INTEGRITY_CHECK = function(){
-    var base = (typeof _origIntegrity === "function") ? _origIntegrity() : { ok:true, issues:[] };
-    try{
-      var dimMax = (typeof DIM_MAX === "object" && DIM_MAX) ? DIM_MAX : {};
-      base.normalization = {
-        using_normalized_grid: true,
-        thresholds: {
-          high: SOM_ENERGY_HIGH_THRESHOLD,
-          low: SOM_ENERGY_LOW_THRESHOLD
-        },
-        dimMax: dimMax
-      };
-      console.log("[SOM_SCORE_INTEGRITY_CHECK] normalized grid active", base.normalization);
-    } catch(e){}
-    return base;
-  };
-
-  try{
-    migrateLegacySomStorage();
-    syncResumeControls();
-    if (!restoreLockedSessionIfPresent()){
-      var stored = readSomResult();
-      if (stored && stored.primaryType && stored.answers && hasSomArray(stored.answers.values)){
-        try{
-          localStorage.setItem(SOM_LOCK_KEY, JSON.stringify({
-            locked: true,
-            som_v: SOM_VERSION,
-            som_math: SOM_MATH_VERSION,
-            qbank: SOM_QBANK_ID,
-            primaryType: stored.primaryType || null,
-            lockedAt: stored.createdAt || new Date().toISOString()
-          }));
-        } catch(e){}
-        restoreLockedSessionIfPresent();
-      }
-    }
-  } catch(e){}
-})();
-
-
-</script>
-<script>
-/* v3.2.1 small behavior polish */
-(function(){
-  try{
-    var closeTie = document.getElementById("closeTie");
-    var tieModal = document.getElementById("tieModal");
-    if (closeTie) closeTie.onclick = function(e){ if(e){ e.preventDefault(); } if (typeof handleTieSkip === "function") handleTieSkip(); else if (typeof closeTieModal === "function") closeTieModal(); };
-    if (tieModal){
-      tieModal.addEventListener("click", function(e){
-        if (e.target === tieModal){
-          if (typeof handleTieSkip === "function") handleTieSkip();
-          else if (typeof closeTieModal === "function") closeTieModal();
-        }
-      }, true);
-    }
-  } catch(e){}
-})();
-
-</script>
 </body>
 </html>
