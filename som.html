@@ -526,54 +526,6 @@
     }
     .mini-explain strong{ color: rgba(229,231,235,.95); }
 
-
-    .near-type-box{
-      display:none;
-      margin-top: 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(245,158,11,0.28);
-      overflow: hidden;
-      background: rgba(245,158,11,0.07);
-    }
-    .near-type-box.show{ display:block; }
-    .near-type-summary{
-      padding: 12px 14px;
-      color: rgba(255,237,180,0.96);
-      font-size: .88rem;
-      line-height: 1.55;
-      border-bottom: 1px solid rgba(245,158,11,0.18);
-      background: rgba(245,158,11,0.04);
-    }
-    .near-type-panel{
-      display:none;
-      padding: 12px 12px 14px;
-      color: rgba(229,231,235,.84);
-      font-size: .86rem;
-      line-height: 1.5;
-    }
-    .near-type-panel.show{ display:block; }
-    .near-type-grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
-      gap:10px;
-      margin-top: 10px;
-    }
-    .near-type-card{
-      border-radius: 14px;
-      border: 1px solid rgba(148,163,184,.22);
-      padding: 10px 11px;
-      background: rgba(2,6,23,.22);
-    }
-    .near-type-card strong{
-      display:block;
-      color: rgba(229,231,235,.95);
-      margin-bottom: 4px;
-    }
-    .near-type-muted{
-      color: rgba(229,231,235,.70);
-      margin-top: 8px;
-    }
-
     .accordion{
       margin-top: 12px;
       border-radius: 14px;
@@ -1018,16 +970,6 @@
       <div class="blurb" id="somBlurb"></div>
       <div class="mini-explain" id="seasonBlend"></div>
 
-
-      <div class="near-type-box" id="nearTypeBox">
-        <button type="button" class="acc-btn" id="toggleNearTypes">
-          <span id="nearTypeTitle">Close result signal</span>
-          <span id="nearChevron">▼</span>
-        </button>
-        <div class="near-type-summary" id="nearTypeSummary"></div>
-        <div class="near-type-panel" id="nearTypePanel"></div>
-      </div>
-
       <div class="accordion" id="scoreAccordion">
         <button type="button" class="acc-btn" id="toggleScores">
           <span>Seasonal trait map</span>
@@ -1179,15 +1121,26 @@
     var EMPOWERU_AUTOSAVE_LOCAL = true;
     var EMPOWERU_STORE_RESULT_LOCAL = true;
 
-    var SOM_UI_VERSION   = "1.0.4";
-    var SOM_VERSION      = "3.3.0";
-    var SOM_MATH_VERSION = "3.3.1_normalized_grid_strict_tie_near_type";
-    var SOM_QBANK_ID     = "SOM27_FORCEDCHOICE_ABC_DIMS5_GRID9_v3_3_0";
+    var SOM_UI_VERSION   = "1.0.3";
+    var SOM_VERSION      = "3.1.0";
+    var SOM_MATH_VERSION = "3.3.0_normalized_grid_strict_tie";
+    var SOM_QBANK_ID     = "SOM27_FORCEDCHOICE_ABC_DIMS5_GRID9_v3_1_0";
 
-    var AUTOSAVE_KEY = "empoweru_utf2_som_v3_3_0_autosave";
+    var AUTOSAVE_KEY = "empoweru_utf2_som_v3_1_0_autosave";
     var RESULT_KEY   = "empoweru_utf2_som_latest";
-    var SOM_LOCK_KEY = "empoweru_utf2_som_lock_v3_3_0";
-    var PENDING_ENDPOINT_KEY = "empoweru_utf2_som_v3_3_0_pending_endpoint";
+    var SOM_LOCK_KEY = "empoweru_utf2_som_lock_v3_1_0";
+    var PENDING_ENDPOINT_KEY = "empoweru_utf2_som_v3_1_0_pending_endpoint";
+
+    var LEGACY_AUTOSAVE_KEYS = [
+      "empoweru_utf2_som_v3_1_0_autosave",
+      "empoweru_utf2_som_v3_3_0_autosave",
+      "empoweru_utf2_som_v1_0_1_autosave",
+      "empoweru_utf2_som_v1_0_1"
+    ];
+    var LEGACY_LOCK_KEYS = [
+      "empoweru_utf2_som_lock_v3_1_0",
+      "empoweru_utf2_som_lock_v3_3_0"
+    ];
 
     var SOM_ENERGY_HIGH_THRESHOLD = 0.18;
     var SOM_ENERGY_LOW_THRESHOLD = -0.18;
@@ -1818,18 +1771,58 @@
       } catch(e){}
     }
 
+    function normalizeAutosaveCandidate(data){
+      if (!data || typeof data !== "object") return null;
+      var arr = null;
+      if (hasSomArray(data.answers)) arr = data.answers;
+      else if (data.answers && hasSomArray(data.answers.values)) arr = data.answers.values;
+      if (!hasSomArray(arr)) return null;
+      var seed = (typeof data.seed === "number") ? data.seed :
+        (data.meta && typeof data.meta.seed === "number") ? data.meta.seed : null;
+      if (typeof seed !== "number") return null;
+      return {
+        schema: "empoweru_som_autosave",
+        schema_v: data.schema_v || 2,
+        ui_v: data.ui_v || SOM_UI_VERSION,
+        som_v: data.som_v || SOM_VERSION,
+        som_math: data.som_math || "legacy",
+        qbank: data.qbank || data.som_qbank || SOM_QBANK_ID,
+        q_count: 27,
+        seed: seed >>> 0,
+        answers: arr.slice(0, 27),
+        updatedAt: data.updatedAt || data.createdAt || new Date().toISOString()
+      };
+    }
+
     function readAutosave(){
       try{
-        var raw = localStorage.getItem(AUTOSAVE_KEY);
-        if (!raw) return null;
-        var data = jp(raw);
-        if (!data || data.schema !== "empoweru_som_autosave") return null;
-        if (data.qbank !== SOM_QBANK_ID) return null;
-        if (data.som_math !== SOM_MATH_VERSION) return null;
-        if (data.q_count !== 27) return null;
-        if (!hasSomArray(data.answers)) return null;
-        if (typeof data.seed !== "number") return null;
-        return data;
+        var candidates = [];
+        for (var i=0;i<LEGACY_AUTOSAVE_KEYS.length;i++){
+          var raw = localStorage.getItem(LEGACY_AUTOSAVE_KEYS[i]);
+          var norm = normalizeAutosaveCandidate(jp(raw || "null"));
+          if (norm) candidates.push(norm);
+        }
+        var stored = readSomResult();
+        if (stored && stored.answers && hasSomArray(stored.answers.values)){
+          var seed = stored.meta && typeof stored.meta.seed === "number" ? stored.meta.seed : null;
+          if (typeof seed === "number"){
+            var fromResult = normalizeAutosaveCandidate({
+              answers: stored.answers.values,
+              seed: seed,
+              qbank: stored.som_qbank || SOM_QBANK_ID,
+              som_math: stored.som_math || "legacy",
+              createdAt: stored.createdAt
+            });
+            if (fromResult) candidates.push(fromResult);
+          }
+        }
+        if (!candidates.length) return null;
+        candidates.sort(function(a,b){
+          return (new Date(b.updatedAt || 0).getTime() || 0) - (new Date(a.updatedAt || 0).getTime() || 0);
+        });
+        var chosen = candidates[0];
+        try{ localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(chosen)); } catch(e){}
+        return chosen;
       } catch(e){ return null; }
     }
 
@@ -1837,8 +1830,6 @@
       try{
         var obj = jp(localStorage.getItem(RESULT_KEY) || "null");
         if (!obj || obj.schema !== "empoweru_utf2_som_result") return null;
-        if (obj.som_qbank !== SOM_QBANK_ID) return null;
-        if (obj.som_math !== SOM_MATH_VERSION) return null;
         if (!obj.primaryType || !SOM_MODE_NAMES[obj.primaryType]) return null;
         if (!obj.dimScores || typeof obj.dimScores !== "object") return null;
         return obj;
@@ -1912,13 +1903,14 @@
 
     function getSomLockData(){
       try{
-        var raw = localStorage.getItem(SOM_LOCK_KEY);
-        if (!raw) return { locked:false };
-        var data = jp(raw);
-        if (!data) return { locked:false };
-        if (data.qbank !== SOM_QBANK_ID) return { locked:false };
-        if (data.som_math !== SOM_MATH_VERSION) return { locked:false };
-        return { locked:true, data:data };
+        for (var i=0;i<LEGACY_LOCK_KEYS.length;i++){
+          var raw = localStorage.getItem(LEGACY_LOCK_KEYS[i]);
+          var data = jp(raw || "null");
+          if (data && (data.locked || data.primaryType)) return { locked:true, data:data };
+        }
+        var stored = readSomResult();
+        if (stored && stored.primaryType) return { locked:true, data:{ locked:true, primaryType:stored.primaryType, qbank:stored.som_qbank || SOM_QBANK_ID, som_math:stored.som_math || "legacy" } };
+        return { locked:false };
       } catch(e){ return { locked:false }; }
     }
 
@@ -1988,9 +1980,9 @@
 
     function restoreLockedSessionIfPresent(){
       var lock = getSomLockData();
-      if (!lock.locked) return false;
       var stored = readSomResult();
       var saved = readAutosave();
+      if (!lock.locked && !stored) return false;
       if (!stored && !saved){ clearSomLock(); return false; }
       var answers = null;
       var seed = null;
@@ -2403,164 +2395,31 @@
     }
 
     function buildEndpointPayload(resultObj){
+      var tb = resultObj.tieBreaker || {};
       return {
         assessment: "UTF-II_SOM",
         primaryType: resultObj.primaryType,
         primaryName: resultObj.primaryName,
         ranked: resultObj.ranked,
         dimScores: resultObj.dimScores,
+        dimRates: resultObj.meta ? resultObj.meta.rates : null,
         modeScores: resultObj.modeScores,
         meta: resultObj.meta,
         tieBreaker: resultObj.tieBreaker,
+        tb_considered: !!tb.considered,
+        tb_used: !!tb.used,
+        tb_skipped: !!tb.skipped,
+        tb_topA: tb.topA || null,
+        tb_topB: tb.topB || null,
+        tb_winner: tb.winner || null,
+        tb_chosen: tb.chosen || resultObj.primaryType,
+        tb_trigger_reasons: tb.triggerReasons || [],
         createdAt: resultObj.createdAt,
         v: SOM_VERSION,
-        qbank: SOM_QBANK_ID
+        qbank: SOM_QBANK_ID,
+        som_math: SOM_MATH_VERSION,
+        submissionFingerprint: resultObj.submissionFingerprint
       };
-    }
-
-    function modeForGrid(tier, orient){
-      if (tier === "HIGH" && orient === "OUT") return "DRV";
-      if (tier === "HIGH" && orient === "PPL") return "HRB";
-      if (tier === "HIGH" && orient === "CHG") return "TBZ";
-      if (tier === "STEADY" && orient === "OUT") return "BLD";
-      if (tier === "STEADY" && orient === "PPL") return "EQZ";
-      if (tier === "STEADY" && orient === "CHG") return "ENH";
-      if (tier === "LOW" && orient === "OUT") return "BST";
-      if (tier === "LOW" && orient === "PPL") return "HVN";
-      if (tier === "LOW" && orient === "CHG") return "REF";
-      return null;
-    }
-
-    function addUniqueCode(arr, code, primaryCode){
-      if (!code || code === primaryCode) return;
-      if (arr.indexOf(code) === -1) arr.push(code);
-    }
-
-    function getShortModeDesc(code){
-      var map = {
-        DRV:"High-capacity output. Momentum, execution, visible progress, and carrying more weight than usual.",
-        HRB:"High-capacity people focus. Connection, trust, responsiveness, and relational presence feel more available.",
-        TBZ:"High-capacity change. Novelty, experimentation, fresh direction, and movement create energy.",
-        BLD:"Steady output. Consistent progress, sustainable build pace, and tangible results without needing a surge.",
-        EQZ:"Steady people focus. Warmth, relationship balance, social steadiness, and manageable connection.",
-        ENH:"Steady change. Improvement, adjustment, smarter systems, and gradual upgrades without a full reset.",
-        BST:"Protected output. Narrower bandwidth, fewer priorities, careful progress, and stronger boundaries.",
-        HVN:"Protected people focus. Safety, trust, restoration, and low-pressure connection matter most.",
-        REF:"Protected change. Transition, recalibration, shifting direction, and clarity forming over time."
-      };
-      return map[code] || "A nearby seasonal pattern in the current result space.";
-    }
-
-    function computeNearTypeMeta(primaryCode, provisional, tieMeta){
-      var candidates = [];
-      var reasons = [];
-      var g = provisional && provisional.grid ? provisional.grid : null;
-      var tie = tieMeta || {};
-
-      if (tie && tie.considered){
-        addUniqueCode(candidates, tie.topA, primaryCode);
-        addUniqueCode(candidates, tie.topB, primaryCode);
-        if (tie.used) reasons.push("tie-breaker used");
-        else if (tie.skipped) reasons.push("tie-breaker skipped");
-        else reasons.push("tie-breaker considered");
-      }
-
-      if (provisional && provisional.tieCheck && provisional.tieCheck.shouldTie){
-        var pair = provisional.tieCheck.pair || [];
-        addUniqueCode(candidates, pair[0], primaryCode);
-        addUniqueCode(candidates, pair[1], primaryCode);
-        if (provisional.tieCheck.reasons && provisional.tieCheck.reasons.length){
-          for (var r=0;r<provisional.tieCheck.reasons.length;r++) reasons.push(provisional.tieCheck.reasons[r]);
-        }
-      }
-
-      if (provisional && provisional.top2 && typeof provisional.gapPoints === "number" && provisional.gapPoints <= 14){
-        addUniqueCode(candidates, provisional.top2.code, primaryCode);
-        reasons.push("near score gap");
-      }
-
-      if (g && Array.isArray(g.orientRates) && g.orientRates.length > 1){
-        var secondOrient = g.orientRates[1];
-        if (secondOrient && typeof g.orientGap === "number" && g.orientGap <= 0.16){
-          addUniqueCode(candidates, modeForGrid(g.tier, secondOrient.code), primaryCode);
-          reasons.push("near orientation boundary");
-        }
-      }
-
-      if (g && typeof g.netNorm === "number"){
-        var orient = g.orient || "OUT";
-        if (Math.abs(g.netNorm - SOM_ENERGY_HIGH_THRESHOLD) <= 0.08){
-          addUniqueCode(candidates, modeForGrid("HIGH", orient), primaryCode);
-          addUniqueCode(candidates, modeForGrid("STEADY", orient), primaryCode);
-          reasons.push("near high/steady energy boundary");
-        }
-        if (Math.abs(g.netNorm - SOM_ENERGY_LOW_THRESHOLD) <= 0.08){
-          addUniqueCode(candidates, modeForGrid("LOW", orient), primaryCode);
-          addUniqueCode(candidates, modeForGrid("STEADY", orient), primaryCode);
-          reasons.push("near steady/protected energy boundary");
-        }
-      }
-
-      var cleanReasons = [];
-      for (var i=0;i<reasons.length;i++){
-        if (cleanReasons.indexOf(reasons[i]) === -1) cleanReasons.push(reasons[i]);
-      }
-      candidates = candidates.slice(0, 3);
-
-      return {
-        show: candidates.length > 0,
-        primary: primaryCode,
-        nearby: candidates,
-        reasons: cleanReasons
-      };
-    }
-
-    function renderNearTypeBox(nearMeta){
-      var box = document.getElementById("nearTypeBox");
-      var summary = document.getElementById("nearTypeSummary");
-      var panel = document.getElementById("nearTypePanel");
-      var title = document.getElementById("nearTypeTitle");
-      var chev = document.getElementById("nearChevron");
-      if (!box || !summary || !panel) return;
-
-      if (!nearMeta || !nearMeta.show || !nearMeta.nearby || !nearMeta.nearby.length){
-        box.classList.remove("show");
-        summary.innerHTML = "";
-        panel.innerHTML = "";
-        panel.classList.remove("show");
-        if (chev) chev.textContent = "▼";
-        return;
-      }
-
-      var primaryName = getModeName(nearMeta.primary);
-      var nearNames = nearMeta.nearby.map(function(c){ return getModeName(c); }).join(", ");
-      if (title) title.textContent = "Close result signal";
-      summary.innerHTML =
-        "<strong>Close signal detected:</strong> Your final SOM is <strong>" + escapeHtml(primaryName) + "</strong>, but your answers also sat near <strong>" + escapeHtml(nearNames) + "</strong>. This is not an error. It means your current season is near a boundary between related modes.";
-
-      var reasonText = nearMeta.reasons && nearMeta.reasons.length ? nearMeta.reasons.join(", ") : "nearby score pattern";
-      var html = '<div class="near-type-muted"><strong>Why this appeared:</strong> ' + escapeHtml(reasonText) + '.</div>';
-      html += '<div class="near-type-grid">';
-      html += '<div class="near-type-card"><strong>Primary: ' + escapeHtml(primaryName) + '</strong>' + escapeHtml(getShortModeDesc(nearMeta.primary)) + '</div>';
-      for (var i=0;i<nearMeta.nearby.length;i++){
-        var code = nearMeta.nearby[i];
-        html += '<div class="near-type-card"><strong>Nearby: ' + escapeHtml(getModeName(code)) + '</strong>' + escapeHtml(getShortModeDesc(code)) + '</div>';
-      }
-      html += '</div>';
-      html += '<div class="near-type-muted">The primary result remains the result used for synthesis. The nearby signal is included so close or borderline seasons are easier to interpret honestly.</div>';
-
-      panel.innerHTML = html;
-      box.classList.add("show");
-      panel.classList.remove("show");
-      if (chev) chev.textContent = "▼";
-    }
-
-    function toggleNearTypes(){
-      var panel = document.getElementById("nearTypePanel");
-      var chev = document.getElementById("nearChevron");
-      if (!panel) return;
-      var isOpen = panel.classList.toggle("show");
-      if (chev) chev.textContent = isOpen ? "▲" : "▼";
     }
 
     function finalizeAndRender(primaryCode, provisional, tieMeta, opts){
@@ -2581,9 +2440,6 @@
       renderDimBars(provisional.dimScores);
 
       var tie = tieMeta || { used:false, skipped:false, considered:false };
-      var nearMeta = computeNearTypeMeta(m.code, provisional, tie);
-      renderNearTypeBox(nearMeta);
-
       if (tie.considered && !tie.chosen) tie.chosen = m.code;
 
       var resultObj = {
@@ -2604,7 +2460,7 @@
         ranked: provisional.ranked,
         provisional: provisional,
         meta: {
-          scoring: "forced_choice_single_dim_normalized_grid_strict_tie_v3_3_0",
+          scoring: "forced_choice_single_dim_normalized_grid_strict_tie_v3_3_0_preserve_keys",
           seed: __seed,
           thresholds: {
             energyHigh: SOM_ENERGY_HIGH_THRESHOLD,
@@ -2634,10 +2490,8 @@
           rates: provisional.grid ? provisional.grid.rates : somNormalizeDimScores(provisional.dimScores),
           orientRates: provisional.grid ? provisional.grid.orientRates : null,
           dimMax: DIM_MAX,
-          tieCheck: provisional.tieCheck || null,
-          nearType: nearMeta || null
+          tieCheck: provisional.tieCheck || null
         },
-        nearType: nearMeta || null,
         tieBreaker: tie,
         answers: { format: "ABC_forced_choice", values: provisional.answersABC.slice(0) },
         endpointSent: endpointSent,
@@ -2926,9 +2780,6 @@
 
       var toggleScores = document.getElementById("toggleScores");
       toggleScores && toggleScores.addEventListener("click", function(e){ e.preventDefault(); toggleAccordion(); });
-
-      var toggleNearTypesBtn = document.getElementById("toggleNearTypes");
-      toggleNearTypesBtn && toggleNearTypesBtn.addEventListener("click", function(e){ e.preventDefault(); toggleNearTypes(); });
 
       var resumeBtn = document.getElementById("resumeBtn");
       var clearBtn  = document.getElementById("clearBtn");
